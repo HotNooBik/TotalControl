@@ -3,9 +3,5 @@ from django.shortcuts import render
 
 
 # Контроллеры
-def index(request):
-    return render(request, template_name='main/index.html')
-
-
-def register(request):
-    return HttpResponse('Регистрация')
+def home(request):
+    return render(request, template_name='main/home.html')
