@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib import messages
 from .forms import UserRegisterForm, UserLoginForm
 from .models import UserProfile
@@ -40,5 +40,5 @@ def user_logout(request):
 
 @login_required
 def profile(request):
-    profile = UserProfile.objects.get(user=request.user)
-    return render(request, 'users/profile.html', {'profile': profile})
+    user_profile = UserProfile.objects.get(user=request.user)
+    return render(request, 'users/profile.html', {'profile': user_profile})

@@ -64,12 +64,32 @@
         .login-link a:hover {
             text-decoration: underline;
         }
+
+        .helptext {
+            font-size: 12px;
+            color: #666;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 0 0;
+        }
+
+        .errorlist li {
+            color: #ff0000;
+            font-size: 12px;
+            margin-top: 5px;
+        }
     </style>
 
     <div class="registration-container">
         <div class="registration-box">
             <h2>Регистрация</h2>
-            <form method="POST">
+            <hr>
+            <form action='.' method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <br>

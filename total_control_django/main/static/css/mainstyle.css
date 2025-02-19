@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
 }
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -11,14 +12,17 @@ body {
     background: #4CAF50;
     color: white;
 }
+
 .logo {
     font-size: 24px;
     font-weight: bold;
 }
+
 .nav-buttons {
     display: flex;
     gap: 15px;
 }
+
 .nav-buttons a {
     text-decoration: none;
     color: white;
@@ -27,9 +31,11 @@ body {
     background: #388E3C;
     transition: 0.3s;
 }
+
 .nav-buttons a:hover {
     background: #2E7D32;
 }
+
 .profile-img {
     width: 40px;
     height: 40px;
@@ -37,12 +43,14 @@ body {
     object-fit: cover;
     border: 2px solid white;
 }
+
 .logo a {
-    text-decoration: none; /* Убираем подчеркивание */
-    color: inherit; /* Наследуем цвет текста */
-    font-weight: bold; /* Можно оставить жирным */
-    cursor: pointer; /* Курсор в виде руки при наведении */
+    text-decoration: none;
+    color: inherit;
+    font-weight: bold;
+    cursor: pointer;
 }
+
 .logo a:hover {
-    text-decoration: none; /* Убираем подчеркивание при наведении */
+    text-decoration: none;
 }
