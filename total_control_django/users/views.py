@@ -26,7 +26,7 @@ def user_login(request):
             user = form.get_user()
             login(request, user)
             messages.success(request, "Вы вошли в систему!")
-            return redirect("home")
+            return redirect("main")
     else:
         form = UserLoginForm()
     return render(request, "users/login.html", {"form": form})
@@ -35,7 +35,7 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     messages.info(request, "Вы вышли из системы.")
-    return redirect("home")
+    return redirect("main")
 
 
 @login_required
