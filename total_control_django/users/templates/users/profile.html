@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Профиль</title>
-</head>
-<body>
-    <h2>Профиль пользователя</h2>
-    <p>Имя: {{ user.username }}</p>
-    <p>Email: {{ user.email }}</p>
-    <p>Дата рождения: {{ profile.birth_date|default:"Не указано" }}</p>
-    <p>Рост: {{ profile.height|default:"Не указано" }} см</p>
-    <p>Вес: {{ profile.weight|default:"Не указано" }} кг</p>
-    <p>Цель: {{ profile.get_goal_display }}</p>
-    <a href="{% url 'logout' %}">Выйти</a>
-</body>
-</html>
+{% extends "main/base.html" %}
+{% block content %}
+    <div class="profile-container">
+        <h2>Ваш профиль</h2>
+        <hr>
+        <div class="profile-info">
+            <p><strong>Имя:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Дата рождения:</strong> {{ profile.birth_date|default:"Не указано" }}</p>
+            <p><strong>Рост:</strong> {{ profile.height|default:"Не указано" }} см</p>
+            <p><strong>Вес:</strong> {{ profile.weight|default:"Не указано" }} кг</p>
+            <p><strong>Цель:</strong> {{ profile.get_goal_display }}</p>
+            <p><strong>Пол:</strong> {% if profile.sex == "man" %}Мужской{% elif profile.sex == "woman" %}Женский{% else %}Не указано{% endif %}</p>
+        </div>
+        <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
+    </div>
+{% endblock content %}

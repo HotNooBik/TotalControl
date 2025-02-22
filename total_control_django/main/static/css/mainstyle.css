@@ -2,6 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #DAD7CD;
 }
 
 .header {
@@ -9,7 +10,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    background: #4CAF50;
+    background-color: #588157;
     color: white;
 }
 
@@ -28,20 +29,31 @@ body {
     color: white;
     padding: 8px 12px;
     border-radius: 5px;
-    background: #388E3C;
+    background: #3A5A40;
     transition: 0.3s;
 }
 
 .nav-buttons a:hover {
-    background: #2E7D32;
+    background: #344E41;
 }
 
-.profile-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
+.btn {
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn a {
+    text-decoration: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background: #3A5A40;
+    transition: 0.3s;
+}
+
+.btn a:hover {
+    background: #344E41;
 }
 
 .logo a {
@@ -53,4 +65,174 @@ body {
 
 .logo a:hover {
     text-decoration: none;
+}
+
+.btn {
+    text-decoration: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background: #3A5A40;
+    transition: 0.3s;
+}
+
+.btn a:hover {
+    background: #344E41;
+}
+
+.login-container {
+    display: grid;
+    place-items: center;
+    height: auto;
+    margin-inline: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.login-box {
+    margin-top: 5%;
+    background-color: rgb(225, 225, 225);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.registration-container {
+    display: grid;
+    place-items: center;
+    height: auto;
+    margin-inline: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.registration-box {
+    margin-top: 1%;
+    background-color: rgb(225, 225, 225);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+form p {
+    margin-bottom: 15px;
+    text-align: left;
+    width: 100%;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="number"],
+form textarea,
+form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #588157;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #344E41;
+}
+
+.login-link {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: rgb(22, 41, 10);
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+.helptext {
+    font-size: 12px;
+    color: #666;
+    display: block;
+    margin-top: 5px;
+}
+
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+
+.errorlist li {
+    color: #ff0000;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.profile-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgb(235, 235, 235);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.profile-container h2 {
+    margin-top: 5%;
+    text-align: center;
+    color: #333;
+}
+
+.profile-info p {
+    font-size: 16px;
+    color: #555;
+    padding: 5px 0;
+}
+
+.logout-btn {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background: #ff5757;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.logout-btn:hover {
+    background: #e04b4b;
 }

@@ -13,7 +13,7 @@ def register(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Вы успешно зарегистрировались!')
-            return redirect('profile')
+            return redirect('main')
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
