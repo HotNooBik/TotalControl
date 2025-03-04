@@ -6,22 +6,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TotalControl</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/mainstyle.css' %}">
+    <script defer src="{% static 'js/dropdown.js' %}"></script>
+    <style>
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 120px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .logout {
+            color: red;
+            font-weight: bold;
+        }
+
+        .logout:hover {
+            background-color: #ffe6e6;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
-        <div class="logo"><a href="{% url 'main' %}">TotalControl</a></div>
-        <div class="nav-buttons">
+        <div class="nav-container">
+            <div class="logo"><a href="{% url 'main' %}">TotalControl</a></div>
+            <div class="nav-buttons">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'calculator' %}">Калькулятор</a>
+                    <a href="{% url 'calculator' %}">Рецепты</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="user-menu">
             {% if user.is_authenticated %}
-                <a href="{% url 'profile' %}">Профиль</a>
-                <a href="{% url 'logout' %}">Выйти</a>
+                <div class="dropdown">
+                    <button class="dropbtn">☰</button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'profile' %}">Профиль</a>
+                        <a href="{% url 'logout' %}" class="logout">Выйти</a>
+                    </div>
+                </div>
             {% else %}
-                <a href="{% url 'login' %}">Вход</a>
-                <a href="{% url 'register' %}">Регистрация</a>
+                <div class="nav-buttons">
+                    <a href="{% url 'login' %}">Вход</a>
+                    <a href="{% url 'register' %}">Регистрация</a>
+                </div>
             {% endif %}
         </div>
     </header>
     <main>
         {% block content %}{% endblock %}
     </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dropdownButton = document.querySelector(".dropbtn");
+            const dropdownMenu = document.querySelector(".dropdown-content");
+
+            dropdownButton.addEventListener("click", function(event) {
+                event.stopPropagation();
+                dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+            });
+
+            document.addEventListener("click", function(event) {
+                if (!dropdownButton.contains(event.target)) {
+                    dropdownMenu.style.display = "none";
+                }
+            });
+        });
+    </script>
 </body>
 </html>

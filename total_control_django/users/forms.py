@@ -5,6 +5,10 @@ from .models import UserProfile
 
 
 class UserRegisterForm(UserCreationForm):
+    error_messages = {
+        'password_mismatch': "Пароли не совпадают!",
+    }
+
     username = forms.CharField(
         label="Имя пользователя",
         max_length=50,
