@@ -4,11 +4,11 @@
         <div class="registration-box">
             <h2>Регистрация</h2>
             <hr>
-            <form action='.' method="POST">
+            <form class="login-form" action='.' method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <br>
-                <button type="submit">Зарегистрироваться</button>
+                <button class="login-button" type="submit">Зарегистрироваться</button>
             </form>
             <div class="login-link">
                 <a href="{% url 'login' %}">Уже есть аккаунт? Войди!</a>

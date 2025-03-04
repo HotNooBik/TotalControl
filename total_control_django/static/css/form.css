@@ -1,85 +1,3 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #DAD7CD;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #588157;
-    color: white;
-}
-
-.logo {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.nav-buttons {
-    display: flex;
-    gap: 15px;
-}
-
-.nav-buttons a {
-    text-decoration: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 5px;
-    background: #3A5A40;
-    transition: 0.3s;
-}
-
-.nav-buttons a:hover {
-    background: #344E41;
-}
-
-.btn {
-    display: inline-block;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn a {
-    text-decoration: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 5px;
-    background: #3A5A40;
-    transition: 0.3s;
-}
-
-.btn a:hover {
-    background: #344E41;
-}
-
-.logo a {
-    text-decoration: none;
-    color: inherit;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.logo a:hover {
-    text-decoration: none;
-}
-
-.btn {
-    text-decoration: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 5px;
-    background: #3A5A40;
-    transition: 0.3s;
-}
-
-.btn a:hover {
-    background: #344E41;
-}
-
 .login-container {
     display: grid;
     place-items: center;
@@ -120,21 +38,17 @@ body {
     max-width: 400px;
 }
 
-h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-}
-
-form {
+.login-form {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-form p {
+.login-form p {
     margin-bottom: 15px;
     text-align: left;
     width: 100%;
+    font-size: 16px;
 }
 
 form input[type="text"],
@@ -151,7 +65,7 @@ form select {
     box-sizing: border-box;
 }
 
-button {
+.login-button {
     background-color: #588157;
     color: white;
     border: none;
@@ -162,7 +76,7 @@ button {
     transition: 0.3s;
 }
 
-button:hover {
+.login-button:hover {
     background-color: #344E41;
 }
 
