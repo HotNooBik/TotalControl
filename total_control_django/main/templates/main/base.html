@@ -57,15 +57,31 @@
             </div>
         </div>
     </nav>
+    
     <header class="header">
-        <div class="logo"><a href="{% url 'main' %}">TotalControl</a></div>
-        <div class="nav-buttons">
+        <div class="nav-container">
+            <div class="logo"><a href="{% url 'main' %}">TotalControl</a></div>
+            <div class="nav-buttons">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'calculator' %}">Калькулятор</a>
+                    <a href="{% url 'calculator' %}">Рецепты</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="user-menu">
             {% if user.is_authenticated %}
-                <a href="{% url 'profile' %}">Профиль</a>
-                <a href="{% url 'logout' %}">Выйти</a>
+                <div class="dropdown">
+                    <button class="dropbtn">☰</button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'profile' %}">Профиль</a>
+                        <a href="{% url 'logout' %}" class="logout">Выйти</a>
+                    </div>
+                </div>
             {% else %}
-                <a href="{% url 'login' %}">Вход</a>
-                <a href="{% url 'register' %}">Регистрация</a>
+                <div class="nav-buttons">
+                    <a href="{% url 'login' %}">Вход</a>
+                    <a href="{% url 'register' %}">Регистрация</a>
+                </div>
             {% endif %}
         </div>
     </header>
