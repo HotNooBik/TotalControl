@@ -1,12 +1,17 @@
+from datetime import date
+
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.core.validators import MaxValueValidator
+
 from .models import UserProfile
+from .utils.nutrition import get_users_calorie_norm
 
 
 class UserRegisterForm(UserCreationForm):
     error_messages = {
-        'password_mismatch': "Пароли не совпадают!",
+        "password_mismatch": "Пароли не совпадают!",
     }
 
     username = forms.CharField(
@@ -57,6 +62,12 @@ class UserRegisterForm(UserCreationForm):
         label="Дата рождения",
         required=True,
         widget=forms.DateInput(attrs={"type": "date"}),
+        validators=[
+            MaxValueValidator(
+                limit_value=date.today(),
+                message="Дата рождения не может быть в будущем.",
+            )
+        ],
         error_messages={
             "required": "Пожалуйста, введите дату рождения.",
         },
@@ -104,6 +115,12 @@ class UserRegisterForm(UserCreationForm):
         },
     )
 
+    activity_coef = forms.FloatField(
+        widget=forms.HiddenInput,
+        initial=1.2,
+        required=True,
+    )
+
     class Meta:
         model = User
         fields = [
@@ -116,27 +133,41 @@ class UserRegisterForm(UserCreationForm):
             "sex",
             "height",
             "weight",
+            "activity_coef",
         ]
 
     def save(self, commit=True):
         user = super().save(commit=False)
         if commit:
+
+            birth_date = self.cleaned_data.get("birth_date")
+            height = round(self.cleaned_data.get("height"), 2)
+            weight = round(self.cleaned_data.get("weight"), 2)
+            goal = self.cleaned_data.get("goal")
+            sex = self.cleaned_data.get("sex")
+            activity_coef = self.cleaned_data.get("activity_coef") or 1.2
+            daily_calories = get_users_calorie_norm(
+                sex, weight, height, birth_date, activity_coef, goal
+            )
+
             user.save()
             UserProfile.objects.create(
                 user=user,
-                birth_date=self.cleaned_data.get("birth_date"),
-                height=self.cleaned_data.get("height"),
-                weight=self.cleaned_data.get("weight"),
-                goal=self.cleaned_data.get("goal"),
-                sex=self.cleaned_data.get("sex"),
+                birth_date=birth_date,
+                height=height,
+                weight=weight,
+                goal=goal,
+                sex=sex,
+                daily_calories=daily_calories,
+                activity_coef=activity_coef,
             )
         return user
 
 
 class UserLoginForm(AuthenticationForm):
     error_messages = {
-        'invalid_login': "Неправильный логин или пароль. Проверьте данные и попробуйте снова.",
-        'inactive': "Этот аккаунт неактивен.",
+        "invalid_login": "Неправильный логин или пароль. Проверьте данные и попробуйте снова.",
+        "inactive": "Этот аккаунт неактивен.",
     }
     username = forms.CharField(label="Имя пользователя")
     password = forms.CharField(label="Пароль", widget=forms.PasswordInput)

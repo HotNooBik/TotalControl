@@ -7,17 +7,18 @@ class UserProfile(models.Model):
     """
     Таблица пользователя со следующими полями:
 
-    user - индивидуальный айди пользователя, связанный с айда пользователей сайта (User)
-    birth_date - дата рождения
-    sex - пол (мужской, женский)
-    height - рост в сантиметрах
-    weight - вес в килограммах
-    goal - цель (похудеть, набор массы, поддержание формы, сушка)
-    daily_calories - дневная норма калорий
-    daily_water - дневная норма воды
-    daily_proteins - дневная норма белков
-    daily_fats - дневная норма жиров
-    daily_carbs - дневная норма углеводов
+    - user - индивидуальный айди пользователя, связанный с айда пользователей сайта (User)
+    - birth_date - дата рождения
+    - sex - пол (мужской, женский)
+    - height - рост в сантиметрах
+    - weight - вес в килограммах
+    - goal - цель (похудеть, набор массы, поддержание формы, сушка)
+    - activity_coef - коэффициент активности
+    - daily_calories - дневная норма калорий
+    - daily_water - дневная норма воды
+    - daily_proteins - дневная норма белков
+    - daily_fats - дневная норма жиров
+    - daily_carbs - дневная норма углеводов
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True, blank=True)
@@ -41,6 +42,7 @@ class UserProfile(models.Model):
         ],
         default='maintain'
     )
+    activity_coef = models.FloatField(null=True, blank=True)
     daily_calories = models.FloatField(null=True, blank=True)
     daily_water = models.FloatField(null=True, blank=True)
     daily_proteins = models.FloatField(null=True, blank=True)

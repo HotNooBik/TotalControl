@@ -4,9 +4,32 @@
         <div class="registration-box">
             <h2>Регистрация</h2>
             <hr>
-            <form class="login-form" action='.' method="POST">
+            <form class="login-form" action="." method="POST">
                 {% csrf_token %}
                 {{ form.as_p }}
+                <!-- Скрытое поле для activity_coef -->
+                <input type="hidden" name="{{ form.activity_coef.html_name }}" id="id_activity_coef" value="1">
+                
+                <div class="row">
+                    <div class="button-panel">
+                        <div class="button-column" data-activity="1.2">
+                            <img src="path_to_image1.jpg" alt="Image 1" class="button-image">
+                            <button type="button" class="panel-button">Подпись 1</button>
+                        </div>
+                        <div class="button-column" data-activity="1.375">
+                            <img src="path_to_image2.jpg" alt="Image 2" class="button-image">
+                            <button type="button" class="panel-button">Подпись 2</button>
+                        </div>
+                        <div class="button-column" data-activity="1.55">
+                            <img src="path_to_image3.jpg" alt="Image 3" class="button-image">
+                            <button type="button" class="panel-button">Подпись 3</button>
+                        </div>
+                        <div class="button-column" data-activity="1.725">
+                            <img src="path_to_image4.jpg" alt="Image 4" class="button-image">
+                            <button type="button" class="panel-button">Подпись 4</button>
+                        </div>
+                    </div>
+                </div>
                 <br>
                 <button class="login-button" type="submit">Зарегистрироваться</button>
             </form>
@@ -15,4 +38,76 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .button-panel {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .button-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 23%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .button-image {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        .panel-button {
+            background-color: #588157;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .panel-button:hover {
+            background-color: #3A5A40;
+        }
+        
+        /* Класс для активного выбора */
+        .button-column.active {
+            border-color:rgb(0, 255, 47);
+            background-color: #e0f0ff;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const activityInput = document.getElementById('id_activity_coef');
+            const buttonColumns = document.querySelectorAll('.button-column');
+
+            // Устанавливаем первую кнопку активной по умолчанию
+            if (buttonColumns.length > 0) {
+                buttonColumns[0].classList.add('active');
+            }
+
+            buttonColumns.forEach(column => {
+                column.addEventListener('click', function() {
+                    // Убираем класс active со всех кнопок
+                    buttonColumns.forEach(col => col.classList.remove('active'));
+                    // Добавляем класс active к выбранной кнопке
+                    this.classList.add('active');
+                    // Устанавливаем значение скрытого поля из data-атрибута
+                    activityInput.value = this.getAttribute('data-activity');
+                });
+            });
+        });
+    </script>
 {% endblock content %}
