@@ -26,7 +26,7 @@ def get_users_calorie_norm(
         heigh: Рост в см;
         birth_date: дата рождения (date объект);
         activity_coef: коэффициент активности;
-        goal: цель ();
+        goal: цель ("lose_weight", "gain_muscle", "cutting");
 
     Returns:
         Дневную норму калорий (int)
@@ -51,8 +51,39 @@ def get_users_calorie_norm(
     return int(bmr * activity_coef)
 
 
-def get_users_pfc_norm():
-    return ()
+def get_users_pfc_norm(calories: int, goal: str) -> tuple[(int, int, int)]:
+    """
+    Функция для расчёта дневной нормы БЖУ в граммах.
+
+    Для расчета используется формула, основанная на кол-ве калорий и цели пользователя.
+
+    Args:
+        calories: дневная норма калорий;
+        goal: цель ("lose_weight", "gain_muscle", "cutting");
+
+    Returns:
+        Дневную норму БЖУ tuple(кол-во белков в гр (int), кол-во жиров в гр (int), кол-во углеводов в гр (int))
+    """
+
+    match goal:
+        case "lose_weight":
+            protein = round(calories * 0.3 / 4)
+            fat = round(calories * 0.25 / 9)
+            carbs = round(calories * 0.45 / 4)
+        case "gain_muscle":
+            protein = round(calories * 0.25 / 4)
+            fat = round(calories * 0.2 / 9)
+            carbs = round(calories * 0.55 / 4)
+        case "cutting":
+            protein = round(calories * 0.35 / 4)
+            fat = round(calories * 0.25 / 9)
+            carbs = round(calories * 0.40 / 4)
+        case _:
+            protein = round(calories * 0.25 / 4)
+            fat = round(calories * 0.25 / 9)
+            carbs = round(calories * 0.5 / 4)
+
+    return (protein, fat, carbs)
 
 
 def get_users_water_norm():

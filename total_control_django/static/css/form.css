@@ -18,24 +18,14 @@
     max-width: 400px;
 }
 
-.registration-container {
-    display: grid;
-    place-items: center;
-    height: auto;
-    margin-inline: auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
 .registration-box {
-    margin-top: 1%;
+    margin-top: 5%;
     background-color: rgb(225, 225, 225);
-    padding: 20px;
+    padding: 2rem;
     border-radius: 10px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
     text-align: center;
-    width: 100%;
-    max-width: 400px;
+    max-width: 600px;
 }
 
 .login-form {
@@ -149,4 +139,78 @@ form select {
 
 .logout-btn:hover {
     background: #e04b4b;
+}
+
+
+/* Стили для выбора активности пользователя на этапе регистрации */
+
+.activity-selector {
+    margin: 20px 0;
+}
+
+.activity-option {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.activity-option:hover {
+    border-color: #4CAF50;
+}
+
+.activity-option.active {
+    border-color: #4CAF50;
+    background-color: #f8fff8;
+}
+
+.radio-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #888;
+    margin-right: 15px;
+    position: relative;
+}
+
+.active .radio-circle {
+    border-color: #4CAF50;
+    background-color: #4CAF50;
+}
+
+.radio-circle::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+    display: none;
+}
+
+.active .radio-circle::after {
+    display: block;
+}
+
+.activity-text-content {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.activity-main-text {
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.activity-sub-text {
+    font-size: 0.9em;
+    color: #666;
 }
