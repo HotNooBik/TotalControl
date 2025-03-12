@@ -1,3 +1,4 @@
+/* Цвета основной палитры сайта*/
 .bg-timberwolf {
     background-color: #DAD7CD;
 }
@@ -16,4 +17,44 @@
 
 .bg-brunswickgreen {
     background-color: #344E41;
+}
+
+
+/* Светлый вариант основных цветов */
+.bg-ferngreen-light {
+    background-color: #9bc99a;
+}
+
+
+/* Текст с основными цветами */
+.fc-brunswickgreen {
+    color: #344E41;
+}
+
+
+/* Цвет наводки на кнопки с основным цветом */
+.btn.bg-ferngreen-light:hover {
+    background-color: #80a57f;
+}
+
+.btn.bg-huntergreen:hover {
+    background-color: #263b2a;
+}
+
+
+/* Цвета для КБЖУ в профиле*/
+.bg-calories {
+    background-color: #fffde2;
+}
+
+.bg-proteins {
+    background-color: #e2f4ff;
+}
+
+.bg-fats {
+    background-color: #ffe2e2;
+}
+
+.bg-carbs {
+    background-color: #e5ffe2;
 }

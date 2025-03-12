@@ -1,0 +1,136 @@
+{% extends "main/base.html" %}
+{% block content %}
+
+<form method="post">
+    <div class="container rounded bg-white mt-5 mb-5">
+        <div class="row">
+            <div class="col-md-4 bg-ferngreen-light">
+                <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                    <img width="150" height="150" src="https://img.icons8.com/ios/500/settings--v1.png" alt="settings--v1"/>
+                    
+                    <span class="fs-4 fw-bold">{{ user.username }}</span>
+                    <span class="text-black-50">{{ user.email }}</span>
+                    <span> </span>
+                </div>
+            </div>
+            <div class="col-md-8 d-flex justify-content-center text-center">
+                <div class="p-3 py-5">
+                    <h1 class='mb-4 fc-brunswickgreen'>Редактирование профиля</h1>
+                    <hr>
+                    <div class="row mt-2 px-sm-5">
+                        {% csrf_token %}
+                        <div class="row px-sm-4">
+                            <div class="col mb-3 d-flex justify-content-center">
+                                <p class="fs-4 me-3"><b>Дата рождения:</b></p>
+                                {{ form.birth_date }}
+                            </div>
+                        </div>
+                        <div class="row px-sm-4">
+                            <div class="col mb-3 d-flex justify-content-between px-5">
+                                <p class="fs-4 me-3"><b>Рост:</b></p>
+                                {{ form.height }}
+                                <p class="fs-4 ms-3">см.</p>
+                            </div>
+                        </div>
+                        <div class="row px-sm-4">
+                            <div class="col mb-3 d-flex justify-content-between px-5">
+                                <p class="fs-4 me-3"><b>Вес:</b></p>
+                                {{ form.weight }}
+                                <p class="fs-4 ms-3">кг.</p>
+                            </div>
+                        </div>
+                        <div class="row px-sm-4">
+                            <div class="col mb-3 d-flex justify-content-between px-5">
+                                <p class="fs-4 me-3"><b>Цель:</b></p>
+                                {{ form.goal }}
+                            </div>
+                        </div>
+                        <div class="row px-sm-4">
+                            <div class="col mb-3 d-flex justify-content-between px-5">
+                                <p class="fs-4 me-3"><b>Пол:</b></p>
+                                {{ form.sex }}
+                            </div>
+                        </div>
+                        <p class="fs-4 mb-0 mt-2"><b>Активность: {{ form.activity_coef }}</b>
+                        <div class="activity-selector">
+                            <div class="activity-option active" data-value="1.2">
+                                <div class="radio-circle"></div>
+                                <div class="activity-text-content">
+                                    <span class="activity-main-text">Минимальная активность</span>
+                                    <span class="activity-sub-text">Сидячая работа, нет тренировок</span>
+                                </div>
+                            </div>
+                            <div class="activity-option" data-value="1.375">
+                                <div class="radio-circle"></div>
+                                <div class="activity-text-content">
+                                    <span class="activity-main-text">Слабая активность</span>
+                                    <span class="activity-sub-text">Тренировки 1-2 раза в неделю</span>
+                                </div>
+                            </div>
+                            <div class="activity-option" data-value="1.5">
+                                <div class="radio-circle"></div>
+                                <div class="activity-text-content">
+                                    <span class="activity-main-text">Умеренная активность</span>
+                                    <span class="activity-sub-text">Тренировки 3-4 раза в неделю</span>
+                                </div>
+                            </div>
+                            <div class="activity-option" data-value="1.73">
+                                <div class="radio-circle"></div>
+                                <div class="activity-text-content">
+                                    <span class="activity-main-text">Высокая активность</span>
+                                    <span class="activity-sub-text">Тренировки 5-7 раз в неделю</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div class="row mt-4">
+                        <div class="col d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                            <button type="submit" name="cancel" class="btn btn-danger">Отмена</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const options = document.querySelectorAll('.activity-option');
+        const hiddenInput = document.querySelector('#id_activity_coef');
+        const currentCoef = hiddenInput.value
+        
+        function setActiveOption(selectedOption) {
+            options.forEach(option => {
+                option.classList.remove('active');
+            });
+            selectedOption.classList.add('active');
+            hiddenInput.value = selectedOption.dataset.value;
+        }
+
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                setActiveOption(this);
+            });
+        });
+
+        // Активируем элемент пользователя по умолчанию
+        switch (currentCoef) {
+            case '1.2':
+                setActiveOption(options[0]);
+                break;
+            case '1.375':
+                setActiveOption(options[1]);
+                break;
+            case '1.5':
+                setActiveOption(options[2]);
+                break;
+            default:
+                setActiveOption(options[3]);
+        }
+    });
+</script>
+{% endblock content %}

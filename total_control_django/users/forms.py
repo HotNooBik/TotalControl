@@ -8,6 +8,7 @@ from django.core.validators import MaxValueValidator
 from .models import UserProfile
 from .utils.nutrition import get_users_calorie_norm, get_users_pfc_norm
 
+
 class UserRegisterForm(UserCreationForm):
     error_messages = {
         "password_mismatch": "Пароли не совпадают!",
@@ -114,10 +115,7 @@ class UserRegisterForm(UserCreationForm):
         },
     )
 
-    activity_coef = forms.FloatField(
-        widget=forms.HiddenInput(),
-        initial=1.2
-    )
+    activity_coef = forms.FloatField(widget=forms.HiddenInput(), initial=1.2)
 
     class Meta:
         model = User
@@ -147,7 +145,9 @@ class UserRegisterForm(UserCreationForm):
             daily_calories = get_users_calorie_norm(
                 sex, weight, height, birth_date, activity_coef, goal
             )
-            daily_proteins, daily_fats, daily_carbs = get_users_pfc_norm(daily_calories, goal)
+            daily_proteins, daily_fats, daily_carbs = get_users_pfc_norm(
+                daily_calories, goal
+            )
 
             user.save()
             UserProfile.objects.create(
@@ -159,9 +159,9 @@ class UserRegisterForm(UserCreationForm):
                 sex=sex,
                 daily_calories=daily_calories,
                 activity_coef=activity_coef,
-                daily_proteins = daily_proteins,
-                daily_fats = daily_fats,
-                daily_carbs = daily_carbs,
+                daily_proteins=daily_proteins,
+                daily_fats=daily_fats,
+                daily_carbs=daily_carbs,
             )
         return user
 
@@ -173,3 +173,36 @@ class UserLoginForm(AuthenticationForm):
     }
     username = forms.CharField(label="Имя пользователя")
     password = forms.CharField(label="Пароль", widget=forms.PasswordInput)
+
+
+"""Форма для редактирования данных в профиле"""
+class UserProfileForm(forms.ModelForm):
+
+    birth_date = forms.DateField(
+        label="Дата рождения",
+        widget=forms.DateInput(attrs={"type": "date"}),
+        validators=[MaxValueValidator(date.today())],
+    )
+
+    height = forms.FloatField(
+        min_value=50, max_value=300,
+    )
+
+    weight = forms.FloatField(min_value=5, max_value=635)
+
+    goal = forms.ChoiceField(label="Ваша цель", choices=UserProfile.goal.field.choices)
+
+    sex = forms.ChoiceField(label="Пол", choices=UserProfile.sex.field.choices)
+
+    activity_coef = forms.FloatField(widget=forms.HiddenInput(), initial=1.2)
+
+    class Meta:
+        model = UserProfile
+        fields = [
+            "goal",
+            "birth_date",
+            "sex",
+            "height",
+            "weight",
+            "activity_coef",
+        ]

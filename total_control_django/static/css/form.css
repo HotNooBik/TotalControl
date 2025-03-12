@@ -9,7 +9,7 @@
 
 .login-box {
     margin-top: 5%;
-    background-color: rgb(225, 225, 225);
+    background-color: rgb(245, 245, 245);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
@@ -20,7 +20,7 @@
 
 .registration-box {
     margin-top: 5%;
-    background-color: rgb(225, 225, 225);
+    background-color: rgb(245, 245, 245);
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
@@ -103,6 +103,10 @@ form select {
     margin-top: 5px;
 }
 
+
+
+/* Таблица стилей для профиля */
+
 .profile-container {
     max-width: 600px;
     margin: 20px auto;
@@ -140,6 +144,7 @@ form select {
 .logout-btn:hover {
     background: #e04b4b;
 }
+
 
 
 /* Стили для выбора активности пользователя на этапе регистрации */
@@ -199,7 +204,7 @@ form select {
     display: block;
 }
 
-.activity-text-content {
+.activity-text-content{
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -213,4 +218,11 @@ form select {
 .activity-sub-text {
     font-size: 0.9em;
     color: #666;
+}
+
+
+.cpfc-content{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
 }

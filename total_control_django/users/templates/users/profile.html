@@ -1,17 +1,71 @@
 {% extends "main/base.html" %}
 {% block content %}
-    <div class="profile-container">
-        <h2>Ваш профиль</h2>
-        <hr>
-        <div class="profile-info">
-            <p><strong>Имя:</strong> {{ user.username }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Дата рождения:</strong> {{ profile.birth_date|default:"Не указано" }}</p>
-            <p><strong>Рост:</strong> {{ profile.height|default:"Не указано" }} см</p>
-            <p><strong>Вес:</strong> {{ profile.weight|default:"Не указано" }} кг</p>
-            <p><strong>Цель:</strong> {{ profile.get_goal_display }}</p>
-            <p><strong>Пол:</strong> {% if profile.sex == "man" %}Мужской{% elif profile.sex == "woman" %}Женский{% else %}Не указано{% endif %}</p>
+
+<div class="container rounded bg-white mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-4 bg-ferngreen-light">
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                {% if profile.sex == "man" %}
+                <img width="150" height="150" src="https://img.icons8.com/glyph-neue/512/user-male-circle.png" alt="user-female-circle"/>
+                {% else %}
+                <img width="150" height="150" src="https://img.icons8.com/glyph-neue/512/user-female-circle.png" alt="user-female-circle"/>
+                {% endif %}
+                
+                <span class="fs-4 fw-bold">{{ user.username }}</span>
+                <span class="text-black-50">{{ user.email }}</span>
+                <span> </span>
+            </div>
         </div>
-        <a href="{% url 'logout' %}" class="logout-btn">Выйти</a>
+        <div class="col-md-8 d-flex justify-content-center text-center">
+            <div class="p-3 py-5">
+                <h1 class='mb-4 fc-brunswickgreen'>Ваш профиль</h1>
+                <hr>
+                <div class="row mt-2">
+                    <p class="fs-4"><b>Дата рождения: </b>{{ profile.birth_date|default:"Не указано"|date:"d/m/Y" }}</p>
+                    <p class="fs-4"><b>Рост: </b>{{ profile.height|default:"Не указано" }} см</p>
+                    <p class="fs-4"><b>Вес: </b>{{ profile.weight|default:"Не указано" }} кг</p>
+                    <p class="fs-4"><b>Цель: </b>{{ profile.get_goal_display }}</p>
+                    <p class="fs-4"><b>Пол: </b>{% if profile.sex == "man" %}Мужской{% elif profile.sex == "woman" %}Женский{% else %}Не указано{% endif %}</p>
+                    <p class="fs-4"><b>Активность: </b>
+                        {% if profile.activity_coef == 1.73 %}<span title="Коэффициент активности 1.73">Высокая</span>
+                        {% elif profile.activity_coef == 1.5 %}<span title="Коэффициент активности 1.5"> Умеренная</span>
+                        {% elif profile.activity_coef == 1.375 %}<span title="Коэффициент активности 1.375">Слабая</span>
+                        {% elif profile.activity_coef == 1.2 %}<span title="Коэффициент активности 1.2">Минимальная</span>
+                        {% else %}неизвестная
+                        {% endif %}</p>
+                </div>
+
+                <hr>
+                <h2 class='my-4 fc-brunswickgreen'>Ваш КБЖУ</h2>
+                <div class="row mt-2 mb-5">
+                    <div class="col-md-3 p-2 cpfc-content bg-calories rounded-2">
+                        <span class="fw-bold fs-4">{{ profile.daily_calories|floatformat:0 }}</span>
+                        <span class="fs-10">Калорий</span>
+                    </div>
+                    <div class="col-md-3 p-2 cpfc-content bg-proteins rounded-2">
+                        <span class="fw-bold fs-4">{{ profile.daily_proteins|floatformat:0 }} г.</span>
+                        <span class="fs-10">Белков</span>
+                    </div>
+                    <div class="col-md-3 p-2 cpfc-content bg-fats rounded-2">
+                        <span class="fw-bold fs-4">{{ profile.daily_fats|floatformat:0 }} г.</span>
+                        <span class="fs-10">Жиров</span>
+                    </div>
+                    <div class="col-md-3 p-2 cpfc-content bg-carbs rounded-2">
+                        <span class="fw-bold fs-4">{{ profile.daily_carbs|floatformat:0 }} г.</span>
+                        <span class="fs-10">Углеводов</span>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-between">
+                        <a href="{% url 'edit_profile' %}" class="btn bg-ferngreen-light">Редактировать данные</a>
+                        <a href="{% url 'logout' %}" class="btn btn-danger">Выйти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
 {% endblock content %}
