@@ -39,20 +39,32 @@
                 <h2 class='my-4 fc-brunswickgreen'>Ваш КБЖУ</h2>
                 <div class="row mt-2 mb-5">
                     <div class="col-md-3 p-2 cpfc-content bg-calories rounded-2">
-                        <span class="fw-bold fs-4">{{ profile.daily_calories|floatformat:0 }}</span>
+                        <span class="fw-bold fs-4">{{ profile.daily_calories }}</span>
                         <span class="fs-10">Калорий</span>
                     </div>
                     <div class="col-md-3 p-2 cpfc-content bg-proteins rounded-2">
-                        <span class="fw-bold fs-4">{{ profile.daily_proteins|floatformat:0 }} г.</span>
+                        <span class="fw-bold fs-4">{{ profile.daily_proteins }} г.</span>
                         <span class="fs-10">Белков</span>
                     </div>
                     <div class="col-md-3 p-2 cpfc-content bg-fats rounded-2">
-                        <span class="fw-bold fs-4">{{ profile.daily_fats|floatformat:0 }} г.</span>
+                        <span class="fw-bold fs-4">{{ profile.daily_fats }} г.</span>
                         <span class="fs-10">Жиров</span>
                     </div>
                     <div class="col-md-3 p-2 cpfc-content bg-carbs rounded-2">
-                        <span class="fw-bold fs-4">{{ profile.daily_carbs|floatformat:0 }} г.</span>
+                        <span class="fw-bold fs-4">{{ profile.daily_carbs }} г.</span>
                         <span class="fs-10">Углеводов</span>
+                    </div>
+                </div>
+
+                <hr>
+                <h2 class='my-4 fc-brunswickgreen'>Ваша норма воды</h2>
+                <div class="row mt-2 mb-5 justify-content-center text-center">
+                    <div class="col-md-4 p-2 cpfc-content bg-water rounded-2">
+                        <span class="fw-bold fs-4">
+                            <img width="40" height="40" src="https://img.icons8.com/color/48/water.png" alt="water"/>
+                            {{ profile.daily_water }} мл.
+                            <img width="40" height="40" src="https://img.icons8.com/color/48/water.png" alt="water"/>
+                        </span>
                     </div>
                 </div>
 

@@ -43,11 +43,11 @@ class UserProfile(models.Model):
         default='maintain'
     )
     activity_coef = models.FloatField(null=True, blank=True)
-    daily_calories = models.FloatField(null=True, blank=True)
-    daily_water = models.FloatField(null=True, blank=True)
-    daily_proteins = models.FloatField(null=True, blank=True)
-    daily_fats = models.FloatField(null=True, blank=True)
-    daily_carbs = models.FloatField(null=True, blank=True)
+    daily_calories = models.IntegerField(null=True, blank=True)
+    daily_water = models.IntegerField(null=True, blank=True)
+    daily_proteins = models.IntegerField(null=True, blank=True)
+    daily_fats = models.IntegerField(null=True, blank=True)
+    daily_carbs = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.user.username

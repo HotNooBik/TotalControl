@@ -1,6 +1,7 @@
 """Модуль для расчёта нормы КБЖУ и нормы выпитой воды пользователя, на основании его данных"""
 
 from datetime import date
+
 from users.utils.age_calculator import calculate_age
 
 
@@ -86,5 +87,46 @@ def get_users_pfc_norm(calories: int, goal: str) -> tuple[(int, int, int)]:
     return (protein, fat, carbs)
 
 
-def get_users_water_norm():
-    return
+def get_users_water_norm(
+    sex: str,
+    weight: float,
+    height: float,
+    activity_coef: float,
+    goal: str,
+) -> int:
+    """
+    Функция для расчета нормы воды пользователя (в мл)
+    Минимальная норма воды - 1500 мл.
+
+    Args:
+        sex: пол;
+        weight: Вес в кг;
+        heigh: Рост в см;
+        activity_coef: коэффициент активности;
+        goal: цель ("lose_weight", "gain_muscle", "cutting");
+
+    Returns:
+        Дневную норму воды (int)
+    """
+    match goal:
+        case "lose_weight":
+            goal_coef = 1.2
+        case "gain_muscle":
+            goal_coef = 1.1
+        case _:
+            goal_coef = 1
+
+    if sex == "man":
+        amount_of_water = (
+            (weight * 35 + max(height - 170, 0) * 10)
+            * goal_coef
+            * (activity_coef - 0.35)
+        )
+    else:
+        amount_of_water = (
+            (weight * 30 + max(height - 170, 0) * 10)
+            * goal_coef
+            * (activity_coef - 0.35)
+        )
+
+    return int((amount_of_water // 100) * 100) if amount_of_water > 1500 else 1500
