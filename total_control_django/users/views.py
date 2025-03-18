@@ -5,7 +5,7 @@ from django.contrib import messages
 
 from .forms import UserRegisterForm, UserLoginForm, UserProfileForm
 from .models import UserProfile
-from .utils.nutrition import get_users_calorie_norm, get_users_pfc_norm
+from .utils.nutrition import get_users_calorie_norm, get_users_pfc_norm, get_users_water_norm
 
 
 def register(request):
@@ -75,6 +75,14 @@ def edit_profile(request):
             updated_profile.daily_proteins = daily_proteins
             updated_profile.daily_fats = daily_fats
             updated_profile.daily_carbs = daily_carbs
+            daily_water = get_users_water_norm(
+                updated_profile.sex,
+                updated_profile.weight,
+                updated_profile.height,
+                updated_profile.activity_coef,
+                updated_profile.goal,
+            )
+            updated_profile.daily_water = daily_water
 
             updated_profile.save()
             messages.success(request, "Данные профиля успешно обновлены!")

@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.validators import MaxValueValidator
 
 from .models import UserProfile
-from .utils.nutrition import get_users_calorie_norm, get_users_pfc_norm
+from .utils.nutrition import get_users_calorie_norm, get_users_pfc_norm, get_users_water_norm
 
 
 class UserRegisterForm(UserCreationForm):
@@ -148,6 +148,7 @@ class UserRegisterForm(UserCreationForm):
             daily_proteins, daily_fats, daily_carbs = get_users_pfc_norm(
                 daily_calories, goal
             )
+            daily_water = get_users_water_norm(sex, weight, height, activity_coef, goal)
 
             user.save()
             UserProfile.objects.create(
@@ -162,6 +163,7 @@ class UserRegisterForm(UserCreationForm):
                 daily_proteins=daily_proteins,
                 daily_fats=daily_fats,
                 daily_carbs=daily_carbs,
+                daily_water=daily_water,
             )
         return user
 
