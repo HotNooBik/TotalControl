@@ -27,6 +27,9 @@ SECRET_KEY = config("SECRET_KEY_DJANGO")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG_STATUS", default=False, cast=bool)
 
+FATSECRET_API_KEY = config('FATSECRET_API_KEY')
+FATSECRET_API_SECRET = config('FATSECRET_API_SECRET')
+
 ALLOWED_HOSTS = ["*"]
 
 
@@ -41,7 +44,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "main",
     "users",
-    "calculator",
+    "calculator_app",
+    "nutrition",
 ]
 
 MIDDLEWARE = [

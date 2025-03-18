@@ -1,0 +1,31 @@
+{% extends "main/base.html" %}
+{% block content %}
+    <div class="row mt-4">
+        <div class="col-md-12 p-5 justify-content-center">
+            <h1>Поиск продуктов</h1>
+            <form method="GET">
+                <input type="text" name="q" value="{{ query }}" placeholder="Введите продукт...">
+                <button type="submit">Искать</button>
+            </form>
+
+            {% if results %}
+                <h2>Результаты для "{{ query }}"</h2>
+                <ul>
+                {% for food in results %}
+                    <li>
+                        <h3>{{ food.food_name }}</h3>
+                        <p>Калории: {{ food.food_description|default:"Нет данных" }}</p>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                {% if query %}
+                    <p>Ничего не найдено.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="col d-flex justify-content-center">
+            <a href="{% url 'calculator' %}" class="btn bg-huntergreen text-white">Вернуться к калькулятору</a>
+        </div>
+    </div>
+{% endblock content %}

@@ -175,8 +175,10 @@ class UserLoginForm(AuthenticationForm):
     password = forms.CharField(label="Пароль", widget=forms.PasswordInput)
 
 
-"""Форма для редактирования данных в профиле"""
 class UserProfileForm(forms.ModelForm):
+    """
+    Форма для редактирования данных в профиле
+    """
 
     birth_date = forms.DateField(
         label="Дата рождения",
