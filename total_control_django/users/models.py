@@ -50,4 +50,4 @@ class UserProfile(models.Model):
     daily_carbs = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.user.username
+        return f"Профиль пользователя {self.user.username}"
