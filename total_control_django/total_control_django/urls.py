@@ -23,5 +23,4 @@ urlpatterns = [
     path('', include('main.urls')),
     path('users/', include('users.urls')),
     path('calculator_app/', include('calculator_app.urls')),
-    path('nutrition/', include('nutrition.urls')),
 ]

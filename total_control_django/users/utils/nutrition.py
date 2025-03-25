@@ -52,7 +52,7 @@ def get_users_calorie_norm(
     return int(bmr * activity_coef)
 
 
-def get_users_pfc_norm(calories: int, goal: str) -> tuple[(int, int, int)]:
+def get_users_pfc_norm(calories: int, goal: str) -> tuple[(float, float, float)]:
     """
     Функция для расчёта дневной нормы БЖУ в граммах.
 
@@ -63,26 +63,26 @@ def get_users_pfc_norm(calories: int, goal: str) -> tuple[(int, int, int)]:
         goal: цель ("lose_weight", "gain_muscle", "cutting");
 
     Returns:
-        Дневную норму БЖУ tuple(кол-во белков в гр (int), кол-во жиров в гр (int), кол-во углеводов в гр (int))
+        Дневную норму БЖУ tuple(кол-во белков в гр (float(1)), кол-во жиров в гр (float(1)), кол-во углеводов в гр (float(1)))
     """
 
     match goal:
         case "lose_weight":
-            protein = round(calories * 0.3 / 4)
-            fat = round(calories * 0.25 / 9)
-            carbs = round(calories * 0.45 / 4)
+            protein = (round(calories * 0.3 / 4, 1),)
+            fat = round(calories * 0.25 / 9, 1)
+            carbs = round(calories * 0.45 / 4, 1)
         case "gain_muscle":
-            protein = round(calories * 0.25 / 4)
-            fat = round(calories * 0.2 / 9)
-            carbs = round(calories * 0.55 / 4)
+            protein = round(calories * 0.25 / 4, 1)
+            fat = round(calories * 0.2 / 9, 1)
+            carbs = round(calories * 0.55 / 4, 1)
         case "cutting":
-            protein = round(calories * 0.35 / 4)
-            fat = round(calories * 0.25 / 9)
-            carbs = round(calories * 0.40 / 4)
+            protein = round(calories * 0.35 / 4, 1)
+            fat = round(calories * 0.25 / 9, 1)
+            carbs = round(calories * 0.40 / 4, 1)
         case _:
-            protein = round(calories * 0.25 / 4)
-            fat = round(calories * 0.25 / 9)
-            carbs = round(calories * 0.5 / 4)
+            protein = round(calories * 0.25 / 4, 1)
+            fat = round(calories * 0.25 / 9, 1)
+            carbs = round(calories * 0.5 / 4, 1)
 
     return (protein, fat, carbs)
 

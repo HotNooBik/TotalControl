@@ -21,7 +21,7 @@ class UserProfile(models.Model):
     - daily_carbs - дневная норма углеводов
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    birth_date = models.DateField(null=True, blank=True)
+    birth_date = models.DateField()
     sex = models.CharField(
         max_length=5,
         choices=[
@@ -30,8 +30,8 @@ class UserProfile(models.Model):
         ],
         default='man'
     )
-    height = models.FloatField(null=True, blank=True)
-    weight = models.FloatField(null=True, blank=True)
+    height = models.FloatField()
+    weight = models.FloatField()
     goal = models.CharField(
         max_length=50,
         choices=[
@@ -42,12 +42,12 @@ class UserProfile(models.Model):
         ],
         default='maintain'
     )
-    activity_coef = models.FloatField(null=True, blank=True)
-    daily_calories = models.IntegerField(null=True, blank=True)
-    daily_water = models.IntegerField(null=True, blank=True)
-    daily_proteins = models.IntegerField(null=True, blank=True)
-    daily_fats = models.IntegerField(null=True, blank=True)
-    daily_carbs = models.IntegerField(null=True, blank=True)
+    activity_coef = models.FloatField()
+    daily_calories = models.IntegerField(null=True)
+    daily_water = models.IntegerField(null=True)
+    daily_proteins = models.FloatField(null=True)
+    daily_fats = models.FloatField(null=True)
+    daily_carbs = models.FloatField(null=True)
 
     def __str__(self):
         return f"Профиль пользователя {self.user.username}"

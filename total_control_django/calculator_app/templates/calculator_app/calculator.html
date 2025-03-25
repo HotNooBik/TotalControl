@@ -12,7 +12,7 @@
                         <div class="col-md-12">
                             <div class="mb-3">
                                 <strong>Калории:</strong> 
-                                {{ current_calories }}/{{ daily_calories }}
+                                {{ current_calories }} / {{ daily_calories }}
                             </div>
                         </div>
                         
@@ -21,19 +21,19 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <strong>Белки:</strong> 
-                                {{ current_proteins }}/{{ daily_proteins }}
+                                {{ current_proteins|floatformat:1 }} / {{ daily_proteins }}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <strong>Жиры:</strong> 
-                                {{ current_fats }}/{{ daily_fats }}
+                                {{ current_fats|floatformat:1 }} / {{ daily_fats }}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <strong>Углеводы:</strong> 
-                                {{ current_carbs }}/{{ daily_carbs }}
+                                {{ current_carbs|floatformat:1 }} / {{ daily_carbs }}
                             </div>
                         </div>
                     </div>
@@ -52,7 +52,10 @@
                         <div>
                             <strong>{{ entry.food_name }}</strong> 
                             ({{ entry.grams }}г) - 
-                            {{ entry.calories }} ккал
+                            {{ entry.calories }} ккал /
+                            {{ entry.proteins|floatformat:1 }} г. белков /
+                            {{ entry.fats|floatformat:1 }} г. жиров /
+                            {{ entry.carbs|floatformat:1 }} г. углеводов
                         </div>
                         <form method="post" action="{% url 'delete_entry' entry.id %}">
                             {% csrf_token %}

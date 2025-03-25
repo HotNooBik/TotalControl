@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     "main",
     "users",
     "calculator_app",
-    "nutrition",
 ]
 
 MIDDLEWARE = [

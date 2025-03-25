@@ -7,11 +7,11 @@ User = get_user_model()
 class FoodEntry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     food_name = models.CharField(max_length=255)
-    calories = models.IntegerField()
-    proteins = models.IntegerField()
-    fats = models.IntegerField()
-    carbs = models.IntegerField()
-    grams = models.IntegerField()
+    calories = models.IntegerField(null=True)
+    proteins = models.FloatField(null=True)
+    fats = models.FloatField(null=True)
+    carbs = models.FloatField(null=True)
+    grams = models.IntegerField(null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

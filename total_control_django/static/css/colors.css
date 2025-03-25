@@ -37,6 +37,10 @@
     background-color: #80a57f;
 }
 
+.btn.bg-ferngreen:hover {
+    background-color: #35523b;
+}
+
 .btn.bg-huntergreen:hover {
     background-color: #263b2a;
 }

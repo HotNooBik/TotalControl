@@ -1,0 +1,55 @@
+{% extends "main/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Добавить {{ food.name }}</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    {{ form.grams.label_tag }}
+                    {{ form.grams }}
+                </div>
+                
+                <div class="nutrition-facts">
+                    <h5>На 100г продукта:</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">Калории: <span id="calories">{{ food.calories|floatformat:0 }}</span> ккал</li>
+                        <li class="list-group-item">Белки: <span id="proteins">{{ food.proteins|floatformat:1 }}</span> г</li>
+                        <li class="list-group-item">Жиры: <span id="fats">{{ food.fats|floatformat:1 }}</span> г</li>
+                        <li class="list-group-item">Углеводы: <span id="carbs">{{ food.carbs|floatformat:1 }}</span> г</li>
+                    </ul>
+                </div>
+                
+                <button type="submit" class="btn btn-primary mt-3">Добавить запись</button>
+            </div>
+            
+            <div class="col-md-6">
+                <h5>На <span id="current-grams">100</span>г продукта:</h5>
+                <ul class="list-group">
+                    <li class="list-group-item">Калории: <span id="calculated-calories">{{ food.calories|floatformat:0 }}</span> ккал</li>
+                    <li class="list-group-item">Белки: <span id="calculated-proteins">{{ food.proteins|floatformat:1 }}</span> г</li>
+                    <li class="list-group-item">Жиры: <span id="calculated-fats">{{ food.fats|floatformat:1 }}</span> г</li>
+                    <li class="list-group-item">Углеводы: <span id="calculated-carbs">{{ food.carbs|floatformat:1 }}</span> г</li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+document.getElementById('grams-input').addEventListener('input', function(e) {
+    const grams = e.target.value;
+    document.getElementById('current-grams').textContent = grams;
+    
+    // Пересчет значений
+    const multiply = (value) => (value * grams / 100).toFixed(1);
+    
+    document.getElementById('calculated-calories').textContent = multiply({{ food.calories }});
+    document.getElementById('calculated-proteins').textContent = multiply({{ food.proteins }});
+    document.getElementById('calculated-fats').textContent = multiply({{ food.fats }});
+    document.getElementById('calculated-carbs').textContent = multiply({{ food.carbs }});
+});
+</script>
+{% endblock %}

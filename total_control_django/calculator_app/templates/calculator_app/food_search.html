@@ -1,0 +1,57 @@
+{% extends "main/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Поиск еды</h2>
+    <form method="get">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды...">
+            <button class="btn btn-primary" type="submit">Искать</button>
+        </div>
+    </form>
+
+    <form method="get">
+
+    </form>
+
+    {% if results %}
+    <div class="list-group">
+        {% for food in results %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <p class="fs-4 mb-0"><strong>{{ food.food_name }}</strong> ({{ food.food_type }})</p>
+                <p class="fc-brunswickgreen">({{ food.food_description }})</p>
+            </div>
+            <a href="{% url 'add_food_entry' food.food_id %}" class="btn btn-success">Добавить</a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row mt-4">
+        <div class="col d-flex justify-content-between align-self-center">
+            <div>
+                {% if current_page > 0 %}
+                    <a href="?query={{ query }}&page={{ current_page|add:-1 }}" 
+                        class="btn bg-ferngreen text-white">← Предыдущая</a>
+                {% else %}
+                    <a href="?query={{ query }}&page={{ total_pages }}" 
+                        class="btn bg-ferngreen text-white">← Предыдущая</a>
+                {% endif %}
+            </div>
+            
+            <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
+            
+            <div>
+                {% if current_page < total_pages %}
+                    <a href="?query={{ query }}&page={{ current_page|add:1 }}" 
+                        class="btn bg-ferngreen text-white">Следующая →</a>
+                {% else %}
+                    <a href="?query={{ query }}&page=0 " 
+                        class="btn bg-ferngreen text-white">Следующая →</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% elif query %}
+    <p>Ничего не найдено</p>
+    {% endif %}
+</div>
+{% endblock %}
