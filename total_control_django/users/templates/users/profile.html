@@ -17,16 +17,16 @@
             </div>
         </div>
         <div class="col-md-8 d-flex justify-content-center text-center">
-            <div class="p-3 py-5">
-                <h1 class='mb-4 fc-brunswickgreen'>Ваш профиль</h1>
+            <div class="p-3 py-4">
+                <h2 class='mb-4 fc-brunswickgreen'>Ваш профиль</h2>
                 <hr>
-                <div class="row mt-2">
-                    <p class="fs-4"><b>Дата рождения: </b>{{ profile.birth_date|default:"Не указано"|date:"d/m/Y" }}</p>
-                    <p class="fs-4"><b>Рост: </b>{{ profile.height|default:"Не указано" }} см</p>
-                    <p class="fs-4"><b>Вес: </b>{{ profile.weight|default:"Не указано" }} кг</p>
-                    <p class="fs-4"><b>Цель: </b>{{ profile.get_goal_display }}</p>
-                    <p class="fs-4"><b>Пол: </b>{% if profile.sex == "man" %}Мужской{% elif profile.sex == "woman" %}Женский{% else %}Не указано{% endif %}</p>
-                    <p class="fs-4"><b>Активность: </b>
+                <div class="row mt-4">
+                    <p class="fs-5"><b>Дата рождения: </b>{{ profile.birth_date|default:"Не указано"|date:"d/m/Y" }}</p>
+                    <p class="fs-5"><b>Рост: </b>{{ profile.height|default:"Не указано" }} см</p>
+                    <p class="fs-5"><b>Вес: </b>{{ profile.weight|default:"Не указано" }} кг</p>
+                    <p class="fs-5"><b>Цель: </b>{{ profile.get_goal_display }}</p>
+                    <p class="fs-5"><b>Пол: </b>{% if profile.sex == "man" %}Мужской{% elif profile.sex == "woman" %}Женский{% else %}Не указано{% endif %}</p>
+                    <p class="fs-5"><b>Активность: </b>
                         {% if profile.activity_coef == 1.73 %}<span title="Коэффициент активности 1.73">Высокая</span>
                         {% elif profile.activity_coef == 1.5 %}<span title="Коэффициент активности 1.5"> Умеренная</span>
                         {% elif profile.activity_coef == 1.375 %}<span title="Коэффициент активности 1.375">Слабая</span>
@@ -36,8 +36,8 @@
                 </div>
 
                 <hr>
-                <h2 class='my-4 fc-brunswickgreen'>Ваш КБЖУ</h2>
-                <div class="row mt-2 mb-5">
+                <h3 class='my-4 fc-brunswickgreen'>Ваш КБЖУ</h3>
+                <div class="row mb-4">
                     <div class="col-md-3 p-2 cpfc-content bg-calories rounded-2">
                         <span class="fw-bold fs-4">{{ profile.daily_calories }}</span>
                         <span class="fs-10">Калорий</span>
@@ -57,13 +57,15 @@
                 </div>
 
                 <hr>
-                <h2 class='my-4 fc-brunswickgreen'>Ваша норма воды</h2>
-                <div class="row mt-2 mb-5 justify-content-center text-center">
-                    <div class="col-md-4 p-2 cpfc-content bg-water rounded-2">
-                        <span class="fw-bold fs-4">
-                            <img width="40" height="40" src="https://img.icons8.com/color/48/water--v1.png" alt="water"/>
+                
+                <div class="row justify-content-center align-items-center my-4">
+                    <div class="col-sm-auto">    
+                        <h3 class='fc-brunswickgreen'>Ваша норма воды: </h3>
+                    </div>   
+                    <div class="col-sm-auto bg-water rounded-2">
+                        <img class="pb-1" width="30" height="30" src="https://img.icons8.com/color/48/water--v1.png" alt="water"/>
+                        <span class="fw-bold fs-5 ">
                             {{ profile.daily_water }} мл.
-                            <img width="40" height="40" src="https://img.icons8.com/color/48/water--v1.png" alt="water"/>
                         </span>
                     </div>
                 </div>

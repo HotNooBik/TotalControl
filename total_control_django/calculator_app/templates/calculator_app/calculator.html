@@ -1,72 +1,147 @@
 {% extends "main/base.html" %}
 {% block content %}
-    
     <div class="container mt-4">
-        <h2>Дневной счетчик</h2>
         
-        <div class="counters mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Показатели</h5>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="mb-3">
-                                <strong>Калории:</strong> 
-                                {{ current_calories }} / {{ daily_calories }}
-                            </div>
-                        </div>
-                        
+        <div class="row justify-content-center my-3">
+            <div class="col-md-auto">
+                <h1 class="text-center fw-bold fc-darkgreen">Дневной счетчик калорий</h1>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mb-3 text-center">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-title fc-brunswickgreen fs-4 mb-0"><span class="fs-2 fw-bold">{{ current_calories }}</span> ккал</p>
+                        <p class="card-text fc-sage fs-6">Цель {{ daily_calories }}</p>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <strong>Белки:</strong> 
-                                {{ current_proteins|floatformat:1 }} / {{ daily_proteins }}
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <strong>Жиры:</strong> 
-                                {{ current_fats|floatformat:1 }} / {{ daily_fats }}
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <strong>Углеводы:</strong> 
-                                {{ current_carbs|floatformat:1 }} / {{ daily_carbs }}
-                            </div>
+                    <div class="card-body">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar {% if calories_percent == 100 %} progress-bar-striped progress-bar-animated {% endif %} bg-ferngreen" 
+                            role="progressbar" 
+                            style="width: {{calories_percent}}%;">{{ calories_percent|floatformat:1 }}%</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    
-        <a href="{% url 'food_search' %}" class="btn btn-success mb-3">Добавить еду</a>
-    
-        <div class="food-list">
-            <h4>Сегодняшние приемы пищи</h4>
-            {% if entries %}
-                <div class="list-group">
-                    {% for entry in entries %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>{{ entry.food_name }}</strong> 
-                            ({{ entry.grams }}г) - 
-                            {{ entry.calories }} ккал /
-                            {{ entry.proteins|floatformat:1 }} г. белков /
-                            {{ entry.fats|floatformat:1 }} г. жиров /
-                            {{ entry.carbs|floatformat:1 }} г. углеводов
+
+        <div class="row justify-content-center">
+            <div class="col-sm-4 mb-3">
+                <div class="card bg-proteins-light">
+                    <div class="card-body">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-auto">
+                                <p class="card-title fc-brunswickgreen fs-4 mb-0"><span class="fs-2 fw-bold">{{ current_proteins|floatformat:1 }}</span> г</p>
+                                <p class="card-text fc-proteins-dark fs-6">Цель {{ daily_proteins }}</p>
+                            </div>
+                            <div class="col-auto">
+                                <p class="fw-bold fs-4 fc-brunswickgreen pe-2 pb-0 mb-0">Белков</p>
+                                <p class="card-text fc-fats-dark fs-6 pe-2 pt-0 mt-0" align="right">{{ proteins_percent|floatformat:1 }}%</p>
+                            </div> 
                         </div>
-                        <form method="post" action="{% url 'delete_entry' entry.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar {% if proteins_percent == 100 %} progress-bar-striped progress-bar-animated {% endif %} bg-proteins-richer" 
+                            role="progressbar" style="width: {{proteins_percent}}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4 mb-3">
+                <div class="card bg-fats-light">
+                    <div class="card-body">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-auto">
+                                <p class="card-title fc-brunswickgreen fs-4 mb-0"><span class="fs-2 fw-bold">{{ current_fats|floatformat:1 }}</span> г</p>
+                                <p class="card-text fc-fats-dark fs-6">Цель {{ daily_fats }}</p>
+                            </div>
+                            <div class="col-auto">
+                                <p class="fw-bold fs-4 fc-brunswickgreen pe-2 pb-0 mb-0">Жиров</p>
+                                <p class="card-text fc-fats-dark fs-6 pe-2 pt-0 mt-0" align="right">{{ fats_percent|floatformat:1 }}%</p>
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar {% if fats_percent == 100 %} progress-bar-striped progress-bar-animated {% endif %} bg-fats-richer" 
+                            role="progressbar" style="width: {{fats_percent}}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4 mb-3">
+                <div class="card bg-carbs-light">
+                    <div class="card-body">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-auto">
+                                <p class="card-title fc-brunswickgreen fs-4 mb-0"><span class="fs-2 fw-bold">{{ current_carbs|floatformat:1 }}</span> г</p>
+                                <p class="card-text fc-carbs-dark fs-6">Цель {{ daily_carbs }}</p>
+                            </div>
+                            <div class="col-auto">
+                                <p class="fw-bold fs-4 fc-brunswickgreen pe-2 pb-0 mb-0">Углеводов</p>
+                                <p class="card-text fc-fats-dark fs-6 pe-2 pt-0 mt-0" align="right">{{ carbs_percent|floatformat:1 }}%</p>
+                            </div> 
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar {% if carbs_percent == 100 %} progress-bar-striped progress-bar-animated {% endif %} bg-carbs-richer" 
+                            role="progressbar" style="width: {{carbs_percent}}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mb-3 text-center">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center gap-3">
+                        <h3 class="mb-0 flex-grow-1 text-truncate fw-bold fc-darkgreen">Сегодняшние приемы пищи</h3>
+                        <form action="{% url 'food_search' %}" class="flex-shrink-0">
+                            <button type="submit" class="btn bg-ferngreen text-white btn-md position-relative ">
+                                Добавить еду
+                                {% if not entries %}
+                                <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                                    <span class="visually-hidden">В приёмах пусто</span>
+                                </span>
+                                {% endif %}
+                            </button>
                         </form>
                     </div>
-                    {% endfor %}
+                    <div class="card-body">
+                        {% if entries %}
+                            <div class="list-group">
+                                {% for entry in entries %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="cpfc-content">
+                                        <p class="fs-6 mb-1" align="start">
+                                            <span class="fs-4 fw-bolder">{{ entry.food_name }}</span> ({{ entry.grams }} г.)
+                                        </p>
+                                        <p align="start">
+                                            <span class="badge bg-calories text-black">{{ entry.calories }} ккал.</span>
+                                            <span class="badge rounded-pill bg-proteins text-black">{{ entry.proteins|floatformat:1 }} г. белков</span>
+                                            <span class="badge rounded-pill bg-fats text-black">{{ entry.fats|floatformat:1 }} г. жиров</span>
+                                            <span class="badge rounded-pill bg-carbs text-black">{{ entry.carbs|floatformat:1 }} г. углеводов</span>
+                                        </p>
+                                    </div>
+                                    <form method="post" action="{% url 'delete_entry' entry.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger btn-md ms-2">Удалить</button>
+                                    </form>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="card-text text-black-50 fs-6">Вы ещё не добавляли еду сегодня.</p>
+                        {% endif %}
+                    </div>
                 </div>
-            {% else %}
-                <p>Вы еще не добавили еды сегодня</p>
-            {% endif %}
+            </div>
         </div>
     </div>
 {% endblock %}

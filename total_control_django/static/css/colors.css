@@ -27,8 +27,28 @@
 
 
 /* Текст с основными цветами */
+.fc-timberwolf {
+    color: #DAD7CD;
+}
+
+.fc-sage {
+    color: #A3B18A;
+}
+
+.fc-ferngreen {
+    color: #588157;
+}
+
+.fc-huntergreen {
+    color: #3A5A40;
+}
+
 .fc-brunswickgreen {
     color: #344E41;
+}
+
+.fc-darkgreen {
+    color: #0b1a0c;
 }
 
 
@@ -46,7 +66,7 @@
 }
 
 
-/* Цвета для КБЖУ в профиле*/
+/* Цвета для КБЖУ */
 .bg-calories {
     background-color: #fffde2;
 }
@@ -65,4 +85,70 @@
 
 .bg-water {
     background-color: #c1e1ee;
+}
+
+.bg-calories-light {
+    background-color: #fffffa;
+}
+
+.bg-proteins-light {
+    background-color: #fafdff;
+}
+
+.bg-fats-light {
+    background-color: #fffafa;
+}
+
+.bg-carbs-light {
+    background-color: #fafff9;
+}
+
+.bg-water-light {
+    background-color: #fafeff;
+}
+
+.bg-calories-richer {
+    background-color: #ffffa2;
+}
+
+.bg-proteins-richer {
+    background-color: #a1daff;
+}
+
+.bg-fats-richer {
+    background-color: #ffa7a7;
+}
+
+.bg-carbs-richer {
+    background-color: #92df83;
+}
+
+.bg-water-richer {
+    background-color: #b6f0ff;
+}
+
+
+/* Текст с цветами для КБЖУ */
+.fc-proteins {
+    color: #e2f4ff;
+}
+
+.fc-fats {
+    color: #ffe2e2;
+}
+
+.fc-carbs {
+    color: #e5ffe2;
+}
+
+.fc-proteins-dark {
+    color: #86929c;
+}
+
+.fc-fats-dark {
+    color: #968484;
+}
+
+.fc-carbs-dark {
+    color: #82947f;
 }

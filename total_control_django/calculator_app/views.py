@@ -24,6 +24,11 @@ def calculator(request):
 
     user_profile = get_object_or_404(UserProfile, user=request.user)
 
+    calories_percent = (totals["calories"] or 0) / user_profile.daily_calories * 100
+    proteins_percent = (totals["proteins"] or 0) / user_profile.daily_proteins * 100
+    fats_percent = (totals["fats"] or 0) / user_profile.daily_fats * 100
+    carbs_percent = (totals["carbs"] or 0) / user_profile.daily_carbs * 100
+
     context = {
         "current_calories": totals["calories"] or 0,
         "current_proteins": totals["proteins"] or 0,
@@ -33,7 +38,11 @@ def calculator(request):
         "daily_proteins": user_profile.daily_proteins,
         "daily_fats": user_profile.daily_fats,
         "daily_carbs": user_profile.daily_carbs,
-        "entries": entries.order_by("-date_added"),
+        "entries": entries.order_by("date_added"),
+        "calories_percent":  calories_percent if calories_percent < 100 else 100,
+        "proteins_percent":  proteins_percent if proteins_percent < 100 else 100,
+        "fats_percent":  fats_percent if fats_percent < 100 else 100,
+        "carbs_percent":  carbs_percent if carbs_percent < 100 else 100,
     }
     return render(request, "calculator_app/calculator.html", context)
 
@@ -52,9 +61,11 @@ def food_search(request):
         page = int(request.GET.get('page', 0))
     except ValueError:
         page = 0
-
-    context = search_fatsecret_food(query, page=page, translate=False)
-    return render(request, 'calculator_app/food_search.html', context)
+    
+    if query:
+        context = search_fatsecret_food(query, page=page, translate=False)
+        return render(request, 'calculator_app/food_search.html', context)
+    return render(request, 'calculator_app/food_search.html')
 
 
 @login_required

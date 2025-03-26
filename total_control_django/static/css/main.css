@@ -220,9 +220,18 @@ form select {
     color: #666;
 }
 
-
 .cpfc-content{
     text-align: center;
     display: flex;
     flex-direction: column;
+}
+
+@media (max-width: 576px) {
+    .card-header h4 {
+        font-size: 1.1rem;
+    }
+    .card-header .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.9rem;
+    }
 }
