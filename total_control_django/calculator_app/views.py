@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required
 from users.models import UserProfile
 
 from .models import FoodEntry
-from .services import search_fatsecret_food, get_food_details  # позже создадим get_food_details
-from .forms import FoodEntryForm  # создадим форму позже
+from .services import search_fatsecret_food, get_food_details
+from .forms import FoodEntryForm
 
 
 @login_required
@@ -72,6 +72,9 @@ def food_search(request):
 def add_food_entry(request, food_id):
     # Получаем детали продукта из API
     food_details = get_food_details(food_id)
+
+    if not food_details:
+        return redirect('food_search')
     
     if request.method == 'POST':
         form = FoodEntryForm(request.POST)

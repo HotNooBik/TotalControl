@@ -127,8 +127,28 @@
     background-color: #b6f0ff;
 }
 
+.bg-calories-trans {
+    background-color: #fffde231;
+}
+
+.bg-proteins-trans {
+    background-color: #e2f4ff31;
+}
+
+.bg-fats-trans {
+    background-color: #ffe2e231;
+}
+
+.bg-carbs-trans {
+    background-color: #e5ffe231;
+}
+
 
 /* Текст с цветами для КБЖУ */
+.fc-calories {
+    color: #fdffe2;
+}
+
 .fc-proteins {
     color: #e2f4ff;
 }

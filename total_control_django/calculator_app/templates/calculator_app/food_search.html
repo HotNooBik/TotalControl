@@ -5,7 +5,7 @@
         <div class="col-sm-12">
             <div class="card">
                 <h2 class="card-header py-3 fw-bold fc-darkgreen">Поиск еды</h2>
-                <div class="card-body px-5 py-3">
+                <div class="card-body mb-0">
                     <form method="get">
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды...">
@@ -13,51 +13,41 @@
                         </div>
                     </form>
                 </div>
-            
-                <form method="get">
-            
-                </form>
-            
-                {% if results %}
-                <div class="list-group">
-                    {% for food in results %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="fs-4 mb-0"><strong>{{ food.food_name }}</strong> ({{ food.food_type }})</p>
-                            <p class="fc-brunswickgreen">({{ food.food_description }})</p>
+                <div class="card-body mt-0">
+                    {% if results %}
+                    <div class="list-group">
+                        {% for food in results %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
+                            <div class="cpfc-content">
+                                <p class="fs-3 mb-1" align="start">
+                                    <span class="fs-4 fw-bolder">{{ food.food_name }}</span> ({{ food.food_type }})
+                                </p>
+                                <p class="fc-brunswickgreen" align="start">({{ food.food_description }})</p>
+                            </div>
+                            <a href="{% url 'add_food_entry' food.food_id %}" class="btn btn-outline-success">Добавить</a>
                         </div>
-                        <a href="{% url 'add_food_entry' food.food_id %}" class="btn btn-success">Добавить</a>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
-                <div class="row mt-4">
-                    <div class="col d-flex justify-content-between align-self-center">
-                        <div>
-                            {% if current_page > 0 %}
-                                <a href="?query={{ query }}&page={{ current_page|add:-1 }}" 
-                                    class="btn bg-ferngreen text-white">← Предыдущая</a>
-                            {% else %}
-                                <a href="?query={{ query }}&page={{ total_pages }}" 
-                                    class="btn bg-ferngreen text-white">← Предыдущая</a>
-                            {% endif %}
-                        </div>
-                        
-                        <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
-                        
-                        <div>
-                            {% if current_page < total_pages %}
-                                <a href="?query={{ query }}&page={{ current_page|add:1 }}" 
-                                    class="btn bg-ferngreen text-white">Следующая →</a>
-                            {% else %}
-                                <a href="?query={{ query }}&page=0 " 
-                                    class="btn bg-ferngreen text-white">Следующая →</a>
+                    <div class="row mt-5">
+                        <div class="col d-flex justify-content-between align-self-center">
+                            {% if total_pages != 0 %}
+                            <a href="?query={{ query }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}" 
+                            class="btn bg-ferngreen text-white">← Предыдущая</a>
+                            
+                            <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
+                            
+                            <a href="?query={{ query }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{0}}{% endif %}" 
+                            class="btn bg-ferngreen text-white">Следующая →</a>
                             {% endif %}
                         </div>
                     </div>
+                    {% elif query %}
+                    <p>Ничего не найдено</p>
+                    {% endif %}
                 </div>
-                {% elif query %}
-                <p>Ничего не найдено</p>
-                {% endif %}
+                <div class="card-footer py-2">
+                    <p class="text-black-50 my-0">Услуга предоставлена FatSecret</p>
+                </div>
             </div>
         </div>
     </div>

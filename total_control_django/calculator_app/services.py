@@ -3,7 +3,7 @@ from requests_oauthlib import OAuth1
 
 from django.conf import settings
 from googletrans import Translator
-import pprint
+from pprint import pprint
 
 
 def get_fatsecret_client():
@@ -14,7 +14,7 @@ def get_fatsecret_client():
     )
 
 
-def search_fatsecret_food(query, max_results=6, page=0, translate=False):
+def search_fatsecret_food(query, max_results=5, page=0, translate=False):
 
     translator = Translator()
 
@@ -85,6 +85,8 @@ def get_food_details(food_id):
         )
         response.raise_for_status()
         data = response.json()
+
+        pprint(data)
         
         if 'food' in data:
             food = data['food']
