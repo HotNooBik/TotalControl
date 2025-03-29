@@ -49,7 +49,7 @@ def search_fatsecret_food(query, max_results=5, page=0, translate=False):
 
         if "foods" in data and "food" in data["foods"]:
             # Если будет найден только 1 продукт, то всё равно возвращаем список, а не словарь
-            if data["foods"]["total_results"] == '1':
+            if isinstance(data["foods"]["food"], dict):
                 result = [data["foods"]["food"]]
             else:
                 result = data["foods"]["food"]

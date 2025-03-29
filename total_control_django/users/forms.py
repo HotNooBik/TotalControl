@@ -4,9 +4,15 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.validators import MaxValueValidator
+from django.contrib.auth import get_user_model
+
 
 from .models import UserProfile
-from .utils.nutrition import get_users_calorie_norm, get_users_pfc_norm, get_users_water_norm
+from .utils.nutrition import (
+    get_users_calorie_norm,
+    get_users_pfc_norm,
+    get_users_water_norm,
+)
 
 
 class UserRegisterForm(UserCreationForm):
@@ -34,6 +40,16 @@ class UserRegisterForm(UserCreationForm):
         },
         required=True,
     )
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        email_used = get_user_model().objects.filter(email=email).exists()
+        if email and email_used:
+            raise forms.ValidationError(
+                "Пользователь с такой почтой уже существует.",
+                code="invalid_email",
+            )
+        return email
 
     password1 = forms.CharField(
         label="Пароль",
@@ -117,6 +133,10 @@ class UserRegisterForm(UserCreationForm):
 
     activity_coef = forms.FloatField(widget=forms.HiddenInput(), initial=1.2)
 
+    def clean_activity_coef(self):
+        activity_coef = self.cleaned_data.get("activity_coef")
+        return activity_coef if activity_coef in [1.2, 1.375, 1.5, 1.73] else 1.2
+
     class Meta:
         model = User
         fields = [
@@ -189,7 +209,8 @@ class UserProfileForm(forms.ModelForm):
     )
 
     height = forms.FloatField(
-        min_value=50, max_value=300,
+        min_value=50,
+        max_value=300,
     )
 
     weight = forms.FloatField(min_value=5, max_value=635)
@@ -199,6 +220,10 @@ class UserProfileForm(forms.ModelForm):
     sex = forms.ChoiceField(label="Пол", choices=UserProfile.sex.field.choices)
 
     activity_coef = forms.FloatField(widget=forms.HiddenInput(), initial=1.2)
+
+    def clean_activity_coef(self):
+        activity_coef = self.cleaned_data.get("activity_coef")
+        return activity_coef if activity_coef in [1.2, 1.375, 1.5, 1.73] else 1.2
 
     class Meta:
         model = UserProfile
