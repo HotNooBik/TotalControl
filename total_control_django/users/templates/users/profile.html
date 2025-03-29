@@ -1,4 +1,5 @@
 {% extends "main/base.html" %}
+{% load static %}
 {% block content %}
 
 <div class="container rounded bg-white mt-5 mb-5">
@@ -6,9 +7,9 @@
         <div class="col-md-4 bg-ferngreen-light">
             <div class="d-flex flex-column align-items-center text-center p-3 py-5">
                 {% if profile.sex == "man" %}
-                <img width="150" height="150" src="https://img.icons8.com/glyph-neue/512/user-male-circle.png" alt="user-female-circle"/>
+                <img width="150" height="150" src="{% static 'svg/user-male.svg' %}" alt="user-male-circle"/>
                 {% else %}
-                <img width="150" height="150" src="https://img.icons8.com/glyph-neue/512/user-female-circle.png" alt="user-female-circle"/>
+                <img width="150" height="150" src="{% static 'svg/user-female.svg' %}" alt="user-female-circle"/>
                 {% endif %}
                 
                 <span class="fs-4 fw-bold">{{ user.username }}</span>
@@ -63,9 +64,9 @@
                         <h3 class='fc-brunswickgreen'>Ваша норма воды: </h3>
                     </div>   
                     <div class="col-sm-auto bg-water rounded-2">
-                        <img class="pb-1" width="30" height="30" src="https://img.icons8.com/color/48/water--v1.png" alt="water"/>
                         <span class="fw-bold fs-5 ">
                             {{ profile.daily_water }} мл.
+                            <i class="fa-solid fa-glass-water-droplet"></i>
                         </span>
                     </div>
                 </div>
