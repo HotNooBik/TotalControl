@@ -1,7 +1,7 @@
 from django import forms
 
 class FoodEntryForm(forms.Form):
-    grams = forms.IntegerField(
+    grams = forms.FloatField(
         label='Граммы',
         min_value=1,
         max_value=15000,

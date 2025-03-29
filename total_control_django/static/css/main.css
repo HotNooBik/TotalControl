@@ -240,16 +240,3 @@ form select {
     border-color: #28a745;
     box-shadow: 0 0 0 0.2rem #588157;
 }
-
-.object-fit-cover {
-    object-fit: cover;
-    object-position: center;
-}
-.card-img-overlay {
-    background: linear-gradient(to bottom, 
-        transparent 0%, 
-        rgba(0,0,0,0.5) 100%);
-}
-.ratio-2x1 {
-    aspect-ratio: 2 / 1;
-}

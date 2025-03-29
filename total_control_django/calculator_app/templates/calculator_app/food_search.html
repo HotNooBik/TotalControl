@@ -45,9 +45,11 @@
                     <p>Ничего не найдено</p>
                     {% endif %}
                 </div>
+                {% if results or query %}
                 <div class="card-footer py-2">
                     <p class="text-black-50 my-0">Услуга предоставлена FatSecret</p>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

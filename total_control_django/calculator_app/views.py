@@ -83,11 +83,11 @@ def add_food_entry(request, food_id):
             FoodEntry.objects.create(
                 user=request.user,
                 food_name=food_details['name'],
-                calories=int(food_details['calories'] * form.cleaned_data['grams'] / 100),
-                proteins=food_details['proteins'] * form.cleaned_data['grams'] / 100,
-                fats=food_details['fats'] * form.cleaned_data['grams'] / 100,
-                carbs=food_details['carbs'] * form.cleaned_data['grams'] / 100,
-                grams=form.cleaned_data['grams']
+                calories=round(food_details['calories'] * form.cleaned_data['grams'] / 100),
+                proteins=round(food_details['proteins'] * form.cleaned_data['grams'] / 100, 1),
+                fats=round(food_details['fats'] * form.cleaned_data['grams'] / 100, 1),
+                carbs=round(food_details['carbs'] * form.cleaned_data['grams'] / 100, 1),
+                grams=round(form.cleaned_data['grams'], 1)
             )
             return redirect('calculator')
     else:

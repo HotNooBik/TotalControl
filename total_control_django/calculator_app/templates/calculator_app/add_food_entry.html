@@ -7,39 +7,30 @@
             <div class="card">
                 <h2 class="card-header py-4 fw-bold fc-darkgreen">Добавление записи</h2>
 
-                <div class="card-body align-items-center p-0 ratio ratio-2x1" style="max-height: 300px;">
-                    <div class="position-relative h-100">
 
-                        <img src="{% static 'img/food_entry_bg.png' %}" 
-                            class="w-100 h-100 object-fit-cover"
-                            alt="Фон карточки">
-                        
-                        <div class="card-img-overlay d-flex flex-column p-4">
-                            <div class="cpfc-content mt-2 mb-4">
-                                <h5 class="card-title text-white fs-1 mb-0">{{ food.name }}</h5>
-                                <p class="card-text text-white-50 mt-0">id: {{ food.id }}</p>
-                            </div>
-                            <h5 class="card-title text-white fs-5 mb-3">На <span id="current-grams">100.0</span> г продукта:</h5>
-                            <div class="row justify-content-center align-items-center">
-                                <div class="col-sm-2 mx-2 text-white bg-calories-trans rounded-4">
-                                    <p class="fs-4 mb-0 pt-2 fw-bold fc-calories">Калории:</p> 
-                                    <p class="fs-5 fw-bold"><span id="calculated-calories">{{ food.calories|floatformat:0 }}</span> ккал</p>
-                                </div>
-                                <div class="col-sm-2 mx-2 text-white bg-proteins-trans rounded-4">
-                                    <p class="fs-4 mb-0 pt-2 fw-bold fc-proteins">Белки:</p> 
-                                    <p class="fs-5 fw-bold"><span id="calculated-proteins">{{ food.proteins|floatformat:1 }}</span> г</p>
+                <div class="card-body" style="background: url('{% static 'img/food_entry_bg.png' %}') center/cover;">
+                    <div class="cpfc-content mt-2 mb-4">
+                        <h5 class="card-title text-white fs-1 mb-0">{{ food.name }}</h5>
+                        <p class="card-text text-white-50 mt-0">id: {{ food.id }}</p>
+                    </div>
+                    <h5 class="card-title text-white fs-5 mb-3 fs-3">На <span id="current-grams">100.0</span> г продукта:</h5>
+                    <div class="row justify-content-center align-items-center">
+                        <div class="col-lg-2 col-5 mb-2 mx-1 bg-calories-trans rounded-4">
+                            <p class="fs-4 mb-0 pt-2 fw-bold fc-calories">Калории:</p> 
+                            <p class="fs-5 fw-bold text-white"><span id="calculated-calories">{{ food.calories|floatformat:0 }}</span> ккал</p>
+                        </div>
+                        <div class="col-lg-2 col-5 mb-2 mx-1 bg-proteins-trans rounded-4">
+                            <p class="fs-4 mb-0 pt-2 fw-bold fc-proteins">Белки:</p> 
+                            <p class="fs-5 fw-bold text-white"><span id="calculated-proteins">{{ food.proteins|floatformat:1 }}</span> г</p>
 
-                                </div>
-                                <div class="col-sm-2 mx-2 text-white bg-fats-trans rounded-4">
-                                    <p class="fs-4 mb-0 pt-2 fw-bold fc-fats">Жиры:</p> 
-                                    <p class="fs-5 fw-bold"><span id="calculated-fats">{{ food.fats|floatformat:1 }}</span> г</p>
-                                </div>
-                                <div class="col-sm-2 mx-2 text-white bg-carbs-trans rounded-4">
-                                    <p class="fs-4 mb-0 pt-2 fw-bold fc-carbs">Углеводы:</p> 
-                                    <p class="fs-5 fw-bold"><span id="calculated-carbs">{{ food.carbs|floatformat:1 }}</span> г</p>
-                                </div>
-                            </div>
-                            
+                        </div>
+                        <div class="col-lg-2 col-5 mb-2 mx-1 bg-fats-trans rounded-4">
+                            <p class="fs-4 mb-0 pt-2 fw-bold fc-fats">Жиры:</p> 
+                            <p class="fs-5 fw-bold text-white"><span id="calculated-fats">{{ food.fats|floatformat:1 }}</span> г</p>
+                        </div>
+                        <div class="col-lg-2 col-5 mb-2 mx-1 bg-carbs-trans rounded-4">
+                            <p class="fs-4 mb-0 pt-2 fw-bold fc-carbs">Углеводы:</p> 
+                            <p class="fs-5 fw-bold text-white"><span id="calculated-carbs">{{ food.carbs|floatformat:1 }}</span> г</p>
                         </div>
                     </div>
                 </div>
@@ -54,7 +45,7 @@
                                     {{ form.grams }}
                                 </div>
                                 
-                                <button type="submit" class="btn btn-primary mt-3">Добавить запись</button>
+                                <button type="submit" class="btn bg-ferngreen text-white mt-3">Добавить запись</button>
                             </div>
                         </div>
                     </form>
@@ -70,16 +61,18 @@
 
 <script>
     document.getElementById('grams-input').addEventListener('input', function(e) {
-        const grams =  parseFloat(e.target.value);
-        document.getElementById('current-grams').textContent = grams.toFixed(1);
-        
-        // Пересчет значений
-        const multiply = (value) => (value * grams / 100).toFixed(1);
-        
-        document.getElementById('calculated-calories').textContent = multiply({{ food.calories }});
-        document.getElementById('calculated-proteins').textContent = multiply({{ food.proteins }});
-        document.getElementById('calculated-fats').textContent = multiply({{ food.fats }});
-        document.getElementById('calculated-carbs').textContent = multiply({{ food.carbs }});
+        let grams =  parseFloat(e.target.value);
+        if (!isNaN(grams)) {
+            if (grams > 15000) {grams = 15000}
+            document.getElementById('current-grams').textContent = grams.toFixed(1);
+
+            // Пересчет значений
+            const multiply = (value) => (value * grams / 100).toFixed(1);            
+            document.getElementById('calculated-calories').textContent = Math.round(multiply({{ food.calories }}));
+            document.getElementById('calculated-proteins').textContent = multiply({{ food.proteins }});
+            document.getElementById('calculated-fats').textContent = multiply({{ food.fats }});
+            document.getElementById('calculated-carbs').textContent = multiply({{ food.carbs }});
+        } 
     });
 </script>
 {% endblock %}

@@ -11,7 +11,7 @@ class FoodEntry(models.Model):
     proteins = models.FloatField(null=True)
     fats = models.FloatField(null=True)
     carbs = models.FloatField(null=True)
-    grams = models.IntegerField(null=True)
+    grams = models.FloatField(null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
