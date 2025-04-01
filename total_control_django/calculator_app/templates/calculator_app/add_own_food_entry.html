@@ -1,0 +1,50 @@
+{% extends "main/base.html" %}\
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center mb-3 text-center">
+        <div class="col-sm-12">
+            <div class="card">
+                <h2 class="card-header py-4 fw-bold fc-darkgreen">Добавление собственной записи</h2>
+
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row justify-content-center">
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <p class="fw-bold fs-5 mb-1">{{ form.food_name.label_tag }}</p>
+                                    {{ form.food_name }}
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <p class="fw-bold mb-1" align="left">{{ form.calories.label_tag }}</p>
+                                    {{ form.calories }}
+                                    <p class="ms-2 my-auto">ккал.</p>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <p class="fw-bold mb-1" align="left">{{ form.proteins.label_tag }}</p>
+                                    {{ form.proteins }}
+                                    <p class="ms-2 my-auto">г.</p>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <p class="fw-bold mb-1" align="left">{{ form.fats.label_tag }}</p>
+                                    {{ form.fats }}
+                                    <p class="ms-2 my-auto">г.</p>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <p class="fw-bold mb-1" align="left">{{ form.carbs.label_tag }}</p>
+                                    {{ form.carbs }}
+                                    <p class="ms-2 my-auto">г.</p>
+                                </div>
+                                
+                                <button type="submit" class="btn bg-ferngreen text-white mt-3">Добавить запись</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

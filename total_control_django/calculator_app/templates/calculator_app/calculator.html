@@ -119,8 +119,9 @@
                                 {% for entry in entries %}
                                 <div class="list-group-item d-flex justify-content-between align-items-center">
                                     <div class="cpfc-content">
-                                        <p class="fs-6 mb-1" align="start">
-                                            <span class="fs-4 fw-bolder">{{ entry.food_name }}</span> ({{ entry.grams }} г.)
+                                        <p class="fs-6 mb-1 text-break" align="start">
+                                            <span class="fs-4 fw-bolder">{{ entry.food_name }}</span> 
+                                            {% if entry.grams %} ({{ entry.grams }} г. ) {% endif %}
                                         </p>
                                         <p align="start">
                                             <span class="badge bg-calories text-black">{{ entry.calories }} ккал.</span>

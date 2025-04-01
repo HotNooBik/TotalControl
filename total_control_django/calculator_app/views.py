@@ -7,7 +7,7 @@ from users.models import UserProfile
 
 from .models import FoodEntry
 from .services import search_fatsecret_food, get_food_details
-from .forms import FoodEntryForm
+from .forms import FoodEntryForm, OwnFoodEntryForm
 
 
 @login_required
@@ -98,3 +98,27 @@ def add_food_entry(request, food_id):
         'form': form,
     }
     return render(request, 'calculator_app/add_food_entry.html', context)
+
+
+@login_required
+def add_own_food_entry(request):
+    if request.method == 'POST':
+        form = OwnFoodEntryForm(request.POST)
+        if form.is_valid():
+            # Создаем запись
+            FoodEntry.objects.create(
+                user=request.user,
+                food_name=form.cleaned_data['food_name'],
+                calories=round(form.cleaned_data['calories']),
+                proteins=round(form.cleaned_data['proteins'], 1),
+                fats=round(form.cleaned_data['fats'], 1),
+                carbs=round(form.cleaned_data['carbs'], 1)
+            )
+            return redirect('calculator')
+    else:
+        form = OwnFoodEntryForm()
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'calculator_app/add_own_food_entry.html', context)

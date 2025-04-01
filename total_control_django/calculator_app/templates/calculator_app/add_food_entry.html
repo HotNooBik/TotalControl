@@ -41,7 +41,7 @@
                         <div class="row justify-content-center">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    {{ form.grams.label_tag }}
+                                    <p class="fw-bold fs-5 mb-1">{{ form.grams.label_tag }}</p>
                                     {{ form.grams }}
                                 </div>
                                 
@@ -63,7 +63,7 @@
     document.getElementById('grams-input').addEventListener('input', function(e) {
         let grams =  parseFloat(e.target.value);
         if (!isNaN(grams)) {
-            if (grams > 15000) {grams = 15000}
+            if (grams > 99999) {grams = 99999}
             document.getElementById('current-grams').textContent = grams.toFixed(1);
 
             // Пересчет значений
