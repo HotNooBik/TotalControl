@@ -5,7 +5,11 @@ from django.contrib import messages
 
 from .forms import UserRegisterForm, UserLoginForm, UserProfileForm
 from .models import UserProfile
-from .utils.nutrition import get_users_calorie_norm, get_users_pfc_norm, get_users_water_norm
+from .utils.nutrition import (
+    get_users_calorie_norm,
+    get_users_pfc_norm,
+    get_users_water_norm,
+)
 
 
 def register(request):

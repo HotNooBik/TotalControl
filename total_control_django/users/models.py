@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-
 class UserProfile(models.Model):
     """
     Таблица пользователя со следующими полями:
@@ -20,27 +19,23 @@ class UserProfile(models.Model):
     - daily_fats - дневная норма жиров
     - daily_carbs - дневная норма углеводов
     """
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField()
     sex = models.CharField(
-        max_length=5,
-        choices=[
-            ('man', 'Мужской'),
-            ('woman', 'Женский')
-        ],
-        default='man'
+        max_length=5, choices=[("man", "Мужской"), ("woman", "Женский")], default="man"
     )
     height = models.FloatField()
     weight = models.FloatField()
     goal = models.CharField(
         max_length=50,
         choices=[
-            ('lose_weight', 'Похудение'),
-            ('gain_muscle', 'Набор массы'),
-            ('maintain', 'Поддержание формы'),
-            ('cutting', 'Сушка')
+            ("lose_weight", "Похудение"),
+            ("gain_muscle", "Набор массы"),
+            ("maintain", "Поддержание формы"),
+            ("cutting", "Сушка"),
         ],
-        default='maintain'
+        default="maintain",
     )
     activity_coef = models.FloatField()
     daily_calories = models.IntegerField(null=True)

@@ -1,4 +1,8 @@
-from django.contrib.auth.password_validation import MinimumLengthValidator, CommonPasswordValidator, NumericPasswordValidator
+from django.contrib.auth.password_validation import (
+    MinimumLengthValidator,
+    CommonPasswordValidator,
+    NumericPasswordValidator,
+)
 from django.core.exceptions import ValidationError
 from django.utils.translation import ngettext
 
