@@ -111,11 +111,25 @@ def add_food_entry(request, food_id):
             return redirect("calculator")
     else:
         form = FoodEntryForm(initial={"grams": 100})
+    
+    print(food_details)
+
+    micronutrients_mass = sum([food_details["proteins"], food_details["fats"], food_details["carbs"]])
+    proteins_percent = 0
+    fats_percent = 0
+    carbs_percent = 0
+    if micronutrients_mass > 0:
+        proteins_percent = food_details["proteins"] / micronutrients_mass
+        fats_percent = food_details["fats"] / micronutrients_mass
+        carbs_percent = food_details["carbs"] / micronutrients_mass
 
     context = {
         "meal": meal,
         "food": food_details,
         "form": form,
+        "proteins_percent": proteins_percent * 100,
+        "fats_percent": fats_percent * 100,
+        "carbs_percent": carbs_percent * 100,
     }
     return render(request, "calculator_app/add_food_entry.html", context)
 
