@@ -13,7 +13,7 @@
                 <div class="card">
                     <div class="card-body">
                         <p class="card-title fc-brunswickgreen fs-4 mb-0"><span class="fs-2 fw-bold">{{ current_calories }}</span> ккал</p>
-                        <p class="card-text fc-sage fs-6">Цель {{ daily_calories }}</p>
+                        <p class="card-text text-black-50 fs-6">Цель {{ daily_calories }}</p>
                     </div>
                     <div class="card-body">
                         <div class="progress" style="height: 20px;">
@@ -102,44 +102,180 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center gap-3 py-3">
                         <h3 class="mb-0 flex-grow-1 text-truncate fw-bold fc-darkgreen">Приемы пищи сегодня</h3>
-                        <form action="{% url 'food_search' %}" class="flex-shrink-0">
-                            <button type="submit" class="btn bg-ferngreen text-white btn-md position-relative ">
-                                Добавить еду
-                                {% if not entries %}
-                                <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-                                    <span class="visually-hidden">Добавь новый продукт!</span>
-                                </span>
-                                {% endif %}
-                            </button>
-                        </form>
                     </div>
                     <div class="card-body">
-                        {% if entries %}
-                            <div class="list-group">
-                                {% for entry in entries %}
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div class="cpfc-content">
-                                        <p class="fs-6 mb-1 text-break" align="start">
-                                            <span class="fs-4 fw-bolder">{{ entry.food_name }}</span> 
-                                            {% if entry.grams %} ({{ entry.grams }} г. ) {% endif %}
-                                        </p>
-                                        <p align="start">
-                                            <span class="badge bg-calories text-black">{{ entry.calories }} ккал.</span>
-                                            <span class="badge rounded-pill bg-proteins text-black">{{ entry.proteins|floatformat:1 }} г. белков</span>
-                                            <span class="badge rounded-pill bg-fats text-black">{{ entry.fats|floatformat:1 }} г. жиров</span>
-                                            <span class="badge rounded-pill bg-carbs text-black">{{ entry.carbs|floatformat:1 }} г. углеводов</span>
-                                        </p>
-                                    </div>
-                                    <form method="post" action="{% url 'delete_entry' entry.id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-danger btn-md ms-2">Удалить</button>
-                                    </form>
-                                </div>
-                                {% endfor %}
+
+                        <div class="card mb-3">
+                            <div class="card-header d-flex justify-content-between py-2 {% if not breakfast_entries %} border-0 {% endif %}">
+                                <h4 class="my-1 text-truncate fw-bold fc-darkgreen">Завтрак</h4>
+                                <form action="{% url 'food_search' meal='breakfast' %}" method="GET">
+                                    <button type="submit" class="btn bg-ferngreen rounded-circle d-flex align-items-center justify-content-center text-white btn-md position-relative my-1" style="width: 35px; height: 35px;">
+                                        <i class="fas fa-plus fs-2"></i>
+                                        {% if not breakfast_entries %}
+                                        <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                                            <span class="visually-hidden">Добавь новый продукт!</span>
+                                        </span>
+                                        {% endif %}
+                                    </button>
+                                </form>
                             </div>
-                        {% else %}
-                            <p class="card-text text-black-50 fs-6">Вы ещё не добавляли еду сегодня.</p>
-                        {% endif %}
+                            
+                            {% if breakfast_entries %}
+                            <div class="card-body">
+                                <div class="list-group">
+                                    {% for entry in breakfast_entries %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="cpfc-content">
+                                            <p class="fs-6 mb-1 text-break" align="start">
+                                                <span class="fs-4 fw-bolder">{{ entry.food_name }}</span> 
+                                                {% if entry.grams %} ({{ entry.grams }} г. ) {% endif %}
+                                            </p>
+                                            <p align="start">
+                                                <span class="badge bg-calories text-black">{{ entry.calories }} ккал.</span>
+                                                <span class="badge rounded-pill bg-proteins text-black">{{ entry.proteins|floatformat:1 }} г. белков</span>
+                                                <span class="badge rounded-pill bg-fats text-black">{{ entry.fats|floatformat:1 }} г. жиров</span>
+                                                <span class="badge rounded-pill bg-carbs text-black">{{ entry.carbs|floatformat:1 }} г. углеводов</span>
+                                            </p>
+                                        </div>
+                                        <form method="post" action="{% url 'delete_entry' entry.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-md ms-2">Удалить</button>
+                                        </form>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-header d-flex justify-content-between py-2 {% if not lunch_entries %} border-0 {% endif %}">
+                                <h4 class="my-1 text-truncate fw-bold fc-darkgreen">Обед</h4>
+                                <form action="{% url 'food_search' meal='lunch' %}" method="GET">
+                                    <button type="submit" class="btn bg-ferngreen rounded-circle d-flex align-items-center justify-content-center text-white btn-md position-relative my-1" style="width: 35px; height: 35px;">
+                                        <i class="fas fa-plus fs-2"></i>
+                                        {% if not lunch_entries %}
+                                        <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                                            <span class="visually-hidden">Добавь новый продукт!</span>
+                                        </span>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            {% if lunch_entries %}
+                            <div class="card-body">
+                                <div class="list-group">
+                                    {% for entry in lunch_entries %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="cpfc-content">
+                                            <p class="fs-6 mb-1 text-break" align="start">
+                                                <span class="fs-4 fw-bolder">{{ entry.food_name }}</span> 
+                                                {% if entry.grams %} ({{ entry.grams }} г. ) {% endif %}
+                                            </p>
+                                            <p align="start">
+                                                <span class="badge bg-calories text-black">{{ entry.calories }} ккал.</span>
+                                                <span class="badge rounded-pill bg-proteins text-black">{{ entry.proteins|floatformat:1 }} г. белков</span>
+                                                <span class="badge rounded-pill bg-fats text-black">{{ entry.fats|floatformat:1 }} г. жиров</span>
+                                                <span class="badge rounded-pill bg-carbs text-black">{{ entry.carbs|floatformat:1 }} г. углеводов</span>
+                                            </p>
+                                        </div>
+                                        <form method="post" action="{% url 'delete_entry' entry.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-md ms-2">Удалить</button>
+                                        </form>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-header d-flex justify-content-between py-2 {% if not dinner_entries %} border-0 {% endif %}">
+                                <h4 class="my-1 text-truncate fw-bold fc-darkgreen">Ужин</h4>
+                                <form action="{% url 'food_search' meal='dinner' %}" method="GET">
+                                    <button type="submit" class="btn bg-ferngreen rounded-circle d-flex align-items-center justify-content-center text-white btn-md position-relative my-1" style="width: 35px; height: 35px;">
+                                        <i class="fas fa-plus fs-2"></i>
+                                        {% if not dinner_entries %}
+                                        <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                                            <span class="visually-hidden">Добавь новый продукт!</span>
+                                        </span>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            {% if dinner_entries %}
+                            <div class="card-body">
+                                <div class="list-group">
+                                    {% for entry in dinner_entries %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="cpfc-content">
+                                            <p class="fs-6 mb-1 text-break" align="start">
+                                                <span class="fs-4 fw-bolder">{{ entry.food_name }}</span> 
+                                                {% if entry.grams %} ({{ entry.grams }} г. ) {% endif %}
+                                            </p>
+                                            <p align="start">
+                                                <span class="badge bg-calories text-black">{{ entry.calories }} ккал.</span>
+                                                <span class="badge rounded-pill bg-proteins text-black">{{ entry.proteins|floatformat:1 }} г. белков</span>
+                                                <span class="badge rounded-pill bg-fats text-black">{{ entry.fats|floatformat:1 }} г. жиров</span>
+                                                <span class="badge rounded-pill bg-carbs text-black">{{ entry.carbs|floatformat:1 }} г. углеводов</span>
+                                            </p>
+                                        </div>
+                                        <form method="post" action="{% url 'delete_entry' entry.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-md ms-2">Удалить</button>
+                                        </form>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between {% if not snack_entries %} border-0 {% endif %}">
+                                <h4 class="my-1 text-truncate fw-bold fc-darkgreen">Перекусы</h4>
+                                <form action="{% url 'food_search' meal='snack' %}" method="GET">
+                                    <button type="submit" class="btn bg-ferngreen rounded-circle d-flex align-items-center justify-content-center text-white btn-md position-relative my-1" style="width: 35px; height: 35px;">
+                                        <i class="fas fa-plus fs-2"></i>
+                                        {% if not snack_entries %}
+                                        <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                                            <span class="visually-hidden">Добавь новый продукт!</span>
+                                        </span>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </div>
+
+                            {% if snack_entries %}
+                            <div class="card-body">
+                                <div class="list-group">
+                                    {% for entry in snack_entries %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="cpfc-content">
+                                            <p class="fs-6 mb-1 text-break" align="start">
+                                                <span class="fs-4 fw-bolder">{{ entry.food_name }}</span> 
+                                                {% if entry.grams %} ({{ entry.grams }} г. ) {% endif %}
+                                            </p>
+                                            <p align="start">
+                                                <span class="badge bg-calories text-black">{{ entry.calories }} ккал.</span>
+                                                <span class="badge rounded-pill bg-proteins text-black">{{ entry.proteins|floatformat:1 }} г. белков</span>
+                                                <span class="badge rounded-pill bg-fats text-black">{{ entry.fats|floatformat:1 }} г. жиров</span>
+                                                <span class="badge rounded-pill bg-carbs text-black">{{ entry.carbs|floatformat:1 }} г. углеводов</span>
+                                            </p>
+                                        </div>
+                                        <form method="post" action="{% url 'delete_entry' entry.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-md ms-2">Удалить</button>
+                                        </form>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>

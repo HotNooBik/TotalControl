@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 # Create your models here.
 User = get_user_model()
 
+
 class FoodEntry(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     food_name = models.CharField(max_length=255)
@@ -12,6 +13,16 @@ class FoodEntry(models.Model):
     fats = models.FloatField(null=True)
     carbs = models.FloatField(null=True)
     grams = models.FloatField(null=True)
+    meal = models.CharField(
+        max_length=9,
+        choices=[
+            ("breakfast", "Завтрак"),
+            ("lunch", "Обед"),
+            ("dinner", "Ужин"),
+            ("snack", "Перекус"),
+        ],
+        default="snack",
+    )
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

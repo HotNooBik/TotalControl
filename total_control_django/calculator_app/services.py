@@ -34,10 +34,10 @@ def search_fatsecret_food(query, max_results=5, page=0, translate=False):
     }
 
     context = {
-        'query': query,
-        'results': None,
-        'current_page': page,
-        'total_pages': None,
+        "query": query,
+        "results": None,
+        "current_page": page,
+        "total_pages": None,
     }
 
     try:
@@ -53,18 +53,26 @@ def search_fatsecret_food(query, max_results=5, page=0, translate=False):
                 result = [data["foods"]["food"]]
             else:
                 result = data["foods"]["food"]
-            
+
             if translate:
                 for food in result:
-                    food['food_description'] = translator.translate(food['food_description'], dest="ru").text
-                    food['food_name'] = translator.translate(food['food_name'], dest="ru").text
-                    food['food_type'] = translator.translate(food['food_type'], dest="ru").text
-            
-            context['results'] = result
-            context['total_pages'] = (int(data["foods"]["total_results"]) - 1) // max_results
-            
+                    food["food_description"] = translator.translate(
+                        food["food_description"], dest="ru"
+                    ).text
+                    food["food_name"] = translator.translate(
+                        food["food_name"], dest="ru"
+                    ).text
+                    food["food_type"] = translator.translate(
+                        food["food_type"], dest="ru"
+                    ).text
+
+            context["results"] = result
+            context["total_pages"] = (
+                int(data["foods"]["total_results"]) - 1
+            ) // max_results
+
             return context
-        
+
     except requests.exceptions.RequestException as e:
         print(f"Ошибка запроса: {e}")
     # Иначе возвращаем пустой список
@@ -73,12 +81,8 @@ def search_fatsecret_food(query, max_results=5, page=0, translate=False):
 
 def get_food_details(food_id):
     url = "https://platform.fatsecret.com/rest/server.api"
-    params = {
-        "method": "food.get",
-        "food_id": food_id,
-        "format": "json"
-    }
-    
+    params = {"method": "food.get", "food_id": food_id, "format": "json"}
+
     try:
         response = requests.get(
             url, params=params, auth=get_fatsecret_client(), timeout=5
@@ -87,27 +91,27 @@ def get_food_details(food_id):
         data = response.json()
 
         pprint(data)
-        
-        if 'food' in data:
-            food = data['food']
-            if isinstance(food['servings']['serving'], list):
+
+        if "food" in data:
+            food = data["food"]
+            if isinstance(food["servings"]["serving"], list):
                 return {
-                    'id': food['food_id'],
-                    'name': food['food_name'],
-                    'calories': float(food['servings']['serving'][0]['calories']),
-                    'proteins': float(food['servings']['serving'][0]['protein']),
-                    'fats': float(food['servings']['serving'][0]['fat']),
-                    'carbs': float(food['servings']['serving'][0]['carbohydrate']),
+                    "id": food["food_id"],
+                    "name": food["food_name"],
+                    "calories": float(food["servings"]["serving"][0]["calories"]),
+                    "proteins": float(food["servings"]["serving"][0]["protein"]),
+                    "fats": float(food["servings"]["serving"][0]["fat"]),
+                    "carbs": float(food["servings"]["serving"][0]["carbohydrate"]),
                 }
             return {
-                    'id': food['food_id'],
-                    'name': food['food_name'],
-                    'calories': float(food['servings']['serving']['calories']),
-                    'proteins': float(food['servings']['serving']['protein']),
-                    'fats': float(food['servings']['serving']['fat']),
-                    'carbs': float(food['servings']['serving']['carbohydrate']),
-                }
-        
+                "id": food["food_id"],
+                "name": food["food_name"],
+                "calories": float(food["servings"]["serving"]["calories"]),
+                "proteins": float(food["servings"]["serving"]["protein"]),
+                "fats": float(food["servings"]["serving"]["fat"]),
+                "carbs": float(food["servings"]["serving"]["carbohydrate"]),
+            }
+
     except requests.exceptions.RequestException as e:
         print(f"Ошибка запроса еды по айди: {e}")
     return None

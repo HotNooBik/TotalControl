@@ -13,8 +13,8 @@ from .forms import FoodEntryForm, OwnFoodEntryForm
 @login_required
 def calculator(request):
     today = timezone.now().date()
-    entries = FoodEntry.objects.filter(user=request.user, date_added__date=today)
 
+    entries = FoodEntry.objects.filter(user=request.user, date_added__date=today)
     totals = entries.aggregate(
         calories=Sum("calories"),
         proteins=Sum("proteins"),
@@ -22,8 +22,12 @@ def calculator(request):
         carbs=Sum("carbs"),
     )
 
-    user_profile = get_object_or_404(UserProfile, user=request.user)
+    breakfast_entries = entries.filter(meal="breakfast")
+    lunch_entries = entries.filter(meal="lunch")
+    dinner_entries = entries.filter(meal="dinner")
+    snack_entries = entries.filter(meal="snack")
 
+    user_profile = get_object_or_404(UserProfile, user=request.user)
     calories_percent = (totals["calories"] or 0) / user_profile.daily_calories * 100
     proteins_percent = (totals["proteins"] or 0) / user_profile.daily_proteins * 100
     fats_percent = (totals["fats"] or 0) / user_profile.daily_fats * 100
@@ -38,11 +42,14 @@ def calculator(request):
         "daily_proteins": user_profile.daily_proteins,
         "daily_fats": user_profile.daily_fats,
         "daily_carbs": user_profile.daily_carbs,
-        "entries": entries.order_by("date_added"),
-        "calories_percent":  calories_percent if calories_percent < 100 else 100,
-        "proteins_percent":  proteins_percent if proteins_percent < 100 else 100,
-        "fats_percent":  fats_percent if fats_percent < 100 else 100,
-        "carbs_percent":  carbs_percent if carbs_percent < 100 else 100,
+        "breakfast_entries": breakfast_entries.order_by("date_added"),
+        "lunch_entries": lunch_entries.order_by("date_added"),
+        "dinner_entries": dinner_entries.order_by("date_added"),
+        "snack_entries": snack_entries.order_by("date_added"),
+        "calories_percent": calories_percent if calories_percent < 100 else 100,
+        "proteins_percent": proteins_percent if proteins_percent < 100 else 100,
+        "fats_percent": fats_percent if fats_percent < 100 else 100,
+        "carbs_percent": carbs_percent if carbs_percent < 100 else 100,
     }
     return render(request, "calculator_app/calculator.html", context)
 
@@ -55,17 +62,18 @@ def delete_entry(request, entry_id):
 
 
 @login_required
-def food_search(request):
-    query = request.GET.get('query', '')
+def food_search(request, meal):
+    query = request.GET.get("query", "")
     try:
-        page = int(request.GET.get('page', 0))
+        page = int(request.GET.get("page", 0))
     except ValueError:
         page = 0
-    
+
     if query:
         context = search_fatsecret_food(query, page=page, translate=False)
-        return render(request, 'calculator_app/food_search.html', context)
-    return render(request, 'calculator_app/food_search.html')
+        context["meal"] = meal
+        return render(request, "calculator_app/food_search.html", context)
+    return render(request, "calculator_app/food_search.html", {"meal": meal})
 
 
 @login_required
@@ -73,52 +81,72 @@ def add_food_entry(request, food_id):
     # Получаем детали продукта из API
     food_details = get_food_details(food_id)
 
+    meal = request.GET.get("meal", "snack")
+    if meal not in ["breakfast", "lunch", "dinner", "snack"]:
+        meal = "snack"
+
     if not food_details:
-        return redirect('food_search')
-    
-    if request.method == 'POST':
+        return redirect("food_search")
+
+    if request.method == "POST":
         form = FoodEntryForm(request.POST)
         if form.is_valid():
             # Создаем запись
             FoodEntry.objects.create(
                 user=request.user,
-                food_name=food_details['name'],
-                calories=round(food_details['calories'] * form.cleaned_data['grams'] / 100),
-                proteins=round(food_details['proteins'] * form.cleaned_data['grams'] / 100, 1),
-                fats=round(food_details['fats'] * form.cleaned_data['grams'] / 100, 1),
-                carbs=round(food_details['carbs'] * form.cleaned_data['grams'] / 100, 1),
-                grams=round(form.cleaned_data['grams'], 1)
+                food_name=food_details["name"],
+                calories=round(
+                    food_details["calories"] * form.cleaned_data["grams"] / 100
+                ),
+                proteins=round(
+                    food_details["proteins"] * form.cleaned_data["grams"] / 100, 1
+                ),
+                fats=round(food_details["fats"] * form.cleaned_data["grams"] / 100, 1),
+                carbs=round(
+                    food_details["carbs"] * form.cleaned_data["grams"] / 100, 1
+                ),
+                grams=round(form.cleaned_data["grams"], 1),
+                meal=meal,
             )
-            return redirect('calculator')
+            return redirect("calculator")
     else:
-        form = FoodEntryForm(initial={'grams': 100})
-    
+        form = FoodEntryForm(initial={"grams": 100})
+
     context = {
-        'food': food_details,
-        'form': form,
+        "meal": meal,
+        "food": food_details,
+        "form": form,
     }
-    return render(request, 'calculator_app/add_food_entry.html', context)
+    return render(request, "calculator_app/add_food_entry.html", context)
 
 
 @login_required
 def add_own_food_entry(request):
-    if request.method == 'POST':
+
+    meal = request.GET.get("meal", "snack")
+    if meal not in ["breakfast", "lunch", "dinner", "snack"]:
+        meal = "snack"
+
+    if request.method == "POST":
         form = OwnFoodEntryForm(request.POST)
         if form.is_valid():
             # Создаем запись
             FoodEntry.objects.create(
                 user=request.user,
-                food_name=form.cleaned_data['food_name'],
-                calories=round(form.cleaned_data['calories']),
-                proteins=round(form.cleaned_data['proteins'], 1),
-                fats=round(form.cleaned_data['fats'], 1),
-                carbs=round(form.cleaned_data['carbs'], 1)
+                food_name=form.cleaned_data["food_name"],
+                calories=round(form.cleaned_data["calories"]),
+                proteins=round(form.cleaned_data["proteins"], 1),
+                fats=round(form.cleaned_data["fats"], 1),
+                carbs=round(form.cleaned_data["carbs"], 1),
+                meal=meal,
             )
-            return redirect('calculator')
+            return redirect("calculator")
     else:
         form = OwnFoodEntryForm()
-    
+
     context = {
-        'form': form,
+        "form": form,
+        "meal": meal,
     }
-    return render(request, 'calculator_app/add_own_food_entry.html', context)
+
+    return render(request, "calculator_app/add_own_food_entry.html", context)
