@@ -1,9 +1,12 @@
+from pprint import pprint
 import requests
 from requests_oauthlib import OAuth1
 
 from django.conf import settings
 from googletrans import Translator
-from pprint import pprint
+
+
+TRANSLATOR = Translator()
 
 
 def get_fatsecret_client():
@@ -16,15 +19,12 @@ def get_fatsecret_client():
 
 def search_fatsecret_food(query, max_results=5, page=0, translate=False):
 
-    translator = Translator()
-
-    url = "https://platform.fatsecret.com/rest/server.api"
-
     try:
-        translated_query = translator.translate(query, dest="en").text
+        translated_query = TRANSLATOR.translate(query, dest="en").text
     except TypeError:
         translated_query = query
 
+    url = "https://platform.fatsecret.com/rest/server.api"
     params = {
         "method": "foods.search",
         "search_expression": translated_query,
@@ -56,15 +56,17 @@ def search_fatsecret_food(query, max_results=5, page=0, translate=False):
 
             if translate:
                 for food in result:
-                    food["food_description"] = translator.translate(
+                    food["food_description"] = TRANSLATOR.translate(
                         food["food_description"], dest="ru"
                     ).text
-                    food["food_name"] = translator.translate(
+                    food["food_name"] = TRANSLATOR.translate(
                         food["food_name"], dest="ru"
                     ).text
-                    food["food_type"] = translator.translate(
+                    food["food_type"] = TRANSLATOR.translate(
                         food["food_type"], dest="ru"
                     ).text
+
+            pprint(result)
 
             context["results"] = result
             context["total_pages"] = (
@@ -75,13 +77,20 @@ def search_fatsecret_food(query, max_results=5, page=0, translate=False):
 
     except requests.exceptions.RequestException as e:
         print(f"Ошибка запроса: {e}")
+
     # Иначе возвращаем пустой список
     return context
 
 
 def get_food_details(food_id):
+
     url = "https://platform.fatsecret.com/rest/server.api"
-    params = {"method": "food.get", "food_id": food_id, "format": "json"}
+    params = {
+        "method": "food.get.v4",
+        "food_id": food_id,
+        "format": "json",
+        "include_food_images": True,
+    }
 
     try:
         response = requests.get(
@@ -94,6 +103,15 @@ def get_food_details(food_id):
 
         if "food" in data:
             food = data["food"]
+
+            image = None
+            brand_name = None
+
+            if food["food_type"] == "Brand":
+                brand_name = food["brand_name"]
+            elif "food_images" in food:
+                image = food["food_images"]["food_image"][0]["image_url"]   # Картинки есть только у не брэндовой еды
+
             if isinstance(food["servings"]["serving"], list):
                 return {
                     "id": food["food_id"],
@@ -102,6 +120,8 @@ def get_food_details(food_id):
                     "proteins": float(food["servings"]["serving"][0]["protein"]),
                     "fats": float(food["servings"]["serving"][0]["fat"]),
                     "carbs": float(food["servings"]["serving"][0]["carbohydrate"]),
+                    "brand_name": brand_name,
+                    "image": image,
                 }
             return {
                 "id": food["food_id"],
@@ -110,6 +130,7 @@ def get_food_details(food_id):
                 "proteins": float(food["servings"]["serving"]["protein"]),
                 "fats": float(food["servings"]["serving"]["fat"]),
                 "carbs": float(food["servings"]["serving"]["carbohydrate"]),
+                "brand_name": brand_name,
             }
 
     except requests.exceptions.RequestException as e:

@@ -78,15 +78,15 @@ def food_search(request, meal):
 
 @login_required
 def add_food_entry(request, food_id):
+
     # Получаем детали продукта из API
     food_details = get_food_details(food_id)
+    if not food_details:
+        return redirect("food_search")
 
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
-
-    if not food_details:
-        return redirect("food_search")
 
     if request.method == "POST":
         form = FoodEntryForm(request.POST)
@@ -111,10 +111,10 @@ def add_food_entry(request, food_id):
             return redirect("calculator")
     else:
         form = FoodEntryForm(initial={"grams": 100})
-    
-    print(food_details)
 
-    micronutrients_mass = sum([food_details["proteins"], food_details["fats"], food_details["carbs"]])
+    micronutrients_mass = sum(
+        [food_details["proteins"], food_details["fats"], food_details["carbs"]]
+    )
     proteins_percent = 0
     fats_percent = 0
     carbs_percent = 0

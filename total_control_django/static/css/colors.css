@@ -66,7 +66,9 @@
 }
 
 
-/* Цвета для КБЖУ */
+/* Цвета для фона КБЖУ */
+
+/* Классические цвета */
 .bg-calories {
     background-color: #fffde2;
 }
@@ -87,6 +89,7 @@
     background-color: #c1e1ee;
 }
 
+/* Светлый вариант */
 .bg-calories-light {
     background-color: #fffffa;
 }
@@ -107,6 +110,7 @@
     background-color: #fafeff;
 }
 
+/* Насыщенный вариант */
 .bg-calories-richer {
     background-color: #ffffa2;
 }
@@ -127,22 +131,28 @@
     background-color: #b6f0ff;
 }
 
+/* Темный и прозрачный вариант */
 .bg-calories-trans {
-    background-color: #fffde250;
+    background-color: #eceacf60;
+    box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.30);
 }
 
 .bg-proteins-trans {
-    background-color: #e2f4ff50;
+    background-color: #d1e4ee60;
+    box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.30);
 }
 
 .bg-fats-trans {
-    background-color: #ffe2e250;
+    background-color: #ecd0d060;
+    box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.30);
 }
 
 .bg-carbs-trans {
-    background-color: #e5ffe250;
+    background-color: #cfe7cc60;
+    box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.30);
 }
 
+/* Менее насыщенный вариант */
 .bg-calories-mid {
     background-color: #e0dda8;
 }
@@ -159,9 +169,12 @@
     background-color: #b0ddaa;
 }
 
-/* Текст с цветами для КБЖУ */
+
+
+/* Цвета для текста с КБЖУ */
 .fc-calories {
     color: #fdffe2;
+    
 }
 
 .fc-proteins {
@@ -176,6 +189,7 @@
     color: #e5ffe2;
 }
 
+/* Темный вариант */
 .fc-proteins-dark {
     color: #86929c;
 }
@@ -186,4 +200,10 @@
 
 .fc-carbs-dark {
     color: #82947f;
+}
+
+
+/* Темная тень для текста */
+.f-shadow {
+    text-shadow: 1px 1px 3px #00000050;
 }
