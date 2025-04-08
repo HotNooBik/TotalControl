@@ -12,7 +12,7 @@ class FoodEntry(models.Model):
     proteins = models.FloatField(null=True)
     fats = models.FloatField(null=True)
     carbs = models.FloatField(null=True)
-    grams = models.FloatField(null=True)
+    amount = models.CharField(max_length=255)
     meal = models.CharField(
         max_length=9,
         choices=[

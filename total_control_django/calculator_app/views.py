@@ -102,18 +102,22 @@ def add_food_entry(request, food_id):
             amount = form.cleaned_data["amount"]
 
             if unit == "g":
+                food_amount = f"{round(amount, 1)} г."
                 amount /= 100
                 calories = food_details["per_100g"]["calories"]
                 proteins = food_details["per_100g"]["proteins"]
                 fats = food_details["per_100g"]["fats"]
                 carbs = food_details["per_100g"]["carbs"]
+
             elif unit == "ml":
+                food_amount = f"{round(amount, 1)} мл."
                 amount /= 100
                 calories = food_details["per_100ml"]["calories"]
                 proteins = food_details["per_100ml"]["proteins"]
                 fats = food_details["per_100ml"]["fats"]
                 carbs = food_details["per_100ml"]["carbs"]
             else:
+                food_amount = f"{round(amount, 1)} порций по {food_details["serving_name"]}"
                 calories = food_details["per_portion"]["calories"]
                 proteins = food_details["per_portion"]["proteins"]
                 fats = food_details["per_portion"]["fats"]
@@ -127,15 +131,13 @@ def add_food_entry(request, food_id):
                 proteins=round(proteins * amount, 1),
                 fats=round(fats * amount, 1),
                 carbs=round(carbs * amount, 1),
-                grams=round(amount if unit == "portion" else amount * 100, 1),
+                amount=food_amount,
                 meal=meal,
             )
             return redirect("calculator")
 
     form = FoodEntryForm(initial={"amount": 1, "unit": "portion"})
     form.fields["unit"].choices = available_units
-
-    print(food_details)
 
     micronutrients_mass = sum(
         [

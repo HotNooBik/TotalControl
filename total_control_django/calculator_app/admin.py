@@ -12,6 +12,6 @@ class FoodEntryAdmin(admin.ModelAdmin):
         "proteins",
         "fats",
         "carbs",
-        "grams",
+        "amount",
         "meal",
     )
