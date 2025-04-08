@@ -31,28 +31,28 @@
                         <p class="card-text text-white-50 mt-0 f-shadow">id: {{ food.id }}</p>
                     </div>
                     
-                    <h5 class="card-title text-white fs-5 mb-3 fs-3 f-shadow">На <span id="current-grams">100.0</span> г продукта:</h5>
+                    <h5 class="card-title text-white fs-5 mb-3 fs-3 f-shadow" id="amount-title">На <span id="current-amount">1.0</span> порций по <i>{{ food.serving_name }}</i>:</h5>
                     
                     <div class="row justify-content-center align-items-center mb-3">
                         <div class="col-lg-4 col-5 mb-2 mx-1 bg-calories-trans rounded-4">
                             <p class="fs-4 mb-0 pt-2 fw-bold fc-calories f-shadow">Калории:</p> 
-                            <p class="fs-5 fw-bold text-white f-shadow"><span id="calculated-calories">{{ food.calories|floatformat:0 }}</span> ккал</p>
+                            <p class="fs-5 fw-bold text-white f-shadow"><span id="calculated-calories">{{ food.per_portion.calories|floatformat:0 }}</span> ккал</p>
                         </div>
                     </div>
 
                     <div class="row justify-content-center align-items-center">
                         <div class="col-lg-3 col-5 mb-2 mx-2 bg-proteins-trans rounded-4">
                             <p class="fs-4 mb-0 pt-2 fw-bold fc-proteins f-shadow">Белки:</p> 
-                            <p class="fs-5 fw-bold text-white f-shadow"><span id="calculated-proteins">{{ food.proteins|floatformat:1 }}</span> г</p>
+                            <p class="fs-5 fw-bold text-white f-shadow"><span id="calculated-proteins">{{ food.per_portion.proteins|floatformat:1 }}</span> г</p>
 
                         </div>
                         <div class="col-lg-3 col-5 mb-2 mx-2 bg-fats-trans rounded-4">
                             <p class="fs-4 mb-0 pt-2 fw-bold fc-fats f-shadow">Жиры:</p> 
-                            <p class="fs-5 fw-bold text-white f-shadow"><span id="calculated-fats">{{ food.fats|floatformat:1 }}</span> г</p>
+                            <p class="fs-5 fw-bold text-white f-shadow"><span id="calculated-fats">{{ food.per_portion.fats|floatformat:1 }}</span> г</p>
                         </div>
                         <div class="col-lg-3 col-5 mb-2 mx-2 bg-carbs-trans rounded-4">
                             <p class="fs-4 mb-0 pt-2 fw-bold fc-carbs f-shadow">Углеводы:</p> 
-                            <p class="fs-5 fw-bold text-white f-shadow"><span id="calculated-carbs">{{ food.carbs|floatformat:1 }}</span> г</p>
+                            <p class="fs-5 fw-bold text-white f-shadow"><span id="calculated-carbs">{{ food.per_portion.carbs|floatformat:1 }}</span> г</p>
                         </div>
                     </div>
                     
@@ -88,12 +88,34 @@
 
                 <div class="card-body">
                     <form method="post">
+
                         {% csrf_token %}
                         <div class="row justify-content-center">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <p class="fw-bold fs-5 mb-1">{{ form.grams.label_tag }}</p>
-                                    {{ form.grams }}
+                                    <p class="fw-bold fs-5 mb-1">Единица измерения:</p>
+                                    <select class="form-select" name="unit" id="unit">
+                                        {% for value, text in form.unit.field.choices %}
+                                            <option value="{{ value }}" 
+                                                {% if form.unit.value == value %}selected{% endif %}>
+                                                {% if value == 'portion' %}
+                                                    {{ text }} по {{ food.serving_name }}
+                                                {% else %}
+                                                    {{ text }}
+                                                {% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row justify-content-center">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <p class="fw-bold fs-5 mb-1">Количество:</p>
+                                    {{ form.amount }}
                                 </div>
                                 
                                 <button type="submit" class="btn bg-ferngreen text-white mt-3">Добавить запись</button>
@@ -111,19 +133,86 @@
 </div>
 
 <script>
-    document.getElementById('grams-input').addEventListener('input', function(e) {
-        let grams =  parseFloat(e.target.value);
-        if (!isNaN(grams)) {
-            if (grams > 99999) {grams = 99999}
-            document.getElementById('current-grams').textContent = grams.toFixed(1);
+    document.getElementById('amount-input').addEventListener('input', function(event) {
+        let amount =  parseFloat(event.target.value);
+
+        const unit = document.getElementById('unit').value;
+        console.log(unit);
+        
+        if (!isNaN(amount)) {
+            if (amount > 99999) {
+                amount = 99999;
+                event.target.value = 99999;
+            }
+            if (amount < 0) {
+                amount = 0;
+                event.target.value = 0;
+            }
+
+            document.getElementById('current-amount').textContent = amount.toFixed(1);
 
             // Пересчет значений
-            const multiply = (value) => (value * grams / 100).toFixed(1);            
-            document.getElementById('calculated-calories').textContent = Math.round(multiply({{ food.calories }}));
-            document.getElementById('calculated-proteins').textContent = multiply({{ food.proteins }});
-            document.getElementById('calculated-fats').textContent = multiply({{ food.fats }});
-            document.getElementById('calculated-carbs').textContent = multiply({{ food.carbs }});
+            const multiply = (value) => (value * amount).toFixed(1);
+            switch(unit) {
+                case 'portion':
+                    document.getElementById('calculated-calories').textContent = Math.round(multiply({{ food.per_portion.calories }}));
+                    document.getElementById('calculated-proteins').textContent = multiply({{ food.per_portion.proteins }});
+                    document.getElementById('calculated-fats').textContent = multiply({{ food.per_portion.fats }});
+                    document.getElementById('calculated-carbs').textContent = multiply({{ food.per_portion.carbs }});
+                    break;
+                
+                case 'g':
+                    amount /= 100
+                    document.getElementById('calculated-calories').textContent = Math.round(multiply({{ food.per_100g.calories|default:0 }}));
+                    document.getElementById('calculated-proteins').textContent = multiply({{ food.per_100g.proteins|default:0 }});
+                    document.getElementById('calculated-fats').textContent = multiply({{ food.per_100g.fats|default:0 }});
+                    document.getElementById('calculated-carbs').textContent = multiply({{ food.per_100g.carbs|default:0 }});
+                    break;
+                
+                case 'ml':
+                default:
+                    amount /= 100
+                    document.getElementById('calculated-calories').textContent = Math.round(multiply({{ food.per_100ml.calories|default:0 }}));
+                    document.getElementById('calculated-proteins').textContent = multiply({{ food.per_100ml.proteins|default:0 }});
+                    document.getElementById('calculated-fats').textContent = multiply({{ food.per_100ml.fats|default:0 }});
+                    document.getElementById('calculated-carbs').textContent = multiply({{ food.per_100ml.carbs|default:0 }});
+            }
         } 
+    });
+
+    document.getElementById('unit').addEventListener('change', function(event) {
+        const unit = event.target.value;
+        console.log(unit);
+
+        switch(unit) {
+            case 'portion':
+                document.getElementById('amount-input').value = 1;
+                document.getElementById('amount-title').innerHTML = 'На <span id="current-amount">1.0</span> порций по <i>{{ food.serving_name }}</i>:';
+                document.getElementById('calculated-calories').textContent = {{ food.per_portion.calories }};
+                document.getElementById('calculated-proteins').textContent = ({{ food.per_portion.proteins }}).toFixed(1);
+                document.getElementById('calculated-fats').textContent = ({{ food.per_portion.fats }}).toFixed(1);
+                document.getElementById('calculated-carbs').textContent = ({{ food.per_portion.carbs }}).toFixed(1);
+                break;
+            
+            case 'g':
+                document.getElementById('amount-input').value = 100;
+                document.getElementById('amount-title').innerHTML = 'На <span id="current-amount">100.0</span> грамм продукта:';
+                document.getElementById('calculated-calories').textContent = {{ food.per_100g.calories|default:0 }};
+                document.getElementById('calculated-proteins').textContent = ({{ food.per_100g.proteins|default:0 }}).toFixed(1);
+                document.getElementById('calculated-fats').textContent = ({{ food.per_100g.fats|default:0 }}).toFixed(1);
+                document.getElementById('calculated-carbs').textContent = ({{ food.per_100g.carbs|default:0 }}).toFixed(1);
+                break;
+            
+            case 'ml':
+            default:
+                document.getElementById('amount-input').value = 100;
+                document.getElementById('amount-title').innerHTML = 'На <span id="current-amount">100.0</span> мл. продукта:';
+                document.getElementById('calculated-calories').textContent = {{ food.per_100ml.calories|default:0 }};
+                document.getElementById('calculated-proteins').textContent = ({{ food.per_100ml.proteins|default:0 }}).toFixed(1);
+                document.getElementById('calculated-fats').textContent = ({{ food.per_100ml.fats|default:0 }}).toFixed(1);
+                document.getElementById('calculated-carbs').textContent = ({{ food.per_100ml.carbs|default:0 }}).toFixed(1);
+        }
+
     });
 </script>
 {% endblock %}

@@ -146,7 +146,6 @@ form select {
 }
 
 
-
 /* Стили для выбора активности пользователя на этапе регистрации */
 
 .activity-selector {
@@ -220,6 +219,9 @@ form select {
     color: #666;
 }
 
+
+/* Стиль для отображения КБЖУ */
+
 .cpfc-content{
     text-align: center;
     display: flex;
@@ -236,7 +238,15 @@ form select {
     }
 }
 
+
+/* Стили для элементов форм */
+
 .form-control:focus {
     border-color: #28a745;
-    box-shadow: 0 0 0 0.2rem #588157;
+    box-shadow: 0 0 0 0.2rem #588157ad;
+}
+
+.form-select:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem #588157ad;
 }

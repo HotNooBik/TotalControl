@@ -2,11 +2,20 @@ from django import forms
 
 
 class FoodEntryForm(forms.Form):
-    grams = forms.FloatField(
-        label="Граммы",
-        min_value=1,
+
+    unit = forms.ChoiceField(
+        label="Единица измерения",
+        choices=[],
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    amount = forms.FloatField(
+        label="Количество",
+        min_value=0.1,
         max_value=99999,
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "grams-input"}),
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "id": "amount-input", "step": "0.1"}
+        ),
     )
 
 

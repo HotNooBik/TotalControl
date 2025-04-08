@@ -88,45 +88,75 @@ def add_food_entry(request, food_id):
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
 
+    available_units = [("portion", "Порции")]
+    if food_details.get("per_100g"):
+        available_units.append(("g", "Граммы"))
+    if food_details.get("per_100ml"):
+        available_units.append(("ml", "Милилитры"))
+
     if request.method == "POST":
         form = FoodEntryForm(request.POST)
+        form.fields["unit"].choices = available_units
         if form.is_valid():
+            unit = form.cleaned_data["unit"]
+            amount = form.cleaned_data["amount"]
+
+            if unit == "g":
+                amount /= 100
+                calories = food_details["per_100g"]["calories"]
+                proteins = food_details["per_100g"]["proteins"]
+                fats = food_details["per_100g"]["fats"]
+                carbs = food_details["per_100g"]["carbs"]
+            elif unit == "ml":
+                amount /= 100
+                calories = food_details["per_100ml"]["calories"]
+                proteins = food_details["per_100ml"]["proteins"]
+                fats = food_details["per_100ml"]["fats"]
+                carbs = food_details["per_100ml"]["carbs"]
+            else:
+                calories = food_details["per_portion"]["calories"]
+                proteins = food_details["per_portion"]["proteins"]
+                fats = food_details["per_portion"]["fats"]
+                carbs = food_details["per_portion"]["carbs"]
+
             # Создаем запись
             FoodEntry.objects.create(
                 user=request.user,
                 food_name=food_details["name"],
-                calories=round(
-                    food_details["calories"] * form.cleaned_data["grams"] / 100
-                ),
-                proteins=round(
-                    food_details["proteins"] * form.cleaned_data["grams"] / 100, 1
-                ),
-                fats=round(food_details["fats"] * form.cleaned_data["grams"] / 100, 1),
-                carbs=round(
-                    food_details["carbs"] * form.cleaned_data["grams"] / 100, 1
-                ),
-                grams=round(form.cleaned_data["grams"], 1),
+                calories=round(calories * amount, 1),
+                proteins=round(proteins * amount, 1),
+                fats=round(fats * amount, 1),
+                carbs=round(carbs * amount, 1),
+                grams=round(amount if unit == "portion" else amount * 100, 1),
                 meal=meal,
             )
             return redirect("calculator")
-    else:
-        form = FoodEntryForm(initial={"grams": 100})
+
+    form = FoodEntryForm(initial={"amount": 1, "unit": "portion"})
+    form.fields["unit"].choices = available_units
+
+    print(food_details)
 
     micronutrients_mass = sum(
-        [food_details["proteins"], food_details["fats"], food_details["carbs"]]
+        [
+            food_details["per_portion"]["proteins"],
+            food_details["per_portion"]["fats"],
+            food_details["per_portion"]["carbs"],
+        ]
     )
     proteins_percent = 0
     fats_percent = 0
     carbs_percent = 0
     if micronutrients_mass > 0:
-        proteins_percent = food_details["proteins"] / micronutrients_mass
-        fats_percent = food_details["fats"] / micronutrients_mass
-        carbs_percent = food_details["carbs"] / micronutrients_mass
+        proteins_percent = food_details["per_portion"]["proteins"] / micronutrients_mass
+        fats_percent = food_details["per_portion"]["fats"] / micronutrients_mass
+        carbs_percent = food_details["per_portion"]["carbs"] / micronutrients_mass
 
     context = {
         "meal": meal,
         "food": food_details,
         "form": form,
+        "available_units": available_units,
         "proteins_percent": proteins_percent * 100,
         "fats_percent": fats_percent * 100,
         "carbs_percent": carbs_percent * 100,
