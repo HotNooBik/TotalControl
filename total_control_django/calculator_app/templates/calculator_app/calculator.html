@@ -19,7 +19,11 @@
                         <div class="progress" style="height: 20px;">
                             <div class="progress-bar {% if calories_percent == 100 %} progress-bar-striped progress-bar-animated {% endif %} bg-ferngreen" 
                             role="progressbar" 
-                            style="width: {{calories_percent}}%;">{{ calories_percent|floatformat:1 }}%</div>
+                            style="width: {{calories_percent}}%;">
+                            {% if calories_percent > 3.5 %}
+                            {{ calories_percent|floatformat:1 }}%
+                            {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
