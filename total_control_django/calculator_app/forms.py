@@ -33,33 +33,53 @@ class OwnFoodEntryForm(forms.Form):
     )
 
     calories = forms.FloatField(
-        label="Калории на порцию",
+        label="Калорий",
         min_value=0,
         max_value=50000,
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "calories-input"}
+            attrs={
+                "class": "form-control",
+                "id": "calories-input",
+                "placeholder": "...",
+            }
         ),
     )
 
     proteins = forms.FloatField(
-        label="Всего белков",
+        label="Белков",
         min_value=0,
         max_value=50000,
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "id": "proteins-input"}
+            attrs={
+                "class": "form-control",
+                "id": "proteins-input",
+                "placeholder": "...",
+            }
         ),
     )
 
     fats = forms.FloatField(
-        label="Всего жиров",
+        label="Жиров",
         min_value=0,
         max_value=50000,
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "fats-input"}),
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "fats-input",
+                "placeholder": "...",
+            }
+        ),
     )
 
     carbs = forms.FloatField(
-        label="Всего углеводов",
+        label="Углеводов",
         min_value=0,
         max_value=50000,
-        widget=forms.NumberInput(attrs={"class": "form-control", "id": "carbs-input"}),
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "id": "carbs-input",
+                "placeholder": "...",
+            }
+        ),
     )
