@@ -1,7 +1,13 @@
+import json
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.db.models import Sum
+from django.db.models.functions import TruncDate
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 from users.models import UserProfile
 
@@ -10,11 +16,33 @@ from .services import search_fatsecret_food, get_food_details
 from .forms import FoodEntryForm, OwnFoodEntryForm
 
 
+@require_POST
+def set_timezone(request):
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        user_timezone = json.loads(request.body).get("timezone")
+        if user_timezone:
+            request.session["user_timezone"] = user_timezone
+            return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)
+
+
 @login_required
 def calculator(request):
-    today = timezone.now().date()
+    user_timezone = request.session.get("user_timezone", "UTC")
 
-    entries = FoodEntry.objects.filter(user=request.user, date_added__date=today)
+    try:
+        tz = ZoneInfo(user_timezone)
+        user_now = timezone.now().astimezone(tz)
+        today = user_now.date()
+
+        entries = FoodEntry.objects.annotate(
+            local_date=TruncDate("date_added", tzinfo=tz)
+        ).filter(user=request.user, local_date=today)
+    except ZoneInfoNotFoundError:
+        entries = FoodEntry.objects.filter(
+            user=request.user, date_added__date=timezone.now().date()
+        )
+
     totals = entries.aggregate(
         calories=Sum("calories"),
         proteins=Sum("proteins"),
@@ -117,7 +145,9 @@ def add_food_entry(request, food_id):
                 fats = food_details["per_100ml"]["fats"]
                 carbs = food_details["per_100ml"]["carbs"]
             else:
-                food_amount = f"{round(amount, 1)} порций по {food_details["serving_name"]}"
+                food_amount = (
+                    f"{round(amount, 1)} порций по {food_details["serving_name"]}"
+                )
                 calories = food_details["per_portion"]["calories"]
                 proteins = food_details["per_portion"]["proteins"]
                 fats = food_details["per_portion"]["fats"]

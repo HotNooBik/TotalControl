@@ -281,4 +281,21 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Скрипт для определения часового пояса пользователя
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
+            fetch('/calculator_app/set-timezone/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ timezone: timeZone })
+            });
+        });
+    </script>
 {% endblock %}
