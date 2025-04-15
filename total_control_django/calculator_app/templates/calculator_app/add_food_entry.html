@@ -24,11 +24,11 @@
                     background-blend-mode: darken;">
                         
                         <div class="cpfc-content mt-2 mb-4">
-                            <h1 class="card-title text-white fs-1 mb-0 f-shadow">{{ food.name }}</h1>
+                            <h1 class="card-title text-white fs-1 mb-0 f-shadow">{{ food.food_name }}</h1>
                             {% if food.brand_name %} 
                             <p class='card-text text-white fs-4 mb-0 f-shadow'>(от "<i>{{ food.brand_name }}</i>")</p> 
                             {% endif %}
-                            <p class="card-text text-white-50 mt-0 f-shadow">id: {{ food.id }}</p>
+                            <p class="card-text text-white-50 mt-0 f-shadow">id: {{ food.food_id }}</p>
                         </div>
                         
                         <h5 class="card-title text-white fs-5 mb-3 fs-3 f-shadow" id="amount-title">На <span id="current-amount">1.0</span> порций по <i>{{ food.serving_name }}</i>:</h5>

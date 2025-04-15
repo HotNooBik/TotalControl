@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 
 from users.models import UserProfile
 
-from .models import FoodEntry
+from .models import FoodEntry, UserCustomFood
 from .services import search_fatsecret_food, get_food_details
 from .forms import FoodEntryForm, OwnFoodEntryForm
 
@@ -105,12 +105,36 @@ def food_search(request, meal):
 
 
 @login_required
-def add_food_entry(request, food_id):
+def own_food_search(request, meal):
+    query = request.GET.get("query", "")
+    try:
+        page = int(request.GET.get("page", 0))
+    except ValueError:
+        page = 0
 
-    # Получаем детали продукта из API
-    food_details = get_food_details(food_id)
+    if query:
+        context = search_fatsecret_food(query, page=page, translate=False)
+        context["meal"] = meal
+        return render(request, "calculator_app/own_food_search.html", context)
+    return render(request, "calculator_app/own_food_search.html", {"meal": meal})
+
+
+@login_required
+def add_food_entry(request, food_id):
+    if food_id.startswith("ucf"):
+        try:
+            custom_food_id = int(food_id[3:])
+
+            food_details = UserCustomFood.get_food_details(
+                user=request.user, food_id=custom_food_id
+            )
+        except ValueError:
+            food_details = None
+    else:
+        food_details = get_food_details(food_id)
+
     if not food_details:
-        return redirect("food_search")
+        return redirect("calculator")
 
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
@@ -144,6 +168,7 @@ def add_food_entry(request, food_id):
                 proteins = food_details["per_100ml"]["proteins"]
                 fats = food_details["per_100ml"]["fats"]
                 carbs = food_details["per_100ml"]["carbs"]
+
             else:
                 food_amount = (
                     f"{round(amount, 1)} порций по {food_details["serving_name"]}"

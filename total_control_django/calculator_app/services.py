@@ -100,7 +100,7 @@ def get_food_details(food_id):
         response.raise_for_status()
         data = response.json()
 
-        # pprint(data)
+        pprint(data)
 
         if "food" in data:
             food = data["food"]
@@ -123,8 +123,8 @@ def get_food_details(food_id):
             result = extract_nutrition_data(food["servings"]["serving"])
 
             context = {
-                "id": food["food_id"],
-                "name": food["food_name"],
+                "food_id": food["food_id"],
+                "food_name": food["food_name"],
                 "serving_name": serving_description,
                 "brand_name": brand_name,
                 "image": image,
