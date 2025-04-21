@@ -5,6 +5,8 @@ from requests_oauthlib import OAuth1
 from django.conf import settings
 from googletrans import Translator
 
+from .models import UserCustomFood
+
 
 TRANSLATOR = Translator()
 
@@ -207,3 +209,58 @@ def extract_nutrition_data(servings: list) -> dict:
                 result["per_100ml"] = create_nutrition_dict(serving, 100 / 4.92892)
 
     return result
+
+
+def search_user_custom_food(user, query, max_results=5, page=0):
+
+    filtered_user_foods = UserCustomFood.objects.filter(
+        user=user, food_name__icontains=query  # нечувствительный к регистру поиск
+    )
+
+    total_pages = int(filtered_user_foods.count() / max_results)
+
+    foods_on_page = filtered_user_foods[
+        max_results * page : max_results * page + max_results
+    ]
+
+    result = list(
+        foods_on_page.values(
+            "brand_name",
+            "food_name",
+            "food_id",
+            "serving_name",
+            "calories",
+            "proteins",
+            "carbs",
+            "fats",
+            "calories_100g",
+            "calories_100ml",
+        )
+    )
+
+    processed_result = [
+        {
+            "food_id": "ucf" + str(food["food_id"]),
+            "brand_name": food["brand_name"],
+            "food_name": food["food_name"],
+            "food_description": (
+                f'На "{food["serving_name"]}" - '
+                f'Калорий: {food["calories"]} ккал. | '
+                f'Жиров: {food["fats"]} г. | '
+                f'Углеводов: {food["carbs"]} г. | '
+                f'Белков: {food["proteins"]} г.'
+            ),
+            "has_g": bool(food["calories_100g"]),
+            "has_ml": bool(food["calories_100ml"]),
+        }
+        for food in result
+    ]
+
+    context = {
+        "current_page": page,
+        "query": query,
+        "results": processed_result,
+        "total_pages": total_pages,
+    }
+
+    return context

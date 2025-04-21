@@ -38,9 +38,18 @@
                         <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
                             <div class="cpfc-content">
                                 <p class="fs-3 mb-1" align="start">
-                                    <span class="fs-4 fw-bolder">{{ food.food_name }}</span> {% if food.brand_name %} (от "{{ food.brand_name }}") {% endif %}
+                                    <span class="fs-4 fw-bolder">{{ food.food_name }}</span> 
+                                    {% if food.brand_name %} (от "{{ food.brand_name }}") {% endif %}
                                 </p>
-                                <p class="fc-brunswickgreen" align="start">({{ food.food_description }})</p>
+                                <p class="fc-brunswickgreen" align="start">
+                                    ({{ food.food_description }})
+                                    {% if food.has_g %}
+                                    <span class="badge rounded-pill bg-grams-mid fc-brunswickgreen">+100г</span>
+                                    {% endif %}
+                                    {% if food.has_ml %}
+                                    <span class="badge rounded-pill bg-water-mid fc-brunswickgreen">+100мл</span>
+                                    {% endif %}
+                                </p>
                             </div>
                             <a href="{% url 'add_food_entry' food.food_id %}?meal={{meal}}" class="btn btn-outline-success">Добавить</a>
                         </div>
@@ -63,11 +72,6 @@
                     <p>Ничего не найдено</p>
                     {% endif %}
                 </div>
-                {% if results or query %}
-                <div class="card-footer py-2">
-                    <p class="text-black-50 my-0">Услуга предоставлена FatSecret</p>
-                </div>
-                {% endif %}
             </div>
         </div>
     </div>

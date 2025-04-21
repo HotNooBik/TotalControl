@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import json
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -12,7 +14,7 @@ from django.views.decorators.http import require_POST
 from users.models import UserProfile
 
 from .models import FoodEntry, UserCustomFood
-from .services import search_fatsecret_food, get_food_details
+from .services import search_fatsecret_food, get_food_details, search_user_custom_food
 from .forms import FoodEntryForm, OwnFoodEntryForm
 
 
@@ -99,6 +101,7 @@ def food_search(request, meal):
 
     if query:
         context = search_fatsecret_food(query, page=page, translate=False)
+        pprint(context)
         context["meal"] = meal
         return render(request, "calculator_app/food_search.html", context)
     return render(request, "calculator_app/food_search.html", {"meal": meal})
@@ -112,11 +115,9 @@ def own_food_search(request, meal):
     except ValueError:
         page = 0
 
-    if query:
-        context = search_fatsecret_food(query, page=page, translate=False)
-        context["meal"] = meal
-        return render(request, "calculator_app/own_food_search.html", context)
-    return render(request, "calculator_app/own_food_search.html", {"meal": meal})
+    context = search_user_custom_food(user=request.user, query=query, page=page)
+    context["meal"] = meal
+    return render(request, "calculator_app/own_food_search.html", context)
 
 
 @login_required
@@ -181,7 +182,7 @@ def add_food_entry(request, food_id):
             # Создаем запись
             FoodEntry.objects.create(
                 user=request.user,
-                food_name=food_details["name"],
+                food_name=food_details["food_name"],
                 calories=round(calories * amount, 1),
                 proteins=round(proteins * amount, 1),
                 fats=round(fats * amount, 1),

@@ -57,8 +57,8 @@ class UserCustomFood(models.Model):
     def to_api_format(self):
         """Преобразует объект в нужный формат"""
         return {
-            "id": "ucf" + str(self.food_id),
-            "name": self.food_name,
+            "food_id": "ucf" + str(self.food_id),
+            "food_name": self.food_name,
             "serving_name": self.serving_name,
             "brand_name": self.brand_name,
             "image": None,
@@ -107,7 +107,7 @@ class UserCustomFood(models.Model):
     @classmethod
     def get_food_details(cls, user, food_id):
         try:
-            food = cls.objects.get(user=user, id=food_id)
+            food = cls.objects.get(user=user, food_id=food_id)
             return food.to_api_format()
         except cls.DoesNotExist:
             return None
