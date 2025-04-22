@@ -242,7 +242,8 @@
                         <div class="card-header d-flex justify-content-between {% if not snack_entries %} border-0 {% endif %}">
                             <h4 class="my-1 text-truncate fw-bold fc-darkgreen">Перекусы</h4>
                             <form action="{% url 'food_search' meal='snack' %}" method="GET">
-                                <button type="submit" class="btn bg-ferngreen rounded-circle d-flex align-items-center justify-content-center text-white btn-md position-relative my-1" style="width: 35px; height: 35px;">
+                                <button type="submit" class="btn bg-ferngreen rounded-circle d-flex align-items-center justify-content-center text-white btn-md position-relative my-1" 
+                                style="width: 35px; height: 35px;">
                                     <i class="fas fa-plus fs-2"></i>
                                     {% if not snack_entries %}
                                     <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">

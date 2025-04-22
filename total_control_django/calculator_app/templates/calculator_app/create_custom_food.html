@@ -1,0 +1,141 @@
+{% extends "main/base.html" %}\
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center mb-3 text-center">
+        <div class="col-sm-12">
+            <div class="card">
+                <h2 class="card-header py-4 fw-bold fc-darkgreen">Добавление собственного продукта</h2>
+
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.food_name.label }}: {{ form.food_name }}<br>
+                        {{ form.brand_name.label }}: {{ form.brand_name }}<br>
+
+                        <p class="fs-4 left">Кол-во КБЖУ продукта:</p>
+
+                        <ul class="nav nav-tabs mb-3 justify-content-center" id="nutritionTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="portion-tab" data-bs-toggle="tab" data-bs-target="#portion" 
+                                type="button" role="tab" aria-controls="portion" aria-selected="true">На порцию</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="per100g-tab" data-bs-toggle="tab" data-bs-target="#per100g" 
+                                type="button" role="tab" aria-controls="per100g" aria-selected="false">На 100 г.</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="per100ml-tab" data-bs-toggle="tab" data-bs-target="#per100ml" 
+                                type="button" role="tab" aria-controls="per100ml" aria-selected="false">На 100 мл.</button>
+                            </li>
+                        </ul>
+                    
+                        <div class="tab-content" id="nutritionTabContent">
+                            <div class="tab-pane fade show active" id="portion" role="tabpanel" aria-labelledby="portion-tab">
+                                <div class="d-flex mb-3 fs-6">
+                                    <p class="fw-bold me-2 my-auto" align="left">{{ form.serving_name.label_tag }}</p>
+                                    {{ form.serving_name }}
+                                    <p class="ms-2 my-auto"></p>
+                                </div>
+                                <div class="d-flex mb-3 fs-6">
+                                    <p class="fw-bold me-2 my-auto" align="left">{{ form.calories.label_tag }}</p>
+                                    {{ form.calories }}
+                                    <p class="ms-2 my-auto">ккал.</p>
+                                </div>
+                                <div class="d-flex mb-3 fs-6">
+                                    <p class="fw-bold me-2 my-auto" align="left">{{ form.proteins.label_tag }}</p>
+                                    {{ form.proteins }}
+                                    <p class="ms-2 my-auto">г.</p>
+                                </div>
+                                <div class="d-flex mb-3 fs-6">
+                                    <p class="fw-bold me-2 my-auto" align="left">{{ form.fats.label_tag }}</p>
+                                    {{ form.fats }}
+                                    <p class="ms-2 my-auto">г.</p>
+                                </div>
+                                <div class="d-flex mb-3 fs-6">
+                                    <p class="fw-bold me-2 my-auto" align="left">{{ form.carbs.label_tag }}</p>
+                                    {{ form.carbs }}
+                                    <p class="ms-2 my-auto">г.</p>
+                                </div>
+                            </div>
+                    
+                            <div class="tab-pane fade" id="per100g" role="tabpanel" aria-labelledby="per100g-tab">
+                                <div class="mb-3">
+                                    {{ form.calories_100g.label_tag }} {{ form.calories_100g }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.proteins_100g.label_tag }} {{ form.proteins_100g }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.fats_100g.label_tag }} {{ form.fats_100g }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.carbs_100g.label_tag }} {{ form.carbs_100g }}
+                                </div>
+                            </div>
+                    
+                            <div class="tab-pane fade" id="per100ml" role="tabpanel" aria-labelledby="per100ml-tab">
+                                <div class="mb-3">
+                                    {{ form.calories_100ml.label_tag }} {{ form.calories_100ml }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.proteins_100ml.label_tag }} {{ form.proteins_100ml }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.fats_100ml.label_tag }} {{ form.fats_100ml }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.carbs_100ml.label_tag }} {{ form.carbs_100ml }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger alert-dismissible fade show text-left" role="alert">
+                                <ul class="mb-0">
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+                    
+                        <button type="submit" class="btn bg-ferngreen text-white mt-3">Сохранить</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+                    
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const activeDiv = document.querySelector("div.show.active");
+        const activeButton = document.querySelector("button.active");
+    
+        const divClassesToTransfer = ["show", "active"];
+        const buttonClassesToTransfer = ["active"];
+    
+        if (activeDiv) {
+            activeDiv.classList.remove(...divClassesToTransfer);
+        }
+    
+        if (activeButton) {
+            activeButton.classList.remove(...buttonClassesToTransfer);
+        }
+    
+        const targetElements = document.querySelectorAll("[id*='{{ target }}']");
+    
+        targetElements.forEach(el => {
+            if (el.tagName.toLowerCase() === "div") {
+                el.classList.add(...divClassesToTransfer);
+            } else if (el.tagName.toLowerCase() === "button") {
+                el.classList.add(...buttonClassesToTransfer);
+            }
+        });
+    });
+    
+</script>
+{% endblock %}

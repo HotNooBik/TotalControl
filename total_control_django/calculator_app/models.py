@@ -32,8 +32,8 @@ class FoodEntry(models.Model):
 class UserCustomFood(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     food_id = models.AutoField(primary_key=True)
-    food_name = models.CharField(max_length=255)
-    brand_name = models.CharField(max_length=255, null=True, blank=True)
+    food_name = models.CharField(max_length=100)
+    brand_name = models.CharField(max_length=100, null=True, blank=True)
     serving_name = models.CharField(max_length=100)
 
     calories = models.FloatField()

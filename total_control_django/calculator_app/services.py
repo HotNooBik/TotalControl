@@ -1,4 +1,3 @@
-from pprint import pprint
 import requests
 from requests_oauthlib import OAuth1
 
@@ -68,8 +67,6 @@ def search_fatsecret_food(query, max_results=5, page=0, translate=False):
                         food["food_type"], dest="ru"
                     ).text
 
-            # pprint(result)
-
             context["results"] = result
             context["total_pages"] = (
                 int(data["foods"]["total_results"]) - 1
@@ -101,8 +98,6 @@ def get_food_details(food_id):
         )
         response.raise_for_status()
         data = response.json()
-
-        pprint(data)
 
         if "food" in data:
             food = data["food"]
@@ -219,7 +214,7 @@ def search_user_custom_food(user, query, max_results=5, page=0):
 
     total_pages = int(filtered_user_foods.count() / max_results)
 
-    foods_on_page = filtered_user_foods[
+    foods_on_page = filtered_user_foods.order_by("-created_at")[
         max_results * page : max_results * page + max_results
     ]
 

@@ -1,5 +1,3 @@
-from pprint import pprint
-
 import json
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -9,13 +7,15 @@ from django.db.models import Sum
 from django.db.models.functions import TruncDate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.urls import reverse
+from django.forms.models import model_to_dict
 from django.views.decorators.http import require_POST
 
 from users.models import UserProfile
 
 from .models import FoodEntry, UserCustomFood
 from .services import search_fatsecret_food, get_food_details, search_user_custom_food
-from .forms import FoodEntryForm, OwnFoodEntryForm
+from .forms import FoodEntryForm, OwnFoodEntryForm, UserCustomFoodForm
 
 
 @require_POST
@@ -101,7 +101,6 @@ def food_search(request, meal):
 
     if query:
         context = search_fatsecret_food(query, page=page, translate=False)
-        pprint(context)
         context["meal"] = meal
         return render(request, "calculator_app/food_search.html", context)
     return render(request, "calculator_app/food_search.html", {"meal": meal})
@@ -252,3 +251,27 @@ def add_own_food_entry(request):
     }
 
     return render(request, "calculator_app/add_own_food_entry.html", context)
+
+
+@login_required
+def create_custom_fodd(request):
+    meal = request.GET.get("meal", "snack")
+    if meal not in ["breakfast", "lunch", "dinner", "snack"]:
+        meal = "snack"
+
+    if request.method == "POST":
+        form = UserCustomFoodForm(request.POST)
+        if form.is_valid():
+            custom_food = form.save(commit=False)
+            custom_food.user = request.user
+            custom_food.save()
+            return redirect(reverse('own_food_search', kwargs={'meal': meal}))
+
+    else:
+        form = UserCustomFoodForm()
+
+    context = {
+            "form": form,
+            "target": form.target if hasattr(form, 'target') else "portion"
+        }
+    return render(request, "calculator_app/create_custom_food.html", context)
