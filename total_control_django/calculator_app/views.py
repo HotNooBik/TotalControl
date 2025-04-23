@@ -8,7 +8,6 @@ from django.db.models.functions import TruncDate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse
-from django.forms.models import model_to_dict
 from django.views.decorators.http import require_POST
 
 from users.models import UserProfile
@@ -121,7 +120,9 @@ def own_food_search(request, meal):
 
 @login_required
 def add_food_entry(request, food_id):
+    is_food_custom = False
     if food_id.startswith("ucf"):
+        is_food_custom = True
         try:
             custom_food_id = int(food_id[3:])
 
@@ -217,6 +218,7 @@ def add_food_entry(request, food_id):
         "proteins_percent": proteins_percent * 100,
         "fats_percent": fats_percent * 100,
         "carbs_percent": carbs_percent * 100,
+        "is_custom": is_food_custom,
     }
     return render(request, "calculator_app/add_food_entry.html", context)
 
@@ -275,3 +277,13 @@ def create_custom_fodd(request):
             "target": form.target if hasattr(form, 'target') else "portion"
         }
     return render(request, "calculator_app/create_custom_food.html", context)
+
+@login_required
+def delete_custom_food(request, food_id):
+    meal = request.GET.get("meal", "snack")
+    if meal not in ["breakfast", "lunch", "dinner", "snack"]:
+        meal = "snack"
+
+    food = get_object_or_404(UserCustomFood, food_id=food_id, user=request.user)
+    food.delete()
+    return redirect(reverse('own_food_search', kwargs={'meal': meal}))

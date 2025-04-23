@@ -50,17 +50,19 @@
                                     {% endif %}
                                 </p>
                             </div>
-                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{meal}}" class="btn btn-outline-success">Добавить</a>
+                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal }}" class="btn btn-outline-success">Добавить</a>
                         </div>
                         {% endfor %}
                     </div>
+                    {% endif %}
                     <div class="row mt-2">
                         <div class="col-12 justify-content-center">
-                            <a href="{% url 'create_custom_food'%}?meal={{meal}}" class="btn bg-body-secondary">
+                            <a href="{% url 'create_custom_food'%}?meal={{ meal }}" class="btn bg-body-secondary">
                                 <i class="fa-solid fa-search-plus"></i> Добавить продукт
                             </a>
                         </div>
                     </div>
+                    {% if results %}
                     <div class="row mt-4">
                         <div class="col d-flex justify-content-between align-self-center">
                             {% if total_pages != 0 %}

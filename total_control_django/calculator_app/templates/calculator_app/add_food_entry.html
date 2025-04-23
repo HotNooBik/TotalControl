@@ -87,11 +87,21 @@
                 </div>
 
                 <div class="card-body">
-                    <form method="post">
+                    
+                    {% if is_custom %}
+                    <div class="z-3 row justify-content-center position-relative">
+                        <div class="col-auto mt-0 position-absolute end-0">
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteFoodModal">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
 
+                    <form method="post">
                         {% csrf_token %}
-                        <div class="row justify-content-center">
-                            <div class="col-md-6">
+                        <div class="row justify-content-center position-relative mt-2">
+                            <div class="col-sm-6">
                                 <div class="mb-3">
                                     <p class="fw-bold fs-5 mb-1">Единица измерения:</p>
                                     <select class="form-select" name="unit" id="unit">
@@ -110,27 +120,50 @@
                             </div>
                         </div>
 
-
                         <div class="row justify-content-center">
-                            <div class="col-md-6">
+                            <div class="col-sm-6">
                                 <div class="mb-3">
                                     <p class="fw-bold fs-5 mb-1">Количество:</p>
                                     {{ form.amount }}
                                 </div>
-                                
                                 <button type="submit" class="btn bg-ferngreen text-white mt-3">Добавить запись</button>
                             </div>
                         </div>
                     </form>
                 </div>
-                
+                {% if not is_custom %}
                 <div class="card-footer py-2">
                     <p class="text-black-50 my-0">Услуга предоставлена FatSecret</p>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+{% if is_custom %}
+<!-- Модальное окно подтверждения удаления еды -->
+<div class="modal fade" id="deleteFoodModal" tabindex="-1" aria-labelledby="deleteFoodModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteFoodModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить этот продукт?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form method="post" action="{% url 'delete_food' food.food_id|slice:"3:" %}?meal={{ meal }}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

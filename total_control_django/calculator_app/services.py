@@ -212,7 +212,7 @@ def search_user_custom_food(user, query, max_results=5, page=0):
         user=user, food_name__icontains=query  # нечувствительный к регистру поиск
     )
 
-    total_pages = int(filtered_user_foods.count() / max_results)
+    total_pages = int((filtered_user_foods.count() - 1) / max_results)
 
     foods_on_page = filtered_user_foods.order_by("-created_at")[
         max_results * page : max_results * page + max_results
