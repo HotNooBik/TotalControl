@@ -5,7 +5,7 @@
     <div class="row justify-content-center mb-3 text-center">
         <div class="col-sm-12">
             <div class="card">
-                <h2 class="card-header py-4 fw-bold fc-darkgreen">Добавление собственного продукта</h2>
+                <h2 class="card-header py-4 fw-bold fc-darkgreen">Редактировние собственного продукта</h2>
 
                 <div class="card-body">
                     <div class="row justify-content-center">
@@ -127,8 +127,10 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                 {% endif %}
-                            
-                                <button type="submit" class="btn bg-ferngreen text-white mt-3">Сохранить</button>
+                                <div class="col d-flex justify-content-between">
+                                    <button type="submit" name="cancel" class="btn btn-danger">Отмена</button>
+                                    <button type="submit" class="btn bg-ferngreen text-white mt-3">Сохранить</button>
+                                </div>
                             </form>
                         </div>
                     </div>

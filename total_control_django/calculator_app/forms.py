@@ -129,7 +129,7 @@ class UserCustomFoodForm(forms.ModelForm):
     )
 
     calories = forms.FloatField(
-        label="Калорий на порцию",
+        label="Калорий",
         min_value=0,
         max_value=50000,
         required=False,
@@ -137,13 +137,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "calories-input",
-                "placeholder": "...",
+                "placeholder": "на порцию...",
             }
         ),
     )
 
     proteins = forms.FloatField(
-        label="Белков на порцию",
+        label="Белков",
         min_value=0,
         max_value=50000,
         required=False,
@@ -151,13 +151,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "proteins-input",
-                "placeholder": "...",
+                "placeholder": "на порцию...",
             }
         ),
     )
 
     fats = forms.FloatField(
-        label="Жиров на порцию",
+        label="Жиров",
         min_value=0,
         max_value=50000,
         required=False,
@@ -165,13 +165,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "fats-input",
-                "placeholder": "...",
+                "placeholder": "на порцию...",
             }
         ),
     )
 
     carbs = forms.FloatField(
-        label="Углеводов на порцию",
+        label="Углеводов",
         min_value=0,
         max_value=50000,
         required=False,
@@ -179,13 +179,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "carbs-input",
-                "placeholder": "...",
+                "placeholder": "на порцию...",
             }
         ),
     )
 
     calories_100g = forms.FloatField(
-        label="Калорий на 100 г.",
+        label="Калорий",
         min_value=0,
         max_value=50000,
         required=False,
@@ -193,13 +193,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "calories-100g-input",
-                "placeholder": "...",
+                "placeholder": "на 100г...",
             }
         ),
     )
 
     proteins_100g = forms.FloatField(
-        label="Белков на 100 г.",
+        label="Белков",
         min_value=0,
         max_value=50000,
         required=False,
@@ -207,13 +207,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "proteins-100g-input",
-                "placeholder": "...",
+                "placeholder": "на 100г...",
             }
         ),
     )
 
     fats_100g = forms.FloatField(
-        label="Жиров на 100 г.",
+        label="Жиров",
         min_value=0,
         max_value=50000,
         required=False,
@@ -221,13 +221,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "fats-100g-input",
-                "placeholder": "...",
+                "placeholder": "на 100г...",
             }
         ),
     )
 
     carbs_100g = forms.FloatField(
-        label="Углеводов на 100 г.",
+        label="Углеводов",
         min_value=0,
         max_value=50000,
         required=False,
@@ -235,13 +235,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "carbs-100g-input",
-                "placeholder": "...",
+                "placeholder": "на 100г...",
             }
         ),
     )
 
     calories_100ml = forms.FloatField(
-        label="Калорий на 100 мл.",
+        label="Калорий",
         min_value=0,
         max_value=50000,
         required=False,
@@ -249,13 +249,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "calories-100ml-input",
-                "placeholder": "...",
+                "placeholder": "на 100мл...",
             }
         ),
     )
 
     proteins_100ml = forms.FloatField(
-        label="Белков на 100 мл.",
+        label="Белков",
         min_value=0,
         max_value=50000,
         required=False,
@@ -263,13 +263,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "proteins-100ml-input",
-                "placeholder": "...",
+                "placeholder": "на 100мл...",
             }
         ),
     )
 
     fats_100ml = forms.FloatField(
-        label="Жиров на 100 мл.",
+        label="Жиров",
         min_value=0,
         max_value=50000,
         required=False,
@@ -277,13 +277,13 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "fats-100ml-input",
-                "placeholder": "...",
+                "placeholder": "на 100мл...",
             }
         ),
     )
 
     carbs_100ml = forms.FloatField(
-        label="Углеводов на 100 мл.",
+        label="Углеводов",
         min_value=0,
         max_value=50000,
         required=False,
@@ -291,7 +291,7 @@ class UserCustomFoodForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "id": "carbs-100ml-input",
-                "placeholder": "...",
+                "placeholder": "на 100мл...",
             }
         ),
     )

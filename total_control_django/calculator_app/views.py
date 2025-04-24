@@ -287,3 +287,30 @@ def delete_custom_food(request, food_id):
     food = get_object_or_404(UserCustomFood, food_id=food_id, user=request.user)
     food.delete()
     return redirect(reverse('own_food_search', kwargs={'meal': meal}))
+
+@login_required
+def edit_custom_food(request, food_id):
+    meal = request.GET.get("meal", "snack")
+    if meal not in ["breakfast", "lunch", "dinner", "snack"]:
+        meal = "snack"
+
+    food = get_object_or_404(UserCustomFood, user=request.user, food_id=food_id)
+
+    if request.method == "POST":
+        if "cancel" in request.POST:
+            return redirect(f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?meal={meal}")
+
+        form = UserCustomFoodForm(request.POST, instance=food)
+        if form.is_valid():
+            custom_food = form.save(commit=False)
+            custom_food.user = request.user
+            custom_food.save()
+            return redirect(f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?meal={meal}")
+    else:
+        form = UserCustomFoodForm(instance=food)
+
+    context = {
+            "form": form,
+            "target": form.target if hasattr(form, 'target') else "portion"
+        }
+    return render(request, "calculator_app/edit_custom_food.html", context)

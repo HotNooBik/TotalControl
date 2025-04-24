@@ -90,8 +90,15 @@
                     
                     {% if is_custom %}
                     <div class="z-3 row justify-content-center position-relative">
+                        <div class="col-auto mt-0 position-absolute start-0">
+                            <a href="{% url 'edit_custom_food' food.food_id|slice:"3:" %}?meal={{meal}}" 
+                            class="btn btn-outline-success btn-md" title="Редактировать еду">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                        </div>
                         <div class="col-auto mt-0 position-absolute end-0">
-                            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteFoodModal">
+                            <button type="button" class="btn btn-outline-danger btn-md" 
+                            title="Удалить еду" data-bs-toggle="modal" data-bs-target="#deleteFoodModal">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -100,7 +107,7 @@
 
                     <form method="post">
                         {% csrf_token %}
-                        <div class="row justify-content-center position-relative mt-2">
+                        <div class="row justify-content-center position-relative mt-3">
                             <div class="col-sm-6">
                                 <div class="mb-3">
                                     <p class="fw-bold fs-5 mb-1">Единица измерения:</p>
@@ -151,11 +158,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Вы уверены, что хотите удалить этот продукт?
+                Вы уверены, что хотите удалить этот продукт из своей базы личных продуктов?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <form method="post" action="{% url 'delete_food' food.food_id|slice:"3:" %}?meal={{ meal }}">
+                <form method="post" action="{% url 'delete_custom_food' food.food_id|slice:"3:" %}?meal={{ meal }}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Удалить</button>
                 </form>
@@ -167,6 +174,13 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const tooltipTriggerList = document.querySelectorAll('[title]');
+        tooltipTriggerList.forEach(el => {
+            new bootstrap.Tooltip(el, {
+                placement: 'top'
+            })
+        })
+
         document.getElementById('amount-input').addEventListener('input', function(event) {
             let amount =  parseFloat(event.target.value);
 
