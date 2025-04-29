@@ -16,6 +16,8 @@ from .utils.nutrition_calculator import (
 
 
 class UserRegisterForm(UserCreationForm):
+    """Форма для регистрации пользователя"""
+
     error_messages = {
         "password_mismatch": "Пароли не совпадают!",
     }
@@ -189,6 +191,8 @@ class UserRegisterForm(UserCreationForm):
 
 
 class UserLoginForm(AuthenticationForm):
+    """Форма для авторизации пользователя"""
+
     error_messages = {
         "invalid_login": "Неправильный логин или пароль. Проверьте данные и попробуйте снова.",
         "inactive": "Этот аккаунт неактивен.",
@@ -198,9 +202,7 @@ class UserLoginForm(AuthenticationForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    """
-    Форма для редактирования данных в профиле
-    """
+    """Форма для редактирования данных в профиле"""
 
     birth_date = forms.DateField(
         label="Дата рождения",

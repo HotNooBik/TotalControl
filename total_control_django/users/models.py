@@ -3,21 +3,33 @@ from django.db import models
 
 
 class UserProfile(models.Model):
-    """
-    Таблица пользователя со следующими полями:
+    """Модель профиля пользователя с фитнес-метриками и целями.
 
-    - user - индивидуальный айди пользователя, связанный с айда пользователей сайта (User)
-    - birth_date - дата рождения
-    - sex - пол (мужской, женский)
-    - height - рост в сантиметрах
-    - weight - вес в килограммах
-    - goal - цель (похудеть, набор массы, поддержание формы, сушка)
-    - activity_coef - коэффициент активности
-    - daily_calories - дневная норма калорий
-    - daily_water - дневная норма воды
-    - daily_proteins - дневная норма белков
-    - daily_fats - дневная норма жиров
-    - daily_carbs - дневная норма углеводов
+    Содержит персональные данные пользователя, его физические параметры,
+    цели и рассчитанные дневные нормы питательных веществ.
+
+    Attributes:
+        user (OneToOneField): Связь с моделью User (один к одному).
+        birth_date (DateField): Дата рождения пользователя.
+        sex (CharField): Пол пользователя. Варианты:
+            - 'man' (Мужской)
+            - 'woman' (Женский)
+        height (FloatField): Рост пользователя в сантиметрах.
+        weight (FloatField): Вес пользователя в килограммах.
+        goal (CharField): Фитнес-цель пользователя. Варианты:
+            - 'lose_weight' (Похудение)
+            - 'gain_muscle' (Набор массы)
+            - 'maintain' (Поддержание формы)
+            - 'cutting' (Сушка)
+        activity_coef (FloatField): Коэффициент физической активности.
+        daily_calories (IntegerField): Дневная норма калорий (ккал).
+        daily_water (IntegerField): Дневная норма воды (мл).
+        daily_proteins (FloatField): Дневная норма белков (г).
+        daily_fats (FloatField): Дневная норма жиров (г).
+        daily_carbs (FloatField): Дневная норма углеводов (г).
+
+    Methods:
+        __str__: Возвращает строковое представление в формате "Профиль пользователя {username}".
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -49,6 +61,26 @@ class UserProfile(models.Model):
 
 
 class UserDailyRecord(models.Model):
+    """Модель дневной записи пользователя о питании и весе.
+
+    Содержит данные о ежедневном потреблении калорий, макронутриентов,
+    воды и весе пользователя.
+
+    Attributes:
+        user (ForeignKey): Связь с моделью User.
+        date (DateField): Дата записи (автоматически устанавливается при создании).
+        weight (FloatField): Вес пользователя в этот день (необязательное).
+        calories (IntegerField): Потребленные калории (ккал).
+        proteins (FloatField): Потребленные белки (г).
+        fats (FloatField): Потребленные жиры (г).
+        carbs (FloatField): Потребленные углеводы (г).
+        water (IntegerField): Потребленная вода (мл).
+
+    Meta:
+        unique_together: Обеспечивает уникальность комбинации user и date
+                         (только одна запись на пользователя в день).
+    """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
 

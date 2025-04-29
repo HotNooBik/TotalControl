@@ -91,14 +91,14 @@ def calculator(request):
 
 
 @login_required
-def delete_entry(request, entry_id):
+def delete_entry(request, entry_id: int):
     entry = get_object_or_404(FoodEntry, id=entry_id, user=request.user)
     entry.delete()
     return redirect("calculator")
 
 
 @login_required
-def food_search(request, meal):
+def food_search(request, meal: str):
     query = request.GET.get("query", "")
     try:
         page = int(request.GET.get("page", 0))
@@ -119,7 +119,7 @@ def food_search(request, meal):
 
 
 @login_required
-def own_food_search(request, meal):
+def own_food_search(request, meal: str):
     query = request.GET.get("query", "")
     try:
         page = int(request.GET.get("page", 0))
@@ -132,7 +132,7 @@ def own_food_search(request, meal):
 
 
 @login_required
-def add_food_entry(request, food_id):
+def add_food_entry(request, food_id: str):
     is_food_custom = False
 
     if food_id.startswith("ucf"):
@@ -307,7 +307,7 @@ def create_custom_fodd(request):
 
 
 @login_required
-def delete_custom_food(request, food_id):
+def delete_custom_food(request, food_id: int):
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
@@ -318,7 +318,7 @@ def delete_custom_food(request, food_id):
 
 
 @login_required
-def edit_custom_food(request, food_id):
+def edit_custom_food(request, food_id: int):
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
@@ -350,7 +350,7 @@ def edit_custom_food(request, food_id):
 
 
 @login_required
-def add_food_to_favorites(request, food_id):
+def add_food_to_favorites(request, food_id: str):
 
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
@@ -394,7 +394,7 @@ def add_food_to_favorites(request, food_id):
 
 
 @login_required
-def remove_food_from_favorites(request, food_id):
+def remove_food_from_favorites(request, food_id: str):
 
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:

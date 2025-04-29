@@ -20,7 +20,9 @@ def get_fatsecret_client():
     )
 
 
-def search_fatsecret_food(query, max_results=5, page=0, translate=False):
+def search_fatsecret_food(
+    query, max_results: int = 5, page: int = 0, translate: bool = False
+) -> dict:
 
     try:
         translated_query = TRANSLATOR.translate(query, dest="en").text
@@ -84,7 +86,7 @@ def search_fatsecret_food(query, max_results=5, page=0, translate=False):
     return context
 
 
-def get_food_details(food_id):
+def get_food_details(food_id: str | int) -> dict | None:
 
     url = "https://platform.fatsecret.com/rest/server.api"
     params = {
@@ -209,7 +211,9 @@ def extract_nutrition_data(servings: list) -> dict:
     return result
 
 
-def search_user_custom_food(user, query, max_results=5, page=0):
+def search_user_custom_food(
+    user, query: str, max_results: int = 5, page: int = 0
+) -> dict:
 
     filtered_user_foods = UserCustomFood.objects.filter(
         user=user, food_name__icontains=query  # нечувствительный к регистру поиск

@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
-from django.contrib import messages
 
 from .forms import UserRegisterForm, UserLoginForm, UserProfileForm
 from .models import UserProfile
@@ -18,7 +17,6 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Вы успешно зарегистрировались!")
             return redirect("main")
     else:
         form = UserRegisterForm()
@@ -31,7 +29,6 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, "Вы вошли в систему!")
             return redirect("main")
     else:
         form = UserLoginForm()
@@ -40,7 +37,6 @@ def user_login(request):
 
 def user_logout(request):
     logout(request)
-    messages.info(request, "Вы вышли из системы.")
     return redirect("main")
 
 
@@ -56,7 +52,6 @@ def edit_profile(request):
 
     if request.method == "POST":
         if "cancel" in request.POST:
-            messages.info(request, "Изменения отменены.")
             return redirect("profile")
 
         form = UserProfileForm(request.POST, instance=user_profile)
@@ -89,7 +84,6 @@ def edit_profile(request):
             updated_profile.daily_water = daily_water
 
             updated_profile.save()
-            messages.success(request, "Данные профиля успешно обновлены!")
             return redirect("profile")
     else:
         form = UserProfileForm(instance=user_profile)
