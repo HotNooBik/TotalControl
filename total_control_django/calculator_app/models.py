@@ -201,13 +201,11 @@ class UserFavoriteCustomFood(models.Model):
         user (ForeignKey): Связь с пользователем
         custom_food (ForeignKey): Связь с пользовательским продуктом
         created_at (DateTimeField): Дата добавления в избранное (автоматически)
-        updated_at (DateTimeField): Дата обновления записи (автоматически)
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     custom_food = models.ForeignKey(UserCustomFood, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
 
 class UserFavoriteApiFood(models.Model):
@@ -220,7 +218,6 @@ class UserFavoriteApiFood(models.Model):
         brand_name (CharField): Бренд продукта (необязательно)
         food_description (CharField): Описание продукта (макс. 255 символов)
         created_at (DateTimeField): Дата добавления в избранное (автоматически)
-        updated_at (DateTimeField): Дата обновления записи (автоматически)
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -229,4 +226,3 @@ class UserFavoriteApiFood(models.Model):
     brand_name = models.CharField(max_length=100, null=True, blank=True)
     food_description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
