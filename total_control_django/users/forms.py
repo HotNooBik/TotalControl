@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 
 
 from .models import UserProfile
-from .utils.nutrition import (
+from .utils.nutrition_calculator import (
     get_users_calorie_norm,
     get_users_pfc_norm,
     get_users_water_norm,

@@ -46,3 +46,19 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"Профиль пользователя {self.user.username}"
+
+
+class UserDailyRecord(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+
+    weight = models.FloatField(null=True, blank=True)
+
+    calories = models.IntegerField(default=0)
+    proteins = models.FloatField(default=0)
+    fats = models.FloatField(default=0)
+    carbs = models.FloatField(default=0)
+    water = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = [["user", "date"]]  # одна запись в день

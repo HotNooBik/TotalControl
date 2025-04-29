@@ -1,3 +1,4 @@
+from pprint import pprint
 import json
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -9,10 +10,16 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django.core.exceptions import ObjectDoesNotExist
 
 from users.models import UserProfile
 
-from .models import FoodEntry, UserCustomFood
+from .models import (
+    FoodEntry,
+    UserCustomFood,
+    UserFavoriteCustomFood,
+    UserFavoriteApiFood,
+)
 from .services import search_fatsecret_food, get_food_details, search_user_custom_food
 from .forms import FoodEntryForm, OwnFoodEntryForm, UserCustomFoodForm
 
@@ -98,11 +105,17 @@ def food_search(request, meal):
     except ValueError:
         page = 0
 
+    favorites = None
+
     if query:
         context = search_fatsecret_food(query, page=page, translate=False)
         context["meal"] = meal
+        pprint(context)
         return render(request, "calculator_app/food_search.html", context)
-    return render(request, "calculator_app/food_search.html", {"meal": meal})
+
+    context = {"meal": meal, "favorites": favorites}
+    pprint(context)
+    return render(request, "calculator_app/food_search.html", context)
 
 
 @login_required
@@ -121,6 +134,7 @@ def own_food_search(request, meal):
 @login_required
 def add_food_entry(request, food_id):
     is_food_custom = False
+
     if food_id.startswith("ucf"):
         is_food_custom = True
         try:
@@ -140,6 +154,19 @@ def add_food_entry(request, food_id):
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
+
+    try:
+        if food_id.startswith("ucf"):
+            custom_food_id = int(food_id[3:])
+            UserFavoriteCustomFood.objects.get(
+                user=request.user, custom_food_id=custom_food_id
+            )
+        else:
+            food_id = int(food_id)
+            UserFavoriteApiFood.objects.get(user=request.user, food_id=food_id)
+        is_favorite = True
+    except (ValueError, ObjectDoesNotExist):
+        is_favorite = False
 
     available_units = [("portion", "Порции")]
     if food_details.get("per_100g"):
@@ -219,6 +246,7 @@ def add_food_entry(request, food_id):
         "fats_percent": fats_percent * 100,
         "carbs_percent": carbs_percent * 100,
         "is_custom": is_food_custom,
+        "is_favorite": is_favorite,
     }
     return render(request, "calculator_app/add_food_entry.html", context)
 
@@ -251,7 +279,6 @@ def add_own_food_entry(request):
         "form": form,
         "meal": meal,
     }
-
     return render(request, "calculator_app/add_own_food_entry.html", context)
 
 
@@ -267,16 +294,17 @@ def create_custom_fodd(request):
             custom_food = form.save(commit=False)
             custom_food.user = request.user
             custom_food.save()
-            return redirect(reverse('own_food_search', kwargs={'meal': meal}))
+            return redirect(reverse("own_food_search", kwargs={"meal": meal}))
 
     else:
         form = UserCustomFoodForm()
 
     context = {
-            "form": form,
-            "target": form.target if hasattr(form, 'target') else "portion"
-        }
+        "form": form,
+        "target": form.target if hasattr(form, "target") else "portion",
+    }
     return render(request, "calculator_app/create_custom_food.html", context)
+
 
 @login_required
 def delete_custom_food(request, food_id):
@@ -286,7 +314,8 @@ def delete_custom_food(request, food_id):
 
     food = get_object_or_404(UserCustomFood, food_id=food_id, user=request.user)
     food.delete()
-    return redirect(reverse('own_food_search', kwargs={'meal': meal}))
+    return redirect(reverse("own_food_search", kwargs={"meal": meal}))
+
 
 @login_required
 def edit_custom_food(request, food_id):
@@ -298,19 +327,97 @@ def edit_custom_food(request, food_id):
 
     if request.method == "POST":
         if "cancel" in request.POST:
-            return redirect(f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?meal={meal}")
+            return redirect(
+                f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?meal={meal}"
+            )
 
         form = UserCustomFoodForm(request.POST, instance=food)
         if form.is_valid():
             custom_food = form.save(commit=False)
             custom_food.user = request.user
             custom_food.save()
-            return redirect(f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?meal={meal}")
+            return redirect(
+                f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?meal={meal}"
+            )
     else:
         form = UserCustomFoodForm(instance=food)
 
     context = {
-            "form": form,
-            "target": form.target if hasattr(form, 'target') else "portion"
-        }
+        "form": form,
+        "target": form.target if hasattr(form, "target") else "portion",
+    }
     return render(request, "calculator_app/edit_custom_food.html", context)
+
+
+@login_required
+def add_food_to_favorites(request, food_id):
+
+    meal = request.GET.get("meal", "snack")
+    if meal not in ["breakfast", "lunch", "dinner", "snack"]:
+        meal = "snack"
+
+    if food_id.startswith("ucf"):
+        try:
+            custom_food_id = int(food_id.replace("ucf", ""))
+            custom_food = get_object_or_404(
+                UserCustomFood, food_id=custom_food_id, user=request.user
+            )
+            UserFavoriteCustomFood.objects.get_or_create(
+                user=request.user, custom_food=custom_food
+            )
+        except (ValueError, UserCustomFood.DoesNotExist):
+            pass
+    else:
+        try:
+            food_data = get_food_details(food_id)
+            food_description = (
+                f"На {food_data["serving_name"]} - "
+                f"Калорий: {food_data["per_portion"]["calories"]} ккал. | "
+                f"Жиров: {food_data["per_portion"]["fats"]} г. | "
+                f"Углеводов: {food_data["per_portion"]["carbs"]} г. | "
+                f"Белков: {food_data["per_portion"]["proteins"]} г."
+            )
+            if food_data:
+                UserFavoriteApiFood.objects.get_or_create(
+                    user=request.user,
+                    food_id=int(food_id),
+                    food_name=food_data["food_name"],
+                    brand_name=food_data["brand_name"],
+                    food_description=food_description,
+                )
+        except (ValueError, TypeError):
+            pass
+
+    return redirect(
+        f"{reverse('add_food_entry', kwargs={'food_id': food_id})}?meal={meal}"
+    )
+
+
+@login_required
+def remove_food_from_favorites(request, food_id):
+
+    meal = request.GET.get("meal", "snack")
+    if meal not in ["breakfast", "lunch", "dinner", "snack"]:
+        meal = "snack"
+
+    if food_id.startswith("ucf"):
+        try:
+            custom_food_id = int(food_id.replace("ucf", ""))
+            favorite = get_object_or_404(
+                UserFavoriteCustomFood, user=request.user, custom_food_id=custom_food_id
+            )
+            favorite.delete()
+        except (ValueError, UserFavoriteCustomFood.DoesNotExist):
+            pass
+    else:
+        try:
+            favorite = get_object_or_404(
+                UserFavoriteApiFood, user=request.user, food_id=int(food_id)
+            )
+            favorite.delete()
+        except (ValueError, UserFavoriteApiFood.DoesNotExist):
+            pass
+
+    return redirect(
+        f"{reverse('add_food_entry', kwargs={'food_id': food_id})}?meal={meal}"
+    )

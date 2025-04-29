@@ -36,17 +36,17 @@ class UserCustomFood(models.Model):
     brand_name = models.CharField(max_length=100, null=True, blank=True)
     serving_name = models.CharField(max_length=100)
 
-    calories = models.FloatField()
+    calories = models.IntegerField()
     proteins = models.FloatField()
     fats = models.FloatField()
     carbs = models.FloatField()
 
-    calories_100g = models.FloatField(null=True, blank=True)
+    calories_100g = models.IntegerField(null=True, blank=True)
     proteins_100g = models.FloatField(null=True, blank=True)
     fats_100g = models.FloatField(null=True, blank=True)
     carbs_100g = models.FloatField(null=True, blank=True)
 
-    calories_100ml = models.FloatField(null=True, blank=True)
+    calories_100ml = models.IntegerField(null=True, blank=True)
     proteins_100ml = models.FloatField(null=True, blank=True)
     fats_100ml = models.FloatField(null=True, blank=True)
     carbs_100ml = models.FloatField(null=True, blank=True)
@@ -111,3 +111,20 @@ class UserCustomFood(models.Model):
             return food.to_api_format()
         except cls.DoesNotExist:
             return None
+
+
+class UserFavoriteCustomFood(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    custom_food = models.ForeignKey(UserCustomFood, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class UserFavoriteApiFood(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    food_id = models.IntegerField()
+    food_name = models.CharField(max_length=100)
+    brand_name = models.CharField(max_length=100, null=True, blank=True)
+    food_description = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

@@ -1,8 +1,10 @@
+from pprint import pprint
 import requests
+
 from requests_oauthlib import OAuth1
+from googletrans import Translator
 
 from django.conf import settings
-from googletrans import Translator
 
 from .models import UserCustomFood
 
@@ -72,6 +74,7 @@ def search_fatsecret_food(query, max_results=5, page=0, translate=False):
                 int(data["foods"]["total_results"]) - 1
             ) // max_results
 
+            pprint(context)
             return context
 
     except requests.exceptions.RequestException as e:
@@ -259,3 +262,7 @@ def search_user_custom_food(user, query, max_results=5, page=0):
     }
 
     return context
+
+
+def search_user_favorite_food(user, max_results=5, page=0):
+    pass

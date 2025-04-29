@@ -12,4 +12,6 @@ urlpatterns = [
     path("create-food", views.create_custom_fodd, name="create_custom_food"),
     path("delete-food/<int:food_id>/", views.delete_custom_food, name="delete_custom_food"),
     path("edit-food/<int:food_id>/", views.edit_custom_food, name="edit_custom_food"),
+    path("add-favorite/<str:food_id>/", views.add_food_to_favorites, name="add_food_to_favorites"),
+    path("remove-favorite/<str:food_id>/", views.remove_food_from_favorites, name="remove_food_from_favorites"),
 ]

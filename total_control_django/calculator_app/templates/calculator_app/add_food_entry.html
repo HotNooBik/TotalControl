@@ -5,6 +5,20 @@
     <div class="row justify-content-center mb-3 text-center">
         <div class="col-sm-12">
             <div class="card">
+
+                <div class="z-3 row justify-content-center position-relative">
+                    <div class="col-auto mt-0 position-absolute start-0">
+                        {% if is_favorite%}
+                        <a href="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}" class="btn star-btn" title="Добавить в избранное">
+                            <i class="fs-2 fc-star fas fa-star"></i>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'add_food_to_favorites' food.food_id %}?meal={{meal}}" class="btn star-btn" title="Убрать из избранного">
+                            <i class="fs-2 fc-star far fa-star"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
                 <h2 class="card-header py-4 fw-bold fc-darkgreen">Добавление записи в
                     {% if meal == 'breakfast' %}
                     "Завтрак"
