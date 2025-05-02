@@ -9,13 +9,31 @@
                 <div class="z-3 row justify-content-center position-relative">
                     <div class="col-auto mt-0 position-absolute start-0">
                         {% if is_favorite%}
-                        <a href="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}" class="btn star-btn" title="Добавить в избранное">
+                        <form action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="food_name" value="{{ food.food_name }}">
+                            <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
+                            <input type="hidden" name="food_description" value="{{ food.food_description }}">
+                            <button class="btn star-btn" title="Убрать из избранного" type="submit">
+                                <i class="fs-2 fc-star fas fa-star"></i>
+                            </button>
+                        </form>
+                        {% comment %} <a href="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}" class="btn star-btn" title="Убрать из избранного">
                             <i class="fs-2 fc-star fas fa-star"></i>
-                        </a>
+                        </a> {% endcomment %}
                         {% else %}
-                        <a href="{% url 'add_food_to_favorites' food.food_id %}?meal={{meal}}" class="btn star-btn" title="Убрать из избранного">
+                        <form action="{% url 'add_food_to_favorites' food.food_id %}?meal={{meal}}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="food_name" value="{{ food.food_name }}">
+                            <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
+                            <input type="hidden" name="food_description" value="{{ food.food_description }}">
+                            <button class="btn star-btn" title="Добавить в избранное" type="submit">
+                                <i class="fs-2 fc-star far fa-star"></i>
+                            </button>
+                        </form>
+                        {% comment %} <a href="{% url 'add_food_to_favorites' food.food_id %}?meal={{meal}}" class="btn star-btn" title="Добавить в избранное">
                             <i class="fs-2 fc-star far fa-star"></i>
-                        </a>
+                        </a> {% endcomment %}
                         {% endif %}
                     </div>
                 </div>

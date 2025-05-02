@@ -130,6 +130,11 @@ def get_food_details(food_id: str | int) -> dict | None:
                 "serving_name": serving_description,
                 "brand_name": brand_name,
                 "image": image,
+                "food_description": f'На "{serving_description}" - '
+                                    f'Калорий: {result.get("per_portion", {}).get("calories", 0)} ккал. | '
+                                    f'Жиров: {result.get("per_portion", {}).get("fats", 0)} г. | '
+                                    f'Углеводов: {result.get("per_portion", {}).get("carbs", 0)} г. | '
+                                    f'Белков: {result.get("per_portion", {}).get("proteins", 0)} г.',
             }
 
             context = context | result

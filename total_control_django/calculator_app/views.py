@@ -139,7 +139,6 @@ def add_food_entry(request, food_id: str):
         is_food_custom = True
         try:
             custom_food_id = int(food_id[3:])
-
             food_details = UserCustomFood.get_food_details(
                 user=request.user, food_id=custom_food_id
             )
@@ -157,7 +156,6 @@ def add_food_entry(request, food_id: str):
 
     try:
         if food_id.startswith("ucf"):
-            custom_food_id = int(food_id[3:])
             UserFavoriteCustomFood.objects.get(
                 user=request.user, custom_food_id=custom_food_id
             )
@@ -350,41 +348,60 @@ def edit_custom_food(request, food_id: int):
 
 
 @login_required
+@require_POST
 def add_food_to_favorites(request, food_id: str):
 
     meal = request.GET.get("meal", "snack")
+    print(meal, type(meal))
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
+
+    brand_name = request.POST.get("brand_name", "").strip()
+    if brand_name == "None":
+        brand_name = None
+
+    food_name = request.POST.get("food_name").strip()
+
+    food_description = request.POST.get("food_description").strip()
 
     if food_id.startswith("ucf"):
         try:
             custom_food_id = int(food_id.replace("ucf", ""))
-            custom_food = get_object_or_404(
-                UserCustomFood, food_id=custom_food_id, user=request.user
+            custom_food = UserCustomFood.objects.get(
+                food_id=custom_food_id, user=request.user
             )
+
+            if not food_name:
+                food_name = custom_food.to_api_format()["food_name"]
+
+            if not food_description:
+                food_description = custom_food.to_api_format()["food_description"]
+
             UserFavoriteCustomFood.objects.get_or_create(
-                user=request.user, custom_food=custom_food
+                user=request.user,
+                custom_food=custom_food,
+                food_name=food_name,
+                brand_name=brand_name,
+                food_description=food_description,
             )
         except (ValueError, UserCustomFood.DoesNotExist):
             pass
     else:
         try:
-            food_data = get_food_details(food_id)
-            food_description = (
-                f"На {food_data["serving_name"]} - "
-                f"Калорий: {food_data["per_portion"]["calories"]} ккал. | "
-                f"Жиров: {food_data["per_portion"]["fats"]} г. | "
-                f"Углеводов: {food_data["per_portion"]["carbs"]} г. | "
-                f"Белков: {food_data["per_portion"]["proteins"]} г."
+            if not food_name or not food_description:
+                food_data = get_food_details(food_id)
+
+                if food_data:
+                    food_name = food_data["food_name"]
+                    food_description = food_data["food_description"]
+
+            UserFavoriteApiFood.objects.get_or_create(
+                user=request.user,
+                food_id=int(food_id),
+                food_name=food_name,
+                brand_name=brand_name,
+                food_description=food_description,
             )
-            if food_data:
-                UserFavoriteApiFood.objects.get_or_create(
-                    user=request.user,
-                    food_id=int(food_id),
-                    food_name=food_data["food_name"],
-                    brand_name=food_data["brand_name"],
-                    food_description=food_description,
-                )
         except (ValueError, TypeError):
             pass
 
@@ -394,6 +411,7 @@ def add_food_to_favorites(request, food_id: str):
 
 
 @login_required
+@require_POST
 def remove_food_from_favorites(request, food_id: str):
 
     meal = request.GET.get("meal", "snack")
@@ -403,16 +421,16 @@ def remove_food_from_favorites(request, food_id: str):
     if food_id.startswith("ucf"):
         try:
             custom_food_id = int(food_id.replace("ucf", ""))
-            favorite = get_object_or_404(
-                UserFavoriteCustomFood, user=request.user, custom_food_id=custom_food_id
+            favorite = UserFavoriteCustomFood.objects.get(
+                user=request.user, custom_food_id=custom_food_id
             )
             favorite.delete()
         except (ValueError, UserFavoriteCustomFood.DoesNotExist):
             pass
     else:
         try:
-            favorite = get_object_or_404(
-                UserFavoriteApiFood, user=request.user, food_id=int(food_id)
+            favorite = UserFavoriteApiFood.objects.get(
+                user=request.user, food_id=int(food_id)
             )
             favorite.delete()
         except (ValueError, UserFavoriteApiFood.DoesNotExist):

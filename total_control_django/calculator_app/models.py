@@ -12,12 +12,12 @@ class FoodEntry(models.Model):
 
     Attributes:
         user (ForeignKey): Связь с пользователем
-        food_name (CharField): Название продукта/блюда (макс. 255 символов)
+        food_name (CharField): Название продукта/блюда
         calories (IntegerField): Калорийность порции (ккал)
         proteins (FloatField): Содержание белков (г)
         fats (FloatField): Содержание жиров (г)
         carbs (FloatField): Содержание углеводов (г)
-        amount (CharField): Количество/объем потребления (макс. 255 символов)
+        amount (CharField): Количество/объем потребления
         meal (CharField): Прием пищи. Варианты:
             - breakfast (Завтрак)
             - lunch (Обед)
@@ -30,12 +30,12 @@ class FoodEntry(models.Model):
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    food_name = models.CharField(max_length=255)
+    food_name = models.CharField(max_length=100)
     calories = models.IntegerField(null=True)
     proteins = models.FloatField(null=True)
     fats = models.FloatField(null=True)
     carbs = models.FloatField(null=True)
-    amount = models.CharField(max_length=255)
+    amount = models.CharField(max_length=100)
     meal = models.CharField(
         max_length=9,
         choices=[
@@ -61,9 +61,9 @@ class UserCustomFood(models.Model):
     Attributes:
         user (ForeignKey): Связь с пользователем
         food_id (AutoField): Уникальный ID продукта (автоинкремент)
-        food_name (CharField): Название продукта (макс. 100 символов)
+        food_name (CharField): Название продукта
         brand_name (CharField): Бренд/производитель (необязательно)
-        serving_name (CharField): Название порции (макс. 100 символов)
+        serving_name (CharField): Название порции
 
         Параметры на порцию (обязательно):
             calories (IntegerField): Калории
@@ -95,7 +95,7 @@ class UserCustomFood(models.Model):
     food_id = models.AutoField(primary_key=True)
     food_name = models.CharField(max_length=100)
     brand_name = models.CharField(max_length=100, null=True, blank=True)
-    serving_name = models.CharField(max_length=100)
+    serving_name = models.CharField(max_length=50)
 
     calories = models.IntegerField()
     proteins = models.FloatField()
@@ -173,6 +173,11 @@ class UserCustomFood(models.Model):
                 )
                 else None
             ),
+            "food_description": f'На "{self.serving_name }" - '
+                                f"Калорий: {self.calories} ккал. | "
+                                f"Жиров: {self.fats} г. | "
+                                f"Углеводов: {self.carbs} г. | "
+                                f"Белков: {self.proteins} г.",
         }
 
     @classmethod
@@ -200,11 +205,17 @@ class UserFavoriteCustomFood(models.Model):
     Attributes:
         user (ForeignKey): Связь с пользователем
         custom_food (ForeignKey): Связь с пользовательским продуктом
+        food_name (CharField): Название продукта
+        brand_name (CharField): Бренд продукта
+        food_description (CharField): Описание продукта
         created_at (DateTimeField): Дата добавления в избранное (автоматически)
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     custom_food = models.ForeignKey(UserCustomFood, on_delete=models.CASCADE)
+    food_name = models.CharField(max_length=100)
+    brand_name = models.CharField(max_length=100, null=True, blank=True)
+    food_description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -214,9 +225,9 @@ class UserFavoriteApiFood(models.Model):
     Attributes:
         user (ForeignKey): Связь с пользователем
         food_id (IntegerField): ID продукта в внешней системе
-        food_name (CharField): Название продукта (макс. 100 символов)
-        brand_name (CharField): Бренд продукта (необязательно)
-        food_description (CharField): Описание продукта (макс. 255 символов)
+        food_name (CharField): Название продукта
+        brand_name (CharField): Бренд продукта
+        food_description (CharField): Описание продукта
         created_at (DateTimeField): Дата добавления в избранное (автоматически)
     """
 

@@ -117,7 +117,7 @@ class UserCustomFoodForm(forms.ModelForm):
 
     serving_name = forms.CharField(
         label="Название порции",
-        max_length=100,
+        max_length=50,
         required=False,
         widget=forms.TextInput(
             attrs={
