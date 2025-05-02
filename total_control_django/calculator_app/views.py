@@ -1,5 +1,6 @@
 from pprint import pprint
 import json
+from urllib.parse import urlencode
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -163,6 +164,8 @@ def favorite_food_search(request, meal: str):
 def add_food_entry(request, food_id: str):
     is_food_custom = False
 
+    next_url = request.GET.get("next", "calculator")
+
     if food_id.startswith("ucf"):
         is_food_custom = True
         try:
@@ -176,7 +179,7 @@ def add_food_entry(request, food_id: str):
         food_details = get_food_details(food_id)
 
     if not food_details:
-        return redirect("calculator")
+        return redirect(next_url)
 
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
@@ -273,6 +276,7 @@ def add_food_entry(request, food_id: str):
         "carbs_percent": carbs_percent * 100,
         "is_custom": is_food_custom,
         "is_favorite": is_favorite,
+        "next_url": next_url,
     }
     return render(request, "calculator_app/add_food_entry.html", context)
 
@@ -349,12 +353,16 @@ def edit_custom_food(request, food_id: int):
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
 
+    next_url = request.GET.get("next", "calculator")
+
+    params = urlencode({"meal": meal, "next": next_url})
+
     food = get_object_or_404(UserCustomFood, user=request.user, food_id=food_id)
 
     if request.method == "POST":
         if "cancel" in request.POST:
             return redirect(
-                f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?meal={meal}"
+                f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?{params}"
             )
 
         form = UserCustomFoodForm(request.POST, instance=food)
@@ -363,7 +371,7 @@ def edit_custom_food(request, food_id: int):
             custom_food.user = request.user
             custom_food.save()
             return redirect(
-                f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?meal={meal}"
+                f"{reverse('add_food_entry', kwargs={'food_id': "ucf" + str(food_id)})}?{params}"
             )
     else:
         form = UserCustomFoodForm(instance=food)
@@ -382,6 +390,10 @@ def add_food_to_favorites(request, food_id: str):
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
+
+    next_url = request.GET.get("next", "calculator")
+
+    params = urlencode({"meal": meal, "next": next_url})
 
     brand_name = request.POST.get("brand_name", "").strip()
     if brand_name == "None":
@@ -433,7 +445,7 @@ def add_food_to_favorites(request, food_id: str):
             pass
 
     return redirect(
-        f"{reverse('add_food_entry', kwargs={'food_id': food_id})}?meal={meal}"
+        f"{reverse('add_food_entry', kwargs={'food_id': food_id})}?{params}"
     )
 
 
@@ -446,6 +458,10 @@ def remove_food_from_favorites(request, food_id: str):
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
+
+    next_url = request.GET.get("next", "calculator")
+
+    params = urlencode({"meal": meal, "next": next_url})
 
     if food_id.startswith("ucf"):
         try:
@@ -469,5 +485,5 @@ def remove_food_from_favorites(request, food_id: str):
         return redirect(referer)
 
     return redirect(
-        f"{reverse('add_food_entry', kwargs={'food_id': food_id})}?meal={meal}"
+        f"{reverse('add_food_entry', kwargs={'food_id': food_id})}?{params}"
     )

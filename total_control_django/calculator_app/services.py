@@ -76,7 +76,7 @@ def search_fatsecret_food(
                 int(data["foods"]["total_results"]) - 1
             ) // max_results
 
-            pprint(context)
+            # pprint(context)
             return context
 
     except requests.exceptions.RequestException as e:

@@ -257,6 +257,13 @@ form select {
     padding-left: 18px;
 }
 
+/* Кнопка закрыть */
+.close-btn {
+    margin-top: 20px;
+    padding-right: 22px;
+}
+
+
 /* Элементы для поисковика */
 .search-img {
     font-size: 800%;

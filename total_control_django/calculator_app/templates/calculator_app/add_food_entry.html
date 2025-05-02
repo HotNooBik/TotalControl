@@ -9,7 +9,7 @@
                 <div class="z-3 row justify-content-center position-relative">
                     <div class="col-auto mt-0 position-absolute start-0">
                         {% if is_favorite%}
-                        <form action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}" method="post">
+                        <form action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}&next={{next_url|urlencode}}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="food_name" value="{{ food.food_name }}">
                             <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
@@ -18,11 +18,8 @@
                                 <i class="fs-2 fc-star fas fa-star"></i>
                             </button>
                         </form>
-                        {% comment %} <a href="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}" class="btn star-btn" title="Убрать из избранного">
-                            <i class="fs-2 fc-star fas fa-star"></i>
-                        </a> {% endcomment %}
                         {% else %}
-                        <form action="{% url 'add_food_to_favorites' food.food_id %}?meal={{meal}}" method="post">
+                        <form action="{% url 'add_food_to_favorites' food.food_id %}?meal={{meal}}&next={{next_url|urlencode}}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="food_name" value="{{ food.food_name }}">
                             <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
@@ -31,10 +28,14 @@
                                 <i class="fs-2 fc-star far fa-star"></i>
                             </button>
                         </form>
-                        {% comment %} <a href="{% url 'add_food_to_favorites' food.food_id %}?meal={{meal}}" class="btn star-btn" title="Добавить в избранное">
-                            <i class="fs-2 fc-star far fa-star"></i>
-                        </a> {% endcomment %}
                         {% endif %}
+                    </div>
+                    <div class="col-auto mt-0 position-absolute end-0">
+                        <div class="close-btn mt-4">
+                            <a href="{{ next_url }}">
+                                <i class="fa-solid fa-xmark fc-ferngreen fs-1 " title="Вернуться назад"></i>
+                            </a> 
+                        </div>
                     </div>
                 </div>
                 <h2 class="card-header py-4 fw-bold fc-darkgreen">Добавление записи в
@@ -123,7 +124,7 @@
                     {% if is_custom %}
                     <div class="z-3 row justify-content-center position-relative">
                         <div class="col-auto mt-0 position-absolute start-0">
-                            <a href="{% url 'edit_custom_food' food.food_id|slice:"3:" %}?meal={{meal}}" 
+                            <a href="{% url 'edit_custom_food' food.food_id|slice:"3:" %}?meal={{meal}}&next={{next_url|urlencode}}" 
                             class="btn btn-outline-success btn-md" title="Редактировать еду">
                                 <i class="fa-solid fa-pencil"></i>
                             </a>
@@ -194,7 +195,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <form method="post" action="{% url 'delete_custom_food' food.food_id|slice:"3:" %}?meal={{ meal }}">
+                <form method="post" action="{% url 'delete_custom_food' food.food_id|slice:"3:" %}?meal={{ meal }}&next={{next_url|urlencode}}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Удалить</button>
                 </form>

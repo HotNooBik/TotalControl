@@ -51,6 +51,31 @@
     color: #0b1a0c;
 }
 
+/* Текст с основными цветами, светлый вариант */
+.fc-timberwolf-light {
+    color: #fdfaf0;
+}
+
+.fc-sage-light {
+    color: #ebffc7;
+}
+
+.fc-ferngreen-light {
+    color: #89ca88;
+}
+
+.fc-huntergreen-light {
+    color: #76b682;
+}
+
+.fc-brunswickgreen-light {
+    color: #619179;
+}
+
+.fc-darkgreen {
+    color: #163518;
+}
+
 
 /* Цвет наводки на кнопки с основным цветом */
 .btn.bg-ferngreen-light:hover {

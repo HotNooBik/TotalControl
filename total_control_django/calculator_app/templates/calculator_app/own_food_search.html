@@ -17,18 +17,18 @@
                 </h2>
                 <ul class="nav nav-tabs mt-3 fs-5">
                     <li class="nav-item flex-fill text-center ms-2">
-                        <a class="nav-link" href="{% url 'favorite_food_search' meal=meal %}">Избранное</a>
+                        <a class="nav-link fc-huntergreen-light" href="{% url 'favorite_food_search' meal=meal %}">Избранное</a>
                     </li>
                     <li class="nav-item flex-fill text-center mx-2">
-                        <a class="nav-link" href="{% url 'food_search' meal=meal %}">Общая база продуктов</a>
+                        <a class="nav-link fc-huntergreen-light" href="{% url 'food_search' meal=meal %}">Общая база продуктов</a>
                     </li>
                     <li class="nav-item flex-fill text-center me-2">
                         <a class="nav-link active" aria-current="page"><span class="fw-bold">Личные продукты</span></a>
                     </li>
                 </ul>  
-                <div class="card-body mb-0">
+                <div class="card-body mt-3 mb-0">
                     <form method="get">
-                        <div class="input-group mb-3">
+                        <div class="input-group mb-2">
                             <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды в личных продуктах...">
                             <button class="btn bg-ferngreen text-white" id="sendbtn" type="submit">Искать</button>
                         </div>
@@ -53,7 +53,7 @@
                                     {% endif %}
                                 </p>
                             </div>
-                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal }}" class="btn btn-outline-success">Добавить</a>
+                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal }}&next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success">Добавить</a>
                         </div>
                         {% endfor %}
                     </div>
