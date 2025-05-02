@@ -206,13 +206,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const tooltipTriggerList = document.querySelectorAll('[title]');
-        tooltipTriggerList.forEach(el => {
-            new bootstrap.Tooltip(el, {
-                placement: 'top'
-            })
-        })
-
         document.getElementById('amount-input').addEventListener('input', function(event) {
             let amount =  parseFloat(event.target.value);
 
@@ -292,7 +285,6 @@
                     document.getElementById('calculated-fats').textContent = ({{ food.per_100ml.fats|default:0 }}).toFixed(1);
                     document.getElementById('calculated-carbs').textContent = ({{ food.per_100ml.carbs|default:0 }}).toFixed(1);
             }
-
         });
     });
 </script>

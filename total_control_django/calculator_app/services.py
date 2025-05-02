@@ -6,7 +6,7 @@ from googletrans import Translator
 
 from django.conf import settings
 
-from .models import UserCustomFood
+from .models import UserCustomFood, UserFavoriteApiFood, UserFavoriteCustomFood
 
 
 TRANSLATOR = Translator()
@@ -131,10 +131,10 @@ def get_food_details(food_id: str | int) -> dict | None:
                 "brand_name": brand_name,
                 "image": image,
                 "food_description": f'На "{serving_description}" - '
-                                    f'Калорий: {result.get("per_portion", {}).get("calories", 0)} ккал. | '
-                                    f'Жиров: {result.get("per_portion", {}).get("fats", 0)} г. | '
-                                    f'Углеводов: {result.get("per_portion", {}).get("carbs", 0)} г. | '
-                                    f'Белков: {result.get("per_portion", {}).get("proteins", 0)} г.',
+                f'Калорий: {result.get("per_portion", {}).get("calories", 0)} ккал. | '
+                f'Жиров: {result.get("per_portion", {}).get("fats", 0)} г. | '
+                f'Углеводов: {result.get("per_portion", {}).get("carbs", 0)} г. | '
+                f'Белков: {result.get("per_portion", {}).get("proteins", 0)} г.',
             }
 
             context = context | result
@@ -224,7 +224,8 @@ def search_user_custom_food(
         user=user, food_name__icontains=query  # нечувствительный к регистру поиск
     )
 
-    total_pages = int((filtered_user_foods.count() - 1) / max_results)
+    total_items = filtered_user_foods.count()
+    total_pages = (total_items - 1) // max_results if total_items > 0 else 0
 
     foods_on_page = filtered_user_foods.order_by("-created_at")[
         max_results * page : max_results * page + max_results
@@ -273,5 +274,47 @@ def search_user_custom_food(
     return context
 
 
-def search_user_favorite_food(user, max_results=5, page=0):
-    pass
+def search_user_favorite_food(
+    user, query: str, max_results: int = 5, page: int = 0
+) -> dict:
+
+    custom_favorites = UserFavoriteCustomFood.objects.filter(
+        user=user, food_name__icontains=query
+    )
+
+    api_favorites = UserFavoriteApiFood.objects.filter(
+        user=user, food_name__icontains=query
+    )
+
+    # Сортируем по дате создания
+    all_favorites = list(custom_favorites) + list(api_favorites)
+    all_favorites.sort(key=lambda item: item.created_at, reverse=True)
+
+    total_items = len(all_favorites)
+    total_pages = (total_items - 1) // max_results if total_items > 0 else 0
+
+    favorites_on_page = all_favorites[
+        max_results * page : max_results * page + max_results
+    ]
+
+    processed_result = []
+    for food in favorites_on_page:
+        base_data = {
+            "brand_name": food.brand_name,
+            "food_name": food.food_name,
+            "food_description": food.food_description,
+        }
+        if isinstance(food, UserFavoriteCustomFood):
+            base_data["food_id"] = f"ucf{food.custom_food_id}"
+        elif isinstance(food, UserFavoriteApiFood):
+            base_data["food_id"] = food.food_id
+        processed_result.append(base_data)
+
+    context = {
+        "current_page": page,
+        "query": query,
+        "results": processed_result,
+        "total_pages": total_pages,
+    }
+
+    return context

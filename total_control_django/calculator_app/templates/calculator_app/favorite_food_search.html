@@ -1,0 +1,118 @@
+{% extends "main/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center mb-3 text-center">
+        <div class="col-sm-12">
+            <div class="card">
+                <h2 class="card-header py-3 fw-bold fc-darkgreen">Поиск еды на
+                    {% if meal == 'breakfast' %}
+                    завтрак
+                    {% elif meal == 'lunch' %}
+                    обед
+                    {% elif meal == 'dinner' %}
+                    ужин
+                    {% else %}
+                    перекус
+                    {% endif %}
+                </h2>
+                <ul class="nav nav-tabs mt-3 fs-5">
+                    <li class="nav-item flex-fill text-center ms-2">
+                        <a class="nav-link active" aria-current="page"><span class="fw-bold">Избранное</span></a>
+                    </li>
+                    <li class="nav-item flex-fill text-center mx-2">
+                        <a class="nav-link" href="{% url 'food_search' meal=meal %}">Общая база продуктов</a>
+                    </li>
+                    <li class="nav-item flex-fill text-center me-2">
+                        <a class="nav-link" href="{% url 'own_food_search' meal=meal%}">Личные продукты</a>
+                    </li>
+                </ul>  
+                <div class="card-body mb-0">
+                    <form method="get">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды в избранном...">
+                            <button class="btn btn-outline-success bg-ferngreen text-white" id="sendbtn" type="submit">Искать</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-body mt-0">
+                    {% if results %}
+                    <div class="list-group">
+                        {% for food in results %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
+                            <div class="d-flex align-items-center gap-3">
+                                <form action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}" class="text-center" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="food_name" value="{{ food.food_name }}">
+                                    <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
+                                    <input type="hidden" name="food_description" value="{{ food.food_description }}">
+                                    <button class="btn star-btn m-auto p-0" title="Убрать из избранного" type="submit">
+                                        <i class="fs-2 fc-star fas fa-star"></i>
+                                    </button>
+                                </form>
+                                <div class="cpfc-content">
+                                    <p class="fs-3 mb-1 text-break" align="start">
+                                        <span class="fs-4 fw-bolder">{{ food.food_name }}</span>
+                                        {% if food.brand_name %} (от "{{ food.brand_name }}") {% endif %}
+                                    </p>
+                                    <p class="fc-brunswickgreen text-break" align="start">
+                                        ({{ food.food_description }})
+                                    </p>
+                                </div>
+                            </div>
+                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal }}" class="btn btn-outline-success">Добавить</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if current_page == 0 and total_pages != 0%}
+                        {% if max_result < 10%}
+                        <div class="row mt-2">
+                            <div class="col-12 justify-content-center">
+                                <a href="?query={{ query }}&max=10" class="btn btn-outline-dark">
+                                    <i class="fa-solid fa-caret-down"></i> Показать больше <i class="fa-solid fa-caret-down"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="row mt-2">
+                            <div class="col-12 justify-content-center">
+                                <a href="?query={{ query }}&max=5" class="btn btn-outline-dark">
+                                    <i class="fa-solid fa-caret-up"></i> Свернуть <i class="fa-solid fa-caret-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if results %}
+                    <div class="row mt-4">
+                        <div class="col d-flex justify-content-between align-self-center">
+                            {% if total_pages != 0 %}
+                            <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}" 
+                            class="btn btn-outline-success bg-ferngreen text-white">← Предыдущая</a>
+                            
+                            <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
+                            
+                            <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{0}}{% endif %}" 
+                            class="btn btn-outline-success bg-ferngreen text-white">Следующая →</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% elif query %}
+                    <p>Ничего не найдено</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-3 text-center">
+        <div class="col-lg-3">
+            <div class="card">
+                <a href="{% url 'add_own_food_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление</a>
+            </div>
+        </div>
+    </div>            
+</div>
+{% endblock %}

@@ -17,6 +17,9 @@
                 </h2>
                 <ul class="nav nav-tabs mt-3 fs-5">
                     <li class="nav-item flex-fill text-center ms-2">
+                        <a class="nav-link" href="{% url 'favorite_food_search' meal=meal %}">Избранное</a>
+                    </li>
+                    <li class="nav-item flex-fill text-center mx-2">
                         <a class="nav-link" href="{% url 'food_search' meal=meal %}">Общая база продуктов</a>
                     </li>
                     <li class="nav-item flex-fill text-center me-2">
@@ -57,7 +60,7 @@
                     {% endif %}
                     <div class="row mt-2">
                         <div class="col-12 justify-content-center">
-                            <a href="{% url 'create_custom_food'%}?meal={{ meal }}" class="btn bg-body-secondary">
+                            <a href="{% url 'create_custom_food'%}?meal={{ meal }}" class="btn btn-outline-dark">
                                 <i class="fa-solid fa-search-plus"></i> Добавить продукт
                             </a>
                         </div>
@@ -87,7 +90,7 @@
     <div class="row justify-content-center mb-3 text-center">
         <div class="col-lg-3">
             <div class="card">
-                <a href="{% url 'add_own_food_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Ввести свои КБЖУ</a>
+                <a href="{% url 'add_own_food_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление</a>
             </div>
         </div>
     </div>            

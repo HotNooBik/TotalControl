@@ -20,7 +20,7 @@ from .models import (
     UserFavoriteCustomFood,
     UserFavoriteApiFood,
 )
-from .services import search_fatsecret_food, get_food_details, search_user_custom_food
+from .services import search_fatsecret_food, get_food_details, search_user_custom_food, search_user_favorite_food
 from .forms import FoodEntryForm, OwnFoodEntryForm, UserCustomFoodForm
 
 
@@ -110,11 +110,9 @@ def food_search(request, meal: str):
     if query:
         context = search_fatsecret_food(query, page=page, translate=False)
         context["meal"] = meal
-        pprint(context)
         return render(request, "calculator_app/food_search.html", context)
 
     context = {"meal": meal, "favorites": favorites}
-    pprint(context)
     return render(request, "calculator_app/food_search.html", context)
 
 
@@ -129,6 +127,24 @@ def own_food_search(request, meal: str):
     context = search_user_custom_food(user=request.user, query=query, page=page)
     context["meal"] = meal
     return render(request, "calculator_app/own_food_search.html", context)
+
+
+@login_required
+def favorite_food_search(request, meal: str):
+    query = request.GET.get("query", "")
+    try:
+        page = int(request.GET.get("page", 0))
+        max_result = int(request.GET.get("max", 5))
+        max_result = 5 if max_result < 1 else max_result
+    except ValueError:
+        page = 0
+        max_result = 5
+
+    context = search_user_favorite_food(user=request.user, query=query, max_results=max_result, page=page)
+    context["meal"] = meal
+    context["max_result"] = max_result
+    pprint(context)
+    return render(request, "calculator_app/favorite_food_search.html", context)
 
 
 @login_required
@@ -352,7 +368,6 @@ def edit_custom_food(request, food_id: int):
 def add_food_to_favorites(request, food_id: str):
 
     meal = request.GET.get("meal", "snack")
-    print(meal, type(meal))
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
 
