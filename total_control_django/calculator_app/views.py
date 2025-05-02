@@ -20,7 +20,12 @@ from .models import (
     UserFavoriteCustomFood,
     UserFavoriteApiFood,
 )
-from .services import search_fatsecret_food, get_food_details, search_user_custom_food, search_user_favorite_food
+from .services import (
+    search_fatsecret_food,
+    get_food_details,
+    search_user_custom_food,
+    search_user_favorite_food,
+)
 from .forms import FoodEntryForm, OwnFoodEntryForm, UserCustomFoodForm
 
 
@@ -140,10 +145,17 @@ def favorite_food_search(request, meal: str):
         page = 0
         max_result = 5
 
-    context = search_user_favorite_food(user=request.user, query=query, max_results=max_result, page=page)
+    context = search_user_favorite_food(
+        user=request.user, query=query, max_results=max_result, page=page
+    )
+    if page > 0 and not context.get("results", []):
+        page -= 1
+        context = search_user_favorite_food(
+            user=request.user, query=query, max_results=max_result, page=page
+        )
+
     context["meal"] = meal
     context["max_result"] = max_result
-    pprint(context)
     return render(request, "calculator_app/favorite_food_search.html", context)
 
 
@@ -266,7 +278,7 @@ def add_food_entry(request, food_id: str):
 
 
 @login_required
-def add_own_food_entry(request):
+def add_fast_entry(request):
 
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
@@ -293,7 +305,7 @@ def add_own_food_entry(request):
         "form": form,
         "meal": meal,
     }
-    return render(request, "calculator_app/add_own_food_entry.html", context)
+    return render(request, "calculator_app/add_fast_entry.html", context)
 
 
 @login_required
@@ -429,6 +441,8 @@ def add_food_to_favorites(request, food_id: str):
 @require_POST
 def remove_food_from_favorites(request, food_id: str):
 
+    referer = request.META.get("HTTP_REFERER")
+
     meal = request.GET.get("meal", "snack")
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
@@ -450,6 +464,9 @@ def remove_food_from_favorites(request, food_id: str):
             favorite.delete()
         except (ValueError, UserFavoriteApiFood.DoesNotExist):
             pass
+
+    if referer:
+        return redirect(referer)
 
     return redirect(
         f"{reverse('add_food_entry', kwargs={'food_id': food_id})}?meal={meal}"

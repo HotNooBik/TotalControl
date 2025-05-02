@@ -40,15 +40,22 @@
                         {% for food in results %}
                         <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
                             <div class="d-flex align-items-center gap-3">
-                                <form action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}" class="text-center" method="post">
+                                <form id="remove-food-form-{{ food.food_id }}" action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{ meal }}" method="post" class="text-center">
                                     {% csrf_token %}
                                     <input type="hidden" name="food_name" value="{{ food.food_name }}">
                                     <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
                                     <input type="hidden" name="food_description" value="{{ food.food_description }}">
-                                    <button class="btn star-btn m-auto p-0" title="Убрать из избранного" type="submit">
+
+                                    <button type="button"
+                                            class="btn star-btn m-auto p-0"
+                                            title="Убрать из избранного"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteFavoriteModal"
+                                            onclick="setFormId('{{ food.food_id }}')">
                                         <i class="fs-2 fc-star fas fa-star"></i>
                                     </button>
                                 </form>
+
                                 <div class="cpfc-content">
                                     <p class="fs-3 mb-1 text-break" align="start">
                                         <span class="fs-4 fw-bolder">{{ food.food_name }}</span>
@@ -64,8 +71,9 @@
                         {% endfor %}
                     </div>
                     {% endif %}
-
-                    {% if current_page == 0 and total_pages != 0%}
+                    
+                    {% if results %}
+                    {% if current_page == 0 and results|length > 5 or current_page == 0 and total_pages != 0 %}
                         {% if max_result < 10%}
                         <div class="row mt-2">
                             <div class="col-12 justify-content-center">
@@ -84,8 +92,6 @@
                         </div>
                         {% endif %}
                     {% endif %}
-
-                    {% if results %}
                     <div class="row mt-4">
                         <div class="col d-flex justify-content-between align-self-center">
                             {% if total_pages != 0 %}
@@ -110,9 +116,42 @@
     <div class="row justify-content-center mb-3 text-center">
         <div class="col-lg-3">
             <div class="card">
-                <a href="{% url 'add_own_food_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление</a>
+                <a href="{% url 'add_fast_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление</a>
             </div>
         </div>
     </div>            
 </div>
+
+<!-- Модальное окно подтверждения удаления еды из избранного -->
+<div class="modal fade" id="deleteFavoriteModal" tabindex="-1" aria-labelledby="deleteFavoriteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteFavoriteModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                Вы действительно хотите удалить этот продукт из избранного?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let formIdToDelete = null;
+
+    function setFormId(foodId) {
+        formIdToDelete = foodId;
+    }
+
+    document.getElementById('confirm-delete-btn').addEventListener('click', function () {
+        if (formIdToDelete) {
+            document.getElementById('remove-food-form-' + formIdToDelete).submit();
+        }
+    });
+</script>
 {% endblock %}
