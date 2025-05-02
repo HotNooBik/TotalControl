@@ -36,90 +36,83 @@
                 </div>
                 <div class="card-body mt-0">
                     {% if results %}
-                    <div class="list-group">
-                        {% for food in results %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
-                            <div class="d-flex align-items-center gap-3">
-                                <form id="remove-food-form-{{ food.food_id }}" action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{ meal }}" method="post" class="text-center">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="food_name" value="{{ food.food_name }}">
-                                    <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
-                                    <input type="hidden" name="food_description" value="{{ food.food_description }}">
+                        <div class="list-group">
+                            {% for food in results %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
+                                <div class="d-flex align-items-center gap-3">
+                                    <form id="remove-food-form-{{ food.food_id }}" action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{ meal }}" method="post" class="text-center">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="food_name" value="{{ food.food_name }}">
+                                        <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
+                                        <input type="hidden" name="food_description" value="{{ food.food_description }}">
 
-                                    <button type="button"
-                                            class="btn star-btn m-auto p-0"
-                                            title="Убрать из избранного"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#deleteFavoriteModal"
-                                            onclick="setFormId('{{ food.food_id }}')">
-                                        <i class="fs-2 fc-star fas fa-star"></i>
-                                    </button>
-                                </form>
+                                        <button type="button"
+                                                class="btn star-btn m-auto p-0"
+                                                title="Убрать из избранного"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteFavoriteModal"
+                                                onclick="setFormId('{{ food.food_id }}')">
+                                            <i class="fs-2 fc-star fas fa-star"></i>
+                                        </button>
+                                    </form>
 
-                                <div class="cpfc-content">
-                                    <p class="fs-3 mb-1 text-break" align="start">
-                                        <span class="fs-4 fw-bolder">{{ food.food_name }}</span>
-                                        {% if food.brand_name %} (от "{{ food.brand_name }}") {% endif %}
-                                    </p>
-                                    <p class="fc-brunswickgreen text-break" align="start">
-                                        ({{ food.food_description }})
-                                    </p>
+                                    <div class="cpfc-content">
+                                        <p class="fs-3 mb-1 text-break" align="start">
+                                            <span class="fs-4 fw-bolder">{{ food.food_name }}</span>
+                                            {% if food.brand_name %} (от "{{ food.brand_name }}") {% endif %}
+                                        </p>
+                                        <p class="fc-brunswickgreen text-break" align="start">
+                                            ({{ food.food_description }})
+                                        </p>
+                                    </div>
+                                </div>
+                                <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal }}" class="btn btn-outline-success">Добавить</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if current_page == 0 and results|length > 5 or current_page == 0 and total_pages != 0 %}
+                            {% if max_result < 10%}
+                            <div class="row mt-2">
+                                <div class="col-12 justify-content-center">
+                                    <a href="?query={{ query }}&max=10" class="btn btn-outline-dark">
+                                        <i class="fa-solid fa-caret-down"></i> Показать больше <i class="fa-solid fa-caret-down"></i>
+                                    </a>
                                 </div>
                             </div>
-                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal }}" class="btn btn-outline-success">Добавить</a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                    
-                    {% if results %}
-                    {% if current_page == 0 and results|length > 5 or current_page == 0 and total_pages != 0 %}
-                        {% if max_result < 10%}
-                        <div class="row mt-2">
-                            <div class="col-12 justify-content-center">
-                                <a href="?query={{ query }}&max=10" class="btn btn-outline-dark">
-                                    <i class="fa-solid fa-caret-down"></i> Показать больше <i class="fa-solid fa-caret-down"></i>
-                                </a>
+                            {% else %}
+                            <div class="row mt-2">
+                                <div class="col-12 justify-content-center">
+                                    <a href="?query={{ query }}&max=5" class="btn btn-outline-dark">
+                                        <i class="fa-solid fa-caret-up"></i> Свернуть <i class="fa-solid fa-caret-up"></i>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                        {% else %}
-                        <div class="row mt-2">
-                            <div class="col-12 justify-content-center">
-                                <a href="?query={{ query }}&max=5" class="btn btn-outline-dark">
-                                    <i class="fa-solid fa-caret-up"></i> Свернуть <i class="fa-solid fa-caret-up"></i>
-                                </a>
-                            </div>
-                        </div>
-                        {% endif %}
-                    {% endif %}
-                    <div class="row mt-4">
-                        <div class="col d-flex justify-content-between align-self-center">
-                            {% if total_pages != 0 %}
-                            <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}" 
-                            class="btn btn-outline-success bg-ferngreen text-white">← Предыдущая</a>
-                            
-                            <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
-                            
-                            <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{0}}{% endif %}" 
-                            class="btn btn-outline-success bg-ferngreen text-white">Следующая →</a>
                             {% endif %}
+                        {% endif %}
+                        <div class="row mt-4">
+                            <div class="col d-flex justify-content-between align-self-center">
+                                {% if total_pages != 0 %}
+                                <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}" 
+                                class="btn btn-outline-success bg-ferngreen text-white"><i class="fa-solid fa-arrow-left"></i> Предыдущая</a>
+                                
+                                <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
+                                
+                                <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{0}}{% endif %}" 
+                                class="btn btn-outline-success bg-ferngreen text-white">Следующая <i class="fa-solid fa-arrow-right"></i></a>
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
                     {% elif query %}
-                    <p>Ничего не найдено</p>
+                    <i class="fa-solid fa-magnifying-glass-minus fc-carbs-dark search-img mt-3 mb-2"></i>
+                    <p class="fc-carbs-dark search-font mb-5">Ничего не найдено</p>
+                    {% else %}
+                    <i class="fa-solid fa-star-half-stroke fc-carbs-dark search-img mt-3 mb-2"></i>
+                    <p class="fc-carbs-dark search-font mb-5">Вы ещё не добавляли продукт в избранное...</p>
                     {% endif %}
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row justify-content-center mb-3 text-center">
-        <div class="col-lg-3">
-            <div class="card">
-                <a href="{% url 'add_fast_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление</a>
-            </div>
-        </div>
-    </div>            
+    </div>         
 </div>
 
 <!-- Модальное окно подтверждения удаления еды из избранного -->

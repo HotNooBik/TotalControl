@@ -53,17 +53,21 @@
                         <div class="col d-flex justify-content-between align-self-center">
                             {% if total_pages != 0 %}
                             <a href="?query={{ query }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}" 
-                            class="btn btn-outline-success bg-ferngreen text-white">← Предыдущая</a>
+                            class="btn btn-outline-success bg-ferngreen text-white"><i class="fa-solid fa-arrow-left"></i> Предыдущая</a>
                             
                             <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
                             
                             <a href="?query={{ query }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{0}}{% endif %}" 
-                            class="btn btn-outline-success bg-ferngreen text-white">Следующая →</a>
+                            class="btn btn-outline-success bg-ferngreen text-white">Следующая <i class="fa-solid fa-arrow-right"></i></a>
                             {% endif %}
                         </div>
                     </div>
                     {% elif query %}
-                    <p>Ничего не найдено</p>
+                    <i class="fa-solid fa-magnifying-glass-minus fc-carbs-dark search-img mt-3 mb-2"></i>
+                    <p class="fc-carbs-dark search-font mb-5">Ничего не найдено</p>
+                    {% else %}
+                    <i class="fa-solid fa-magnifying-glass fc-carbs-dark search-img mt-3 mb-2"></i>
+                    <p class="fc-carbs-dark search-font mb-5">Введите название продукта для поиска...</p>
                     {% endif %}
                 </div>
                 {% if results or query %}
@@ -78,7 +82,7 @@
     <div class="row justify-content-center mb-3 text-center">
         <div class="col-lg-3">
             <div class="card">
-                <a href="{% url 'add_fast_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление</a>
+                <a href="{% url 'add_fast_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление записи</a>
             </div>
         </div>
     </div>            

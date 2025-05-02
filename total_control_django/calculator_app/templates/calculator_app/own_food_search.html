@@ -57,8 +57,16 @@
                         </div>
                         {% endfor %}
                     </div>
+                    {% elif query %}
+                    <i class="fa-solid fa-magnifying-glass-minus fc-carbs-dark search-img mt-3 mb-2"></i>
+                    <p class="fc-carbs-dark search-font mb-5">Ничего не найдено</p>
+                    {% else %}
+                    <a href="{% url 'create_custom_food'%}?meal={{ meal }}">
+                        <i class="fa-solid fa-folder-plus fc-carbs-dark search-img mt-3 mb-2"></i>
+                    </a>
+                    <p class="fc-carbs-dark search-font mb-5">Добавляйте продукты в свой личный список...</p>
                     {% endif %}
-                    <div class="row mt-2">
+                    <div class="row mt-2 mb-3">
                         <div class="col-12 justify-content-center">
                             <a href="{% url 'create_custom_food'%}?meal={{ meal }}" class="btn btn-outline-dark">
                                 <i class="fa-solid fa-search-plus"></i> Добавить продукт
@@ -70,29 +78,19 @@
                         <div class="col d-flex justify-content-between align-self-center">
                             {% if total_pages != 0 %}
                             <a href="?query={{ query }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}" 
-                            class="btn bg-ferngreen text-white">← Предыдущая</a>
+                            class="btn bg-ferngreen text-white"><i class="fa-solid fa-arrow-left"></i> Предыдущая</a>
                             
                             <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
                             
                             <a href="?query={{ query }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{0}}{% endif %}" 
-                            class="btn bg-ferngreen text-white">Следующая →</a>
+                            class="btn bg-ferngreen text-white">Следующая <i class="fa-solid fa-arrow-left"></i></a>
                             {% endif %}
                         </div>
                     </div>
-                    {% elif query %}
-                    <p>Ничего не найдено</p>
                     {% endif %}
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row justify-content-center mb-3 text-center">
-        <div class="col-lg-3">
-            <div class="card">
-                <a href="{% url 'add_fast_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление</a>
-            </div>
-        </div>
-    </div>            
+    </div>        
 </div>
 {% endblock %}
