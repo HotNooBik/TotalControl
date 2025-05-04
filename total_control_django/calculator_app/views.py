@@ -1,19 +1,19 @@
 from pprint import pprint
 import json
+from datetime import datetime
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.db.models import Sum
-from django.db.models.functions import TruncDate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.core.exceptions import ObjectDoesNotExist
 
-from users.models import UserProfile
+from users.models import UserProfile, UserDailyRecord
 
 from .models import (
     FoodEntry,
@@ -46,16 +46,26 @@ def calculator(request):
 
     try:
         tz = ZoneInfo(user_timezone)
-        user_now = timezone.now().astimezone(tz)
-        today = user_now.date()
+        today = timezone.now().astimezone(tz).date()
 
-        entries = FoodEntry.objects.annotate(
-            local_date=TruncDate("date_added", tzinfo=tz)
-        ).filter(user=request.user, local_date=today)
-    except ZoneInfoNotFoundError:
-        entries = FoodEntry.objects.filter(
-            user=request.user, date_added__date=timezone.now().date()
+        start_of_day = timezone.make_aware(
+            datetime.combine(today, datetime.min.time()), tz
         )
+        end_of_day = timezone.make_aware(
+            datetime.combine(today, datetime.max.time()), tz
+        )
+
+        start_of_day_utc = start_of_day.astimezone(timezone.utc)
+        end_of_day_utc = end_of_day.astimezone(timezone.utc)
+
+        entries = FoodEntry.objects.filter(
+            user=request.user, date_added__range=(start_of_day_utc, end_of_day_utc)
+        )
+
+    except ZoneInfoNotFoundError:
+        today = timezone.now().date()
+
+        entries = FoodEntry.objects.filter(user=request.user, date_added__date=today)
 
     totals = entries.aggregate(
         calories=Sum("calories"),
@@ -63,6 +73,16 @@ def calculator(request):
         fats=Sum("fats"),
         carbs=Sum("carbs"),
     )
+
+    record, _ = UserDailyRecord.objects.get_or_create(
+        user=request.user,
+        user_date=today,
+    )
+    record.calories = totals["calories"] or 0
+    record.proteins = totals["proteins"] or 0
+    record.fats = totals["fats"] or 0
+    record.carbs = totals["carbs"] or 0
+    record.save()
 
     breakfast_entries = entries.filter(meal="breakfast")
     lunch_entries = entries.filter(meal="lunch")
@@ -74,16 +94,19 @@ def calculator(request):
     proteins_percent = (totals["proteins"] or 0) / user_profile.daily_proteins * 100
     fats_percent = (totals["fats"] or 0) / user_profile.daily_fats * 100
     carbs_percent = (totals["carbs"] or 0) / user_profile.daily_carbs * 100
+    water_percent = record.water / user_profile.daily_water * 100
 
     context = {
         "current_calories": totals["calories"] or 0,
         "current_proteins": totals["proteins"] or 0,
         "current_fats": totals["fats"] or 0,
         "current_carbs": totals["carbs"] or 0,
+        "current_water": record.water,
         "daily_calories": user_profile.daily_calories,
         "daily_proteins": user_profile.daily_proteins,
         "daily_fats": user_profile.daily_fats,
         "daily_carbs": user_profile.daily_carbs,
+        "daily_water": user_profile.daily_water,
         "breakfast_entries": breakfast_entries.order_by("date_added"),
         "lunch_entries": lunch_entries.order_by("date_added"),
         "dinner_entries": dinner_entries.order_by("date_added"),
@@ -92,8 +115,49 @@ def calculator(request):
         "proteins_percent": proteins_percent if proteins_percent < 100 else 100,
         "fats_percent": fats_percent if fats_percent < 100 else 100,
         "carbs_percent": carbs_percent if carbs_percent < 100 else 100,
+        "water_percent": water_percent if water_percent < 100 else 100,
     }
     return render(request, "calculator_app/calculator.html", context)
+
+
+@login_required
+def add_water(request):
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        amount = json.loads(request.body).get("amount")
+
+        if not isinstance(amount, (int, float)) or amount <= 0:
+            return JsonResponse({"error": "Некорректное количество воды"}, status=400)
+
+        user_timezone = request.session.get("user_timezone", "UTC")
+        try:
+            tz = ZoneInfo(user_timezone)
+            today = timezone.now().astimezone(tz).date()
+        except ZoneInfoNotFoundError:
+            today = timezone.now().date()
+
+        record, _ = UserDailyRecord.objects.get_or_create(
+            user=request.user,
+            user_date=today,
+        )
+        if (record.water + amount) > 10000:
+            return JsonResponse(
+                {"error": "Успокойтесь, вы выпили слишком много воды!"}, status=400
+            )
+        record.water += amount
+        record.save()
+
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+
+        water_percent = (record.water / user_profile.daily_water) * 100
+
+        return JsonResponse(
+            {
+                "new_water": record.water,
+                "water_percent": min(water_percent, 100),
+            }
+        )
+
+    return JsonResponse({"error": "Недопустимый запрос"}, status=400)
 
 
 @login_required

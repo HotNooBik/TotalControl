@@ -68,7 +68,7 @@ class UserDailyRecord(models.Model):
 
     Attributes:
         user (ForeignKey): Связь с моделью User.
-        date (DateField): Дата записи (автоматически устанавливается при создании).
+        user_date (DateField): Дата записи (берётся день пользователя, с учетом его часового пояса).
         weight (FloatField): Вес пользователя в этот день (необязательное).
         calories (IntegerField): Потребленные калории (ккал).
         proteins (FloatField): Потребленные белки (г).
@@ -82,9 +82,9 @@ class UserDailyRecord(models.Model):
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
+    user_date = models.DateField()
 
-    weight = models.FloatField(null=True, blank=True)
+    weight = models.FloatField(blank=True, null=True)
 
     calories = models.IntegerField(default=0)
     proteins = models.FloatField(default=0)
@@ -93,4 +93,4 @@ class UserDailyRecord(models.Model):
     water = models.IntegerField(default=0)
 
     class Meta:
-        unique_together = [["user", "date"]]  # одна запись в день
+        unique_together = [["user", "user_date"]]

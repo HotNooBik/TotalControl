@@ -19,3 +19,16 @@ class UserProfileAdmin(admin.ModelAdmin):
         "daily_fats",
         "daily_carbs",
     )
+
+@admin.register(models.UserDailyRecord)
+class UserDailyRecordAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "user_date",
+        "weight",
+        "calories",
+        "proteins",
+        "fats",
+        "carbs",
+        "water",
+    )
