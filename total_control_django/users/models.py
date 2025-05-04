@@ -74,15 +74,9 @@ class UserProfile(models.Model):
             self.goal,
         )
 
-        result = get_user_pfc_norm(self.daily_calories, self.goal)
-        print(result)
-        print(type(result))
-
         self.daily_proteins, self.daily_fats, self.daily_carbs = get_user_pfc_norm(
             self.daily_calories, self.goal
         )
-
-        print(self.daily_proteins)
 
         self.daily_water = get_user_water_norm(
             self.sex,

@@ -131,6 +131,7 @@ def add_water(request):
             return JsonResponse({"error": "Некорректное количество воды"}, status=400)
 
         user_timezone = request.session.get("user_timezone", "UTC")
+        print(user_timezone)
         try:
             tz = ZoneInfo(user_timezone)
             today = timezone.now().astimezone(tz).date()
@@ -166,11 +167,11 @@ def add_water(request):
 @login_required
 def update_weight(request):
     weight = request.POST.get("weight", 0)
-    print(type(weight))
     try:
         weight = float(weight)
 
         user_timezone = request.session.get("user_timezone", "UTC")
+        print(user_timezone)
         try:
             tz = ZoneInfo(user_timezone)
             today = timezone.now().astimezone(tz).date()
