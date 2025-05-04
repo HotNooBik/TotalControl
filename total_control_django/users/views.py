@@ -1,16 +1,26 @@
+from functools import wraps
+
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
+from django.http import HttpResponseRedirect
 
 from .forms import UserRegisterForm, UserLoginForm, UserProfileForm
 from .models import UserProfile
-from .utils.nutrition_calculator import (
-    get_users_calorie_norm,
-    get_users_pfc_norm,
-    get_users_water_norm,
-)
 
 
+def anonymous_required(view_func):
+    """Декоратор, который проверяет, чтобы пользователь не был авторизованным (иначе отправляет на главную страницу)."""
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('main'))
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+@anonymous_required
 def register(request):
     if request.method == "POST":
         form = UserRegisterForm(request.POST)
@@ -23,6 +33,7 @@ def register(request):
     return render(request, "users/register.html", {"form": form})
 
 
+@anonymous_required
 def user_login(request):
     if request.method == "POST":
         form = UserLoginForm(data=request.POST)
@@ -57,32 +68,6 @@ def edit_profile(request):
         form = UserProfileForm(request.POST, instance=user_profile)
         if form.is_valid():
             updated_profile = form.save(commit=False)
-
-            # Пересчёт дневной нормы калорий и БЖУ
-            daily_calories = get_users_calorie_norm(
-                updated_profile.sex,
-                updated_profile.weight,
-                updated_profile.height,
-                updated_profile.birth_date,
-                updated_profile.activity_coef,
-                updated_profile.goal,
-            )
-            updated_profile.daily_calories = daily_calories
-            daily_proteins, daily_fats, daily_carbs = get_users_pfc_norm(
-                daily_calories, updated_profile.goal
-            )
-            updated_profile.daily_proteins = daily_proteins
-            updated_profile.daily_fats = daily_fats
-            updated_profile.daily_carbs = daily_carbs
-            daily_water = get_users_water_norm(
-                updated_profile.sex,
-                updated_profile.weight,
-                updated_profile.height,
-                updated_profile.activity_coef,
-                updated_profile.goal,
-            )
-            updated_profile.daily_water = daily_water
-
             updated_profile.save()
             return redirect("profile")
     else:

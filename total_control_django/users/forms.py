@@ -8,11 +8,6 @@ from django.contrib.auth import get_user_model
 
 
 from .models import UserProfile
-from .utils.nutrition_calculator import (
-    get_users_calorie_norm,
-    get_users_pfc_norm,
-    get_users_water_norm,
-)
 
 
 class UserRegisterForm(UserCreationForm):
@@ -156,21 +151,14 @@ class UserRegisterForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        if commit:
 
+        if commit:
             birth_date = self.cleaned_data.get("birth_date")
             height = round(self.cleaned_data.get("height"), 2)
             weight = round(self.cleaned_data.get("weight"), 2)
             goal = self.cleaned_data.get("goal")
             sex = self.cleaned_data.get("sex")
-            activity_coef = self.cleaned_data.get("activity_coef") or 1.2
-            daily_calories = get_users_calorie_norm(
-                sex, weight, height, birth_date, activity_coef, goal
-            )
-            daily_proteins, daily_fats, daily_carbs = get_users_pfc_norm(
-                daily_calories, goal
-            )
-            daily_water = get_users_water_norm(sex, weight, height, activity_coef, goal)
+            activity_coef = self.cleaned_data.get("activity_coef")
 
             user.save()
             UserProfile.objects.create(
@@ -180,12 +168,7 @@ class UserRegisterForm(UserCreationForm):
                 weight=weight,
                 goal=goal,
                 sex=sex,
-                daily_calories=daily_calories,
                 activity_coef=activity_coef,
-                daily_proteins=daily_proteins,
-                daily_fats=daily_fats,
-                daily_carbs=daily_carbs,
-                daily_water=daily_water,
             )
         return user
 

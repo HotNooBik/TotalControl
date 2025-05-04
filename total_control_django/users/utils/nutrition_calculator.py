@@ -5,7 +5,7 @@ from datetime import date
 from users.utils.age_calculator import calculate_age
 
 
-def get_users_calorie_norm(
+def get_user_calories_norm(
     sex: str,
     weight: float,
     height: float,
@@ -52,7 +52,7 @@ def get_users_calorie_norm(
     return int(bmr * activity_coef)
 
 
-def get_users_pfc_norm(calories: int, goal: str) -> tuple[(float, float, float)]:
+def get_user_pfc_norm(calories: int, goal: str) -> tuple[(float, float, float)]:
     """
     Функция для расчёта дневной нормы БЖУ в граммах.
 
@@ -68,7 +68,7 @@ def get_users_pfc_norm(calories: int, goal: str) -> tuple[(float, float, float)]
 
     match goal:
         case "lose_weight":
-            protein = (round(calories * 0.3 / 4, 1),)
+            protein = round(calories * 0.3 / 4, 1)
             fat = round(calories * 0.25 / 9, 1)
             carbs = round(calories * 0.45 / 4, 1)
         case "gain_muscle":
@@ -87,7 +87,7 @@ def get_users_pfc_norm(calories: int, goal: str) -> tuple[(float, float, float)]
     return (protein, fat, carbs)
 
 
-def get_users_water_norm(
+def get_user_water_norm(
     sex: str,
     weight: float,
     height: float,
@@ -117,16 +117,13 @@ def get_users_water_norm(
             goal_coef = 1
 
     if sex == "man":
-        amount_of_water = (
-            (weight * 35 + max(height - 170, 0) * 10)
-            * goal_coef
-            * (activity_coef - 0.35)
-        )
+        sex_coef = 35
     else:
-        amount_of_water = (
-            (weight * 30 + max(height - 170, 0) * 10)
-            * goal_coef
-            * (activity_coef - 0.35)
-        )
+        sex_coef = 30
 
-    return int((amount_of_water // 100) * 100) if amount_of_water > 1500 else 1500
+    amount_of_water = weight * sex_coef + max(height - 170, 0) * 10
+    amount_of_water *= goal_coef
+    amount_of_water *= activity_coef - 0.65
+    amount_of_water = (amount_of_water // 100) * 100
+
+    return max(amount_of_water, 1500)

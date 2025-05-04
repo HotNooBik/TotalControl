@@ -5,6 +5,7 @@ urlpatterns = [
     path("set-timezone/", views.set_timezone, name="set_timezone"),
     path("calculator/", views.calculator, name="calculator"),
     path("add-water/", views.add_water, name="add_water"),
+    path("update-weight/", views.update_weight, name="update_weight"),
 
     path("food-search/<str:meal>/", views.food_search, name="food_search"),
     path("own-food-search/<str:meal>/", views.own_food_search, name="own_food_search"),

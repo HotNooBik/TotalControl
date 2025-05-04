@@ -102,6 +102,7 @@ def calculator(request):
         "current_fats": totals["fats"] or 0,
         "current_carbs": totals["carbs"] or 0,
         "current_water": record.water,
+        "current_weight": user_profile.weight,
         "daily_calories": user_profile.daily_calories,
         "daily_proteins": user_profile.daily_proteins,
         "daily_fats": user_profile.daily_fats,
@@ -120,6 +121,7 @@ def calculator(request):
     return render(request, "calculator_app/calculator.html", context)
 
 
+@require_POST
 @login_required
 def add_water(request):
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -158,6 +160,38 @@ def add_water(request):
         )
 
     return JsonResponse({"error": "Недопустимый запрос"}, status=400)
+
+
+@require_POST
+@login_required
+def update_weight(request):
+    weight = request.POST.get("weight", 0)
+    print(type(weight))
+    try:
+        weight = float(weight)
+
+        user_timezone = request.session.get("user_timezone", "UTC")
+        try:
+            tz = ZoneInfo(user_timezone)
+            today = timezone.now().astimezone(tz).date()
+        except ZoneInfoNotFoundError:
+            today = timezone.now().date()
+
+        record, _ = UserDailyRecord.objects.get_or_create(
+            user=request.user,
+            user_date=today,
+        )
+
+        record.weight = weight
+        record.save()
+
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+        user_profile.weight = weight
+        user_profile.save()
+
+    except ValueError:
+        pass
+    return redirect("calculator")
 
 
 @login_required

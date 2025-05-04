@@ -1,6 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+from .utils.nutrition_calculator import (
+    get_user_calories_norm,
+    get_user_pfc_norm,
+    get_user_water_norm,
+)
+
 
 class UserProfile(models.Model):
     """Модель профиля пользователя с фитнес-метриками и целями.
@@ -29,7 +35,9 @@ class UserProfile(models.Model):
         daily_carbs (FloatField): Дневная норма углеводов (г).
 
     Methods:
+        save: сохраняет профиль в БД, предварительно расчитав норму калорий, БЖУ и воды.
         __str__: Возвращает строковое представление в формате "Профиль пользователя {username}".
+
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -55,6 +63,36 @@ class UserProfile(models.Model):
     daily_proteins = models.FloatField(null=True)
     daily_fats = models.FloatField(null=True)
     daily_carbs = models.FloatField(null=True)
+
+    def save(self, *args, **kwargs):
+        self.daily_calories = get_user_calories_norm(
+            self.sex,
+            self.weight,
+            self.height,
+            self.birth_date,
+            self.activity_coef,
+            self.goal,
+        )
+
+        result = get_user_pfc_norm(self.daily_calories, self.goal)
+        print(result)
+        print(type(result))
+
+        self.daily_proteins, self.daily_fats, self.daily_carbs = get_user_pfc_norm(
+            self.daily_calories, self.goal
+        )
+
+        print(self.daily_proteins)
+
+        self.daily_water = get_user_water_norm(
+            self.sex,
+            self.weight,
+            self.height,
+            self.activity_coef,
+            self.goal,
+        )
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Профиль пользователя {self.user.username}"
