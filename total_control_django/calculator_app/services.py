@@ -424,7 +424,7 @@ def search_user_favorite_food(
     return context
 
 
-def get_weight_history_for_chart(user, limit=0, period="all"):
+def get_weight_history_for_chart(user, limit=0, period="all", get_info=False):
     """
     Получает данные о весе пользователя за указанный период (историю) для построения графика.
 
@@ -441,11 +441,16 @@ def get_weight_history_for_chart(user, limit=0, period="all"):
                                  - 'week' — по неделям,
                                  - 'month' — по месяцам,
                                  - 'year' — по годам. По умолчанию 'all'.
+        get_info (bool): Если true, то выводит дополнительную информацию о весе (средний, максимальный и минимальный).
 
     Returns:
         tuple: Кортеж из двух списков:
             - labels (List[str]): Список строковых представлений дат согласно указанному периоду.
             - data (List[float]): Список значений веса.
+            - info(Dict): дополнительная информация о data:
+                - mean (float): среднее значение,
+                - max (float): максимальное значение,
+                - min (float): минимальное значение.
     """
 
     records = UserDailyRecord.objects.filter(
@@ -484,11 +489,20 @@ def get_weight_history_for_chart(user, limit=0, period="all"):
         if period == "all":
             labels.append(record.user_date.strftime("%d/%m/%Y"))
         elif period == "week":
-            labels.append(record.user_date.strftime("№%W-%d/%m/%Y"))
+            labels.append(record.user_date.strftime("№%W - %d/%m/%Y"))
         elif period == "month":
             labels.append(record.user_date.strftime("%m/%Y"))
         else:
             labels.append(record.user_date.strftime("%Y"))
         data.append(round(record.weight, 1))
 
-    return labels, data
+    if get_info:
+        info = {
+            "mean": round(sum(data) / len(data), 1),
+            "max": max(data),
+            "min": min(data),
+        }
+        return labels, data, info
+
+    else:
+        return labels, data

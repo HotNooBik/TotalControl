@@ -97,7 +97,9 @@ def calculator(request):
     carbs_percent = (totals["carbs"] or 0) / user_profile.daily_carbs * 100
     water_percent = record.water / user_profile.daily_water * 100
 
-    labels, data = get_weight_history_for_chart(request.user, limit=10, period='all')
+    labels, data_points = get_weight_history_for_chart(
+        request.user, limit=10, period="all"
+    )
 
     context = {
         "current_calories": totals["calories"] or 0,
@@ -123,7 +125,7 @@ def calculator(request):
         "user_goal": user_profile.get_goal_display().lower(),
         "weight_data": {
             "labels": labels,
-            "data": data,
+            "data": data_points,
         },
     }
     return render(request, "calculator_app/calculator.html", context)
@@ -139,7 +141,6 @@ def add_water(request):
             return JsonResponse({"error": "Некорректное количество воды"}, status=400)
 
         user_timezone = request.session.get("user_timezone", "UTC")
-        print(user_timezone)
         try:
             tz = ZoneInfo(user_timezone)
             today = timezone.now().astimezone(tz).date()
@@ -179,7 +180,6 @@ def update_weight(request):
         weight = float(weight)
 
         user_timezone = request.session.get("user_timezone", "UTC")
-        print(user_timezone)
         try:
             tz = ZoneInfo(user_timezone)
             today = timezone.now().astimezone(tz).date()
@@ -201,6 +201,34 @@ def update_weight(request):
     except ValueError:
         pass
     return redirect("calculator")
+
+
+@require_POST
+@login_required
+def get_weight_history_graph(request):
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        period = json.loads(request.body).get("period")
+
+        valid_periods = ["all", "week", "month", "year"]
+        if period not in valid_periods:
+            return JsonResponse(
+                {"error": f"Некорректный период. Допустимые значения: {valid_periods}"},
+                status=400,
+            )
+
+        labels, data_points, info = get_weight_history_for_chart(request.user, period=period, get_info=True)
+
+        return JsonResponse(
+            {
+                "labels": labels,
+                "data_points": data_points,
+                "mean": info["mean"],
+                "max": info["max"],
+                "min": info["min"],
+            }
+        )
+
+    return JsonResponse({"error": "Недопустимый запрос"}, status=400)
 
 
 @login_required

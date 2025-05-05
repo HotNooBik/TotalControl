@@ -6,6 +6,7 @@ urlpatterns = [
     path("calculator/", views.calculator, name="calculator"),
     path("add-water/", views.add_water, name="add_water"),
     path("update-weight/", views.update_weight, name="update_weight"),
+    path("get-weight-history/", views.get_weight_history_graph, name="get_weight_history"),
 
     path("food-search/<str:meal>/", views.food_search, name="food_search"),
     path("own-food-search/<str:meal>/", views.own_food_search, name="own_food_search"),
