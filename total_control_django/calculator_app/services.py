@@ -6,13 +6,24 @@ from googletrans import Translator
 
 from django.conf import settings
 
+from users.models import UserDailyRecord
+
 from .models import UserCustomFood, UserFavoriteApiFood, UserFavoriteCustomFood
 
 
-TRANSLATOR = Translator()
+TRANSLATOR = Translator()  # Модуль для перевода текста
 
 
 def get_fatsecret_client():
+    """
+    Создаёт OAuth1 клиент для аутентификации в API FatSecret.
+
+    Использует ключи из настроек Django (FATSECRET_API_KEY и FATSECRET_API_SECRET).
+
+    Returns:
+        OAuth1: Авторизованный OAuth1 клиент для выполнения запросов к FatSecret API.
+    """
+
     return OAuth1(
         settings.FATSECRET_API_KEY,
         settings.FATSECRET_API_SECRET,
@@ -23,6 +34,22 @@ def get_fatsecret_client():
 def search_fatsecret_food(
     query, max_results: int = 5, page: int = 0, translate: bool = False
 ) -> dict:
+    """
+    Выполняет поиск продуктов в базе данных FatSecret по заданному запросу.
+
+    Args:
+        query (str): Поисковый запрос для поиска продуктов.
+        max_results (int, optional): Максимальное количество результатов на странице. По умолчанию 5.
+        page (int, optional): Номер страницы для пагинации (начинается с нуля). По умолчанию 0.
+        translate (bool, optional): Флаг необходимости перевода описания и названия на русский язык. По умолчанию False.
+
+    Returns:
+        dict: Словарь с результатами поиска, содержащий следующие ключи:
+            - 'query' (str): Исходный поисковый запрос.
+            - 'results' (list): Список найденных продуктов.
+            - 'current_page' (int): Текущая страница.
+            - 'total_pages' (int): Общее количество страниц.
+    """
 
     try:
         translated_query = TRANSLATOR.translate(query, dest="en").text
@@ -87,6 +114,24 @@ def search_fatsecret_food(
 
 
 def get_food_details(food_id: str | int) -> dict | None:
+    """
+    Получает детальную информацию о продукте по его ID из API FatSecret.
+
+    Args:
+        food_id (str | int): Уникальный идентификатор продукта.
+
+    Returns:
+        dict | None: Словарь с информацией о продукте или None, если произошла ошибка. Ключи:
+            - 'food_id' (str): ID продукта.
+            - 'food_name' (str): Название продукта.
+            - 'serving_name' (str): Стандартная порция.
+            - 'brand_name' (str | None): Бренд (если есть).
+            - 'image' (str | None): URL изображения продукта (если есть).
+            - 'food_description' (str): Описание с КБЖУ продукта.
+            - 'per_portion' (dict): Питательные вещества на одну порцию.
+            - 'per_100g' (dict): Питательные вещества на 100 грамм.
+            - 'per_100ml' (dict): Питательные вещества на 100 мл (для жидких продуктов).
+    """
 
     url = "https://platform.fatsecret.com/rest/server.api"
     params = {
@@ -147,6 +192,15 @@ def get_food_details(food_id: str | int) -> dict | None:
 
 
 def get_default_serving_description(servings: list) -> str:
+    """
+    Находит название стандартной порции среди списка порций.
+
+    Args:
+        servings (list): Список порций, полученный из данных продукта.
+
+    Returns:
+        str: Описание стандартной порции. Если такая не найдена — возвращает '100 g'.
+    """
     serving_description = None
     for serving in servings:
         if serving.get("is_default") == "1":
@@ -155,6 +209,24 @@ def get_default_serving_description(servings: list) -> str:
 
 
 def extract_nutrition_data(servings: list) -> dict:
+    """
+    Обрабатывает данные о порциях и извлекает информацию о питательной ценности.
+
+    Args:
+        servings (list): Список порций из данных продукта.
+
+    Returns:
+        dict: Содержит три ключа:
+            - 'per_portion' (dict): Данные на стандартную порцию.
+            - 'per_100g' (dict): Данные на 100 грамм.
+            - 'per_100ml' (dict): Данные на 100 мл.
+
+            Каждое значение — это словарь с ключами:
+                - 'calories' (int): калории (ккал),
+                - 'proteins' (float): белки (г),
+                - 'fats' (float): жиры (г),
+                - 'carbs' (float): углеводы (г).
+    """
     result = {"per_portion": None, "per_100g": None, "per_100ml": None}
 
     def create_nutrition_dict(serving, multiplier=1.0):
@@ -219,6 +291,22 @@ def extract_nutrition_data(servings: list) -> dict:
 def search_user_custom_food(
     user, query: str, max_results: int = 5, page: int = 0
 ) -> dict:
+    """
+    Выполняет поиск пользовательских продуктов (добавленных вручную) по имени.
+
+    Args:
+        user (User): Объект пользователя.
+        query (str): Поисковый запрос.
+        max_results (int, optional): Максимальное количество результатов на странице. По умолчанию 5.
+        page (int, optional): Номер страницы. По умолчанию 0.
+
+    Returns:
+        dict: Словарь с результатами поиска, содержащий следующие ключи:
+            - 'query' (str): Исходный поисковый запрос.
+            - 'results' (list): Список найденных продуктов.
+            - 'current_page' (int): Текущая страница.
+            - 'total_pages' (int): Общее количество страниц.
+    """
 
     filtered_user_foods = UserCustomFood.objects.filter(
         user=user, food_name__icontains=query  # нечувствительный к регистру поиск
@@ -277,6 +365,22 @@ def search_user_custom_food(
 def search_user_favorite_food(
     user, query: str, max_results: int = 5, page: int = 0
 ) -> dict:
+    """
+    Выполняет поиск избранных продуктов пользователя (включая API и пользовательские) по имени.
+
+    Args:
+        user (User): Объект пользователя.
+        query (str): Поисковый запрос.
+        max_results (int, optional): Максимальное количество результатов на странице. По умолчанию 5.
+        page (int, optional): Номер страницы. По умолчанию 0.
+
+    Returns:
+        dict: Словарь с результатами поиска, содержащий следующие ключи:
+            - 'query' (str): Исходный поисковый запрос.
+            - 'results' (list): Список найденных продуктов.
+            - 'current_page' (int): Текущая страница.
+            - 'total_pages' (int): Общее количество страниц.
+    """
 
     custom_favorites = UserFavoriteCustomFood.objects.filter(
         user=user, food_name__icontains=query
@@ -318,3 +422,73 @@ def search_user_favorite_food(
     }
 
     return context
+
+
+def get_weight_history_for_chart(user, limit=0, period="all"):
+    """
+    Получает данные о весе пользователя за указанный период (историю) для построения графика.
+
+    Группирует записи по дате и возвращает списки меток (дат) и значений веса,
+    которые можно использовать для отображения в графическом интерфейсе.
+
+    Args:
+        user (User): Объект пользователя, чьи записи о весе необходимо получить.
+        limit (int, optional): Ограничение количества возвращаемых записей.
+                               Если > 0 — возвращает последние N записей.
+                               Если 0 — без ограничения. По умолчанию 0.
+        period (str, optional): Период группировки данных. Допустимые значения:
+                                 - 'all' — по каждой отдельной дате (по умолчанию),
+                                 - 'week' — по неделям,
+                                 - 'month' — по месяцам,
+                                 - 'year' — по годам. По умолчанию 'all'.
+
+    Returns:
+        tuple: Кортеж из двух списков:
+            - labels (List[str]): Список строковых представлений дат согласно указанному периоду.
+            - data (List[float]): Список значений веса.
+    """
+
+    records = UserDailyRecord.objects.filter(
+        user=user,
+    ).order_by("user_date")
+
+    grouped_records = []
+    if period == "all":
+        grouped_records = list(records)
+    else:
+        period_data = {}
+        for record in records:
+            if period == "week":
+                key = record.user_date.strftime("%Y-%W")
+            elif period == "month":
+                key = record.user_date.strftime("%Y-%m")
+            elif period == "year":
+                key = record.user_date.strftime("%Y")
+            else:
+                raise ValueError(
+                    "No such period type. Use 'all', 'week', 'month' or 'year'."
+                )
+            period_data[key] = record
+        grouped_records = sorted(period_data.values(), key=lambda x: x.user_date)
+
+    if limit < 0:
+        raise ValueError("Invalid limit value, it must be greater than or equal to 0.")
+    elif limit > 0:
+        grouped_records = grouped_records[-limit:]
+
+    # Формируем данные для графика
+    labels = []
+    data = []
+
+    for record in grouped_records:
+        if period == "all":
+            labels.append(record.user_date.strftime("%d/%m/%Y"))
+        elif period == "week":
+            labels.append(record.user_date.strftime("№%W-%d/%m/%Y"))
+        elif period == "month":
+            labels.append(record.user_date.strftime("%m/%Y"))
+        else:
+            labels.append(record.user_date.strftime("%Y"))
+        data.append(round(record.weight, 1))
+
+    return labels, data

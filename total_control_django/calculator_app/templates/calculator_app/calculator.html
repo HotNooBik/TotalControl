@@ -294,18 +294,36 @@
     </div>
 
     <div class="row justify-content-center mb-5 mt-4">
-        <div class="col-lg-5">
+        <div class="col-lg-7">
             <div class="card bg-calories-light">
                 <div class="card-body position-relative">
                     <div class="row justify-content-between align-items-baseline mb-2">
-                        <p class="card-title fc-brunswickgreen fs-4 mb-0">Вес: {{ current_weight }}</p>
-                        <form action="{% url "update_weight" %}" method="post">
-                            {% csrf_token %}
-                            <div class="input-group mb-3 w-50 mx-auto">
-                                <input type="number" name="weight" class="form-control" placeholder="Текущий вес" min="5" max="635" step="0.1" required>
-                                <button class="btn bg-ferngreen btn-outline-success text-white" type="submit">Сохранить</button>
-                            </div>
-                        </form>
+                        <div class="col-auto">
+                            <p class="card-title fc-brunswickgreen fs-4 mb-0"><span class="fs-2 fw-bold">{{ current_weight }}</span> кг</p>
+                            <p class="card-text fc-fats-dark fs-6">Цель: {{ user_goal }}</p>
+                        </div>
+                        <div class="col-auto">
+                            <p class="fw-bold fs-3 fc-brunswickgreen pe-2 pb-0 mb-0">Вес</p>
+                        </div>
+                    </div>
+                    <div class="row justify-content-between align-items-baseline">
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                    <div class="row justify-content-center align-items-center mt-4 mb-0">
+                        <div class="col-12">
+                            <form action="{% url "update_weight" %}" method="post">
+                                {% csrf_token %}
+                                <div class="input-group mb-3 w-50 mx-auto">
+                                    <input type="number" name="weight" class="form-control-weight form-control" placeholder="Текущий вес" min="5" max="635" step="0.1" required>
+                                    <button class="btn bg-send-weight btn-outline-dark" type="submit">Сохранить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row mt-0 mb-0">
+                        <div class="col-12">
+                            <p class="fst-italic text-black-50 mb-0 advice-text" align="center">Старайтесь взвешиваться и записывать результат каждый день!</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -432,6 +450,88 @@
             percentageElement.textContent = `${percent.toFixed(0)}%`;
         }
         window.onload = updateWaterLevel({{ water_percent }});
+
+
+        // Скрипт для графика веса на главном экране
+        const ctx = document.getElementById('weightChart')
+
+        const labels = {{ weight_data.labels|safe }}
+        const data = {{ weight_data.data }}
+
+        const lastFiveIndexStart = labels.length - 5;
+    
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Вес (в кг)',
+                    data: data,
+                    fill: false,
+                    borderColor: 'rgb(255, 145, 0)',
+                    backgroundColor: 'rgb(255, 166, 49)',
+                    tension: 0.1,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'category',
+                        offset: true,
+                        min: lastFiveIndexStart >= 0 ? lastFiveIndexStart : 0,
+                        max: labels.length - 1,
+                        ticks: {
+                            autoSkip: false
+                        },
+                    },
+                    y: {
+                        position: 'right',
+                        offset: true,
+                        min: Math.min(...data) - 1,
+                        max: Math.max(...data) + 1,
+                    },
+                },
+                plugins: {
+                    legend: false,
+                    zoom: {
+                        limits: {
+                            x: { 
+                                min: 0, 
+                                max: labels.length - 1 
+                            },
+                            y: {
+                                min: Math.min(...data) - 2,
+                                max: Math.max(...data) + 2,
+                            },
+                        },
+                        pan: {
+                            enabled: true,
+                            mode: 'xy',
+                            rangeMin: {
+                                x: 0, // минимальная позиция X
+                                y: null
+                            },
+                            rangeMax: {
+                                x: labels.length - 1, // максимальная позиция X
+                                y: null
+                            },
+                            speed: 0.5, // скорость панорамирования (плавность)
+                            threshold: 10 // чувствительность к движению мыши
+                        },
+                        zoom: {
+                            wheel: {
+                                enabled: true,
+                            },
+                            pinch: {
+                                enabled: true
+                            },
+                            mode: 'xy',
+                            scaleMode: 'xy',
+                        }
+                    }
+                }
+            }
+        });
     });
 </script>
 {% endblock %}

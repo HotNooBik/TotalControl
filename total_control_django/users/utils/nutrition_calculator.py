@@ -123,7 +123,7 @@ def get_user_water_norm(
 
     amount_of_water = weight * sex_coef + max(height - 170, 0) * 10
     amount_of_water *= goal_coef
-    amount_of_water *= activity_coef - 0.65
+    amount_of_water *= activity_coef - 0.75
     amount_of_water = (amount_of_water // 100) * 100
 
     return max(amount_of_water, 1500)

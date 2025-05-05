@@ -26,6 +26,7 @@ from .services import (
     get_food_details,
     search_user_custom_food,
     search_user_favorite_food,
+    get_weight_history_for_chart,
 )
 from .forms import FoodEntryForm, OwnFoodEntryForm, UserCustomFoodForm
 
@@ -96,6 +97,8 @@ def calculator(request):
     carbs_percent = (totals["carbs"] or 0) / user_profile.daily_carbs * 100
     water_percent = record.water / user_profile.daily_water * 100
 
+    labels, data = get_weight_history_for_chart(request.user, limit=10, period='all')
+
     context = {
         "current_calories": totals["calories"] or 0,
         "current_proteins": totals["proteins"] or 0,
@@ -117,6 +120,11 @@ def calculator(request):
         "fats_percent": fats_percent if fats_percent < 100 else 100,
         "carbs_percent": carbs_percent if carbs_percent < 100 else 100,
         "water_percent": water_percent if water_percent < 100 else 100,
+        "user_goal": user_profile.get_goal_display().lower(),
+        "weight_data": {
+            "labels": labels,
+            "data": data,
+        },
     }
     return render(request, "calculator_app/calculator.html", context)
 

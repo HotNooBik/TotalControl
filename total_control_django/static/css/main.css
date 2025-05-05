@@ -250,12 +250,18 @@ form select {
     box-shadow: 0 0 0 0.2rem #588157ad;
 }
 
+.form-control-weight:focus {
+    border-color: rgb(0, 0, 0);
+    box-shadow: 0 0 0 0.2rem rgba(255, 166, 49, 0.527);
+}
+
 
 /* Звезда - избранное */
 .star-btn {
     margin-top: 20px;
     padding-left: 18px;
 }
+
 
 /* Кнопка закрыть */
 .close-btn {
@@ -312,4 +318,10 @@ form select {
     font-weight: bold;
     color: rgb(37, 39, 37);
     z-index: 2;
+}
+
+
+/* Для комментария вод графиком веса */
+.advice-text {
+    font-size: 13px;
 }
