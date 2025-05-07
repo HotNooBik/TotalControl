@@ -12,6 +12,8 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.storage import default_storage
+from django.forms import formset_factory
 
 from users.models import UserProfile, UserDailyRecord
 
@@ -29,7 +31,13 @@ from .services import (
     get_weight_history_for_chart,
     get_products_from_image,
 )
-from .forms import FoodEntryForm, OwnFoodEntryForm, UserCustomFoodForm
+from .forms import (
+    FoodEntryForm,
+    OwnFoodEntryForm,
+    UserCustomFoodForm,
+    ImageUploadForm,
+    ImageFoodEntryForm,
+)
 
 
 @require_POST
@@ -102,7 +110,7 @@ def calculator(request):
     carbs_percent = (totals["carbs"] or 0) / user_profile.daily_carbs * 100
     water_percent = record.water / user_profile.daily_water * 100
 
-    labels, data_points, _= get_weight_history_for_chart(
+    labels, data_points, _ = get_weight_history_for_chart(
         request.user, limit=10, period="all", get_info=False
     )
 
@@ -221,7 +229,9 @@ def get_weight_history_graph(request):
                 status=400,
             )
 
-        labels, data_points, info = get_weight_history_for_chart(request.user, period=period, get_info=True)
+        labels, data_points, info = get_weight_history_for_chart(
+            request.user, period=period, get_info=True
+        )
 
         return JsonResponse(
             {
@@ -629,6 +639,83 @@ def remove_food_from_favorites(request, food_id: str):
     )
 
 
+@login_required
 def food_image_recognition(request):
-    
-    pass
+    FoodFormSet = formset_factory(ImageFoodEntryForm, extra=0)
+
+    if request.method == "POST":
+        if "image" in request.FILES:
+            upload_form = ImageUploadForm(request.POST, request.FILES)
+            if upload_form.is_valid():
+                image = upload_form.cleaned_data["image"]
+                # сохраняем временно
+                tmp_path = default_storage.save(f"tmp/{image.name}", image)
+                full_path = default_storage.path(tmp_path)
+
+                # вызываем ваше API
+                result = get_products_from_image(full_path)
+                # удаляем временный файл
+                default_storage.delete(tmp_path)
+
+                # если API вернуло что-то валидное — готовим formset
+                if result and result.get("is_food_was_found"):
+                    initial_data = []
+                    for food in result["foods"]:
+                        initial_data.append(
+                            {
+                                "food_name": food.get("food_name"),
+                                "amount": food.get("amount"),
+                                "calories": food.get("calories"),
+                                "proteins": food.get("proteins"),
+                                "fats": food.get("fats"),
+                                "carbs": food.get("carbs"),
+                                # meal оставляем дефолтом или можно задать сразу
+                            }
+                        )
+
+                    formset = FoodFormSet(initial=initial_data)
+                    return render(
+                        request,
+                        "calculator_app/food_recognition.html",
+                        {
+                            "formset": formset,
+                        },
+                    )
+                else:
+                    # ничего не нашли
+                    return render(
+                        request,
+                        "calculator_app/food_recognition.html",
+                        {
+                            "upload_form": upload_form,
+                            "error": "Продукты не найдены на изображении.",
+                        },
+                    )
+        # Шаг 2: приём отредактированных данных и сохранение в БД
+        else:
+            formset = FoodFormSet(request.POST)
+            if formset.is_valid():
+                for form in formset:
+                    cd = form.cleaned_data
+                    if cd:
+                        FoodEntry.objects.create(
+                            user=request.user,
+                            food_name=cd["food_name"],
+                            amount=cd["amount"],
+                            calories=cd["calories"],
+                            proteins=cd["proteins"],
+                            fats=cd["fats"],
+                            carbs=cd["carbs"],
+                            meal=cd["meal"],
+                        )
+                return redirect("calculator")  # или на любую страницу «список записей»
+    else:
+        upload_form = ImageUploadForm()
+
+    return render(
+        request,
+        "calculator_app/food_recognition.html",
+        {
+            "upload_form": upload_form,
+        },
+    )

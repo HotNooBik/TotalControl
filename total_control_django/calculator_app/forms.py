@@ -1,5 +1,5 @@
 from django import forms
-from .models import UserCustomFood
+from .models import UserCustomFood, FoodEntry
 
 
 class FoodEntryForm(forms.Form):
@@ -379,3 +379,24 @@ class UserCustomFoodForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class ImageUploadForm(forms.Form):
+    image = forms.ImageField(label='Загрузите изображение')
+
+
+class ImageFoodEntryForm(forms.ModelForm):
+    class Meta:
+        model = FoodEntry
+        fields = [
+            'food_name',
+            'amount',
+            'calories',
+            'proteins',
+            'fats',
+            'carbs',
+            'meal',
+        ]
+        widgets = {
+            'meal': forms.Select(),  # выпадающий список
+        }
