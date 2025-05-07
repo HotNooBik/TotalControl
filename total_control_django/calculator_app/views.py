@@ -27,6 +27,7 @@ from .services import (
     search_user_custom_food,
     search_user_favorite_food,
     get_weight_history_for_chart,
+    get_products_from_image,
 )
 from .forms import FoodEntryForm, OwnFoodEntryForm, UserCustomFoodForm
 
@@ -43,6 +44,10 @@ def set_timezone(request):
 
 @login_required
 def calculator(request):
+
+    # result = get_products_from_image(r"E:\work_space\TotalControl\total_control_django\static\img\dinner.jpg")
+    # pprint(result)
+
     user_timezone = request.session.get("user_timezone", "UTC")
 
     try:
@@ -97,8 +102,8 @@ def calculator(request):
     carbs_percent = (totals["carbs"] or 0) / user_profile.daily_carbs * 100
     water_percent = record.water / user_profile.daily_water * 100
 
-    labels, data_points = get_weight_history_for_chart(
-        request.user, limit=10, period="all"
+    labels, data_points, _= get_weight_history_for_chart(
+        request.user, limit=10, period="all", get_info=False
     )
 
     context = {
@@ -622,3 +627,8 @@ def remove_food_from_favorites(request, food_id: str):
     return redirect(
         f"{reverse('add_food_entry', kwargs={'food_id': food_id})}?{params}"
     )
+
+
+def food_image_recognition(request):
+    
+    pass

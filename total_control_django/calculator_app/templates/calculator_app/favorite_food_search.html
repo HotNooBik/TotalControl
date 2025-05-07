@@ -29,6 +29,9 @@
                 <div class="card-body mt-3 mb-0">
                     <form method="get">
                         <div class="input-group mb-2">
+                            <a class="btn btn-outline-light fc-ferngreen align-content-center me-2" href="{% url 'food_recognition' %}" id="cameraIconHref">
+                                <i class="m-0 fs-1 fa-solid fa-camera" id="cameraIcon"></i>
+                            </a>
                             <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды в избранном...">
                             <button class="btn btn-outline-success bg-ferngreen text-white" id="sendbtn" type="submit">Искать</button>
                         </div>
@@ -135,6 +138,7 @@
 </div>
 
 <script>
+    // Код для удаления еды из избранного
     let formIdToDelete = null;
 
     function setFormId(foodId) {
@@ -145,6 +149,22 @@
         if (formIdToDelete) {
             document.getElementById('remove-food-form-' + formIdToDelete).submit();
         }
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Свечение иконки с камерой при наведении
+        const icon = document.getElementById('cameraIcon');
+        const iconHref = document.getElementById('cameraIconHref')
+      
+        iconHref.addEventListener('mouseenter', () => {
+          icon.classList.add('glow-hover');
+        });
+      
+        iconHref.addEventListener('mouseleave', () => {
+          icon.classList.remove('glow-hover');
+        });
     });
 </script>
 {% endblock %}

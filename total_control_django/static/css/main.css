@@ -325,3 +325,12 @@ form select {
 .advice-text {
     font-size: 13px;
 }
+
+
+/* Селектор для свечения кнопки */
+.glow-hover {
+    text-shadow: 0 0 2px #ffffff, 
+                 0 0 5px #8fbb8e, 
+                 0 0 15px #588157;
+    transition: text-shadow 0.5s ease;
+  }

@@ -1,4 +1,9 @@
 from pprint import pprint
+
+import io
+import json
+import base64
+from PIL import Image
 import requests
 
 from requests_oauthlib import OAuth1
@@ -10,11 +15,13 @@ from users.models import UserDailyRecord
 
 from .models import UserCustomFood, UserFavoriteApiFood, UserFavoriteCustomFood
 
+from .prompts import FOOD_RECOGNITION_PROMPT, MODEL_VERSION
+
 
 TRANSLATOR = Translator()  # Модуль для перевода текста
 
 
-def get_fatsecret_client():
+def get_fatsecret_client(query=True):
     """
     Создаёт OAuth1 клиент для аутентификации в API FatSecret.
 
@@ -27,7 +34,7 @@ def get_fatsecret_client():
     return OAuth1(
         settings.FATSECRET_API_KEY,
         settings.FATSECRET_API_SECRET,
-        signature_type="query",
+        signature_type="query" if query else "auth_header",
     )
 
 
@@ -288,6 +295,86 @@ def extract_nutrition_data(servings: list) -> dict:
     return result
 
 
+def get_products_from_image(image_path):
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    base64_image = prepare_image(image_path)
+    data_url = f"data:image/jpeg;base64,{base64_image}"
+
+    messages = [
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": FOOD_RECOGNITION_PROMPT},
+                {"type": "image_url", "image_url": {"url": data_url}},
+            ],
+        }
+    ]
+
+    payload = {"model": MODEL_VERSION, "messages": messages}
+
+    response = requests.post(url, headers=headers, json=payload, timeout=60)
+
+    answer = (
+        response.json().get("choices", [{}])[0].get("message", {}).get("content", None)
+    )
+
+    if not answer:
+        return None
+
+    try:
+        result = json.loads(answer)
+    except json.JSONDecodeError as e:
+        print(f"Ошибка парсинга JSON: {e}")
+        result = None
+
+    return result
+
+
+def prepare_image(image_path, max_size=1280, quality=85):
+    """
+    Подготавливает изображение для передачи: сжимает до заданного размера с сохранением пропорций, 
+    конвертирует в формат JPEG вместе с RGB и кодирует в base64. При увеличении разрешения
+    повышает качество с помощью ресемплинга LANCZOS.
+
+    Args:
+        image_path (str): Путь к исходному изображению.
+        max_size (int, необязательный): Максимальный размер большей стороны изображения. 
+                                        По умолчанию 1280 пикселей.
+        quality (int, необязательный): Качество сохраняемого JPEG-файла (от 1 до 95).
+                                       По умолчанию 85.
+
+    Returns:
+        str: Строка с изображением, закодированным в формате base64.
+    """
+    with Image.open(image_path) as img:
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
+        width, height = img.size
+
+        if width > height:
+            target_width = max_size
+            target_height = int((max_size / width) * height)
+        else:
+            target_height = max_size
+            target_width = int((max_size / height) * width)
+
+        resized_img = img.resize(
+            (target_width, target_height), resample=Image.Resampling.LANCZOS
+        )
+
+        buffer = io.BytesIO()
+        resized_img.save(buffer, format="JPEG", quality=quality)
+        buffer.seek(0)
+
+        return base64.b64encode(buffer.read()).decode("utf-8")
+
+
 def search_user_custom_food(
     user, query: str, max_results: int = 5, page: int = 0
 ) -> dict:
@@ -505,4 +592,4 @@ def get_weight_history_for_chart(user, limit=0, period="all", get_info=False):
         return labels, data, info
 
     else:
-        return labels, data
+        return labels, data, None

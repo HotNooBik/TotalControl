@@ -7,3 +7,4 @@ requests==2.32.3
 requests-oauthlib==2.0.0
 googletrans==4.0.0-rc1
 psycopg2-binary==2.9.10
+pillow==11.2.1
