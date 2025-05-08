@@ -29,7 +29,8 @@
                 <div class="card-body mt-3 mb-0">
                     <form method="get">
                         <div class="input-group mb-2">
-                            <a class="btn btn-outline-light fc-ferngreen align-content-center me-2" href="{% url 'food_recognition' %}" id="cameraIconHref">
+                            <a class="btn btn-outline-light fc-ferngreen align-content-center me-2" 
+                            href="{% url 'food_recognition' %}?meal={{meal}}&prev={{ request.get_full_path|urlencode }}" id="cameraIconHref">
                                 <i class="m-0 fs-1 fa-solid fa-camera" id="cameraIcon"></i>
                             </a>
                             <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды в личных продуктах...">

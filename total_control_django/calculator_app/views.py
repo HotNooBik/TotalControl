@@ -30,6 +30,7 @@ from .services import (
     search_user_favorite_food,
     get_weight_history_for_chart,
     get_products_from_image,
+    prepare_image,
 )
 from .forms import (
     FoodEntryForm,
@@ -266,10 +267,10 @@ def food_search(request, meal: str):
     if query:
         context = search_fatsecret_food(query, page=page, translate=False)
         context["meal"] = meal
-        return render(request, "calculator_app/food_search.html", context)
+        return render(request, "calculator_app/search_food.html", context)
 
     context = {"meal": meal, "favorites": favorites}
-    return render(request, "calculator_app/food_search.html", context)
+    return render(request, "calculator_app/search_food.html", context)
 
 
 @login_required
@@ -282,7 +283,7 @@ def own_food_search(request, meal: str):
 
     context = search_user_custom_food(user=request.user, query=query, page=page)
     context["meal"] = meal
-    return render(request, "calculator_app/own_food_search.html", context)
+    return render(request, "calculator_app/search_own_food.html", context)
 
 
 @login_required
@@ -307,7 +308,7 @@ def favorite_food_search(request, meal: str):
 
     context["meal"] = meal
     context["max_result"] = max_result
-    return render(request, "calculator_app/favorite_food_search.html", context)
+    return render(request, "calculator_app/search_favorite_food.html", context)
 
 
 @login_required
@@ -438,6 +439,8 @@ def add_fast_entry(request):
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
 
+    next_url = request.GET.get("next", reverse("calculator"))
+
     if request.method == "POST":
         form = OwnFoodEntryForm(request.POST)
         if form.is_valid():
@@ -458,6 +461,7 @@ def add_fast_entry(request):
     context = {
         "form": form,
         "meal": meal,
+        "next_url": next_url,
     }
     return render(request, "calculator_app/add_fast_entry.html", context)
 
@@ -631,9 +635,12 @@ def remove_food_from_favorites(request, food_id: str):
         except (ValueError, UserFavoriteApiFood.DoesNotExist):
             pass
 
+    print(referer)
+
     if referer:
         return redirect(referer)
 
+    # Если referer не будет, то задаем redirect
     return redirect(
         f"{reverse('add_food_entry', kwargs={'food_id': food_id})}?{params}"
     )
@@ -641,81 +648,153 @@ def remove_food_from_favorites(request, food_id: str):
 
 @login_required
 def food_image_recognition(request):
+
+    prev_url = request.GET.get("prev", reverse("calculator"))
+
+    meal = request.GET.get("meal", "snack")
+    if meal not in ["breakfast", "lunch", "dinner", "snack"]:
+        meal = "snack"
+
+    context = {
+        "prev_url": prev_url,
+        "meal": meal,
+    }
+
     FoodFormSet = formset_factory(ImageFoodEntryForm, extra=0)
 
     if request.method == "POST":
-        if "image" in request.FILES:
-            upload_form = ImageUploadForm(request.POST, request.FILES)
-            if upload_form.is_valid():
-                image = upload_form.cleaned_data["image"]
-                # сохраняем временно
-                tmp_path = default_storage.save(f"tmp/{image.name}", image)
-                full_path = default_storage.path(tmp_path)
-
-                # вызываем ваше API
-                result = get_products_from_image(full_path)
-                # удаляем временный файл
-                default_storage.delete(tmp_path)
-
-                # если API вернуло что-то валидное — готовим formset
-                if result and result.get("is_food_was_found"):
-                    initial_data = []
-                    for food in result["foods"]:
-                        initial_data.append(
-                            {
-                                "food_name": food.get("food_name"),
-                                "amount": food.get("amount"),
-                                "calories": food.get("calories"),
-                                "proteins": food.get("proteins"),
-                                "fats": food.get("fats"),
-                                "carbs": food.get("carbs"),
-                                # meal оставляем дефолтом или можно задать сразу
-                            }
-                        )
-
-                    formset = FoodFormSet(initial=initial_data)
-                    return render(
-                        request,
-                        "calculator_app/food_recognition.html",
-                        {
-                            "formset": formset,
-                        },
-                    )
-                else:
-                    # ничего не нашли
-                    return render(
-                        request,
-                        "calculator_app/food_recognition.html",
-                        {
-                            "upload_form": upload_form,
-                            "error": "Продукты не найдены на изображении.",
-                        },
-                    )
-        # Шаг 2: приём отредактированных данных и сохранение в БД
-        else:
+        files = request.FILES.getlist("image")
+        # Если файлов нет, значит мы уже получили фото и сохраняем полученные данные
+        if not files:
             formset = FoodFormSet(request.POST)
             if formset.is_valid():
                 for form in formset:
-                    cd = form.cleaned_data
-                    if cd:
+                    # Создаем запись для каждой найденной и отмеченной еды
+                    if form.cleaned_data["save_flag"]:
                         FoodEntry.objects.create(
                             user=request.user,
-                            food_name=cd["food_name"],
-                            amount=cd["amount"],
-                            calories=cd["calories"],
-                            proteins=cd["proteins"],
-                            fats=cd["fats"],
-                            carbs=cd["carbs"],
-                            meal=cd["meal"],
+                            food_name=form.cleaned_data["food_name"],
+                            amount=form.cleaned_data["amount"],
+                            calories=round(form.cleaned_data["calories"]),
+                            proteins=round(form.cleaned_data["proteins"], 1),
+                            fats=round(form.cleaned_data["fats"], 1),
+                            carbs=round(form.cleaned_data["carbs"], 1),
+                            meal=meal,
                         )
-                return redirect("calculator")  # или на любую страницу «список записей»
+                return redirect("calculator")
+            else:
+                upload_form = ImageUploadForm()
+                context["upload_form"] = upload_form
+                context["error"] = (
+                        "Произошла ошибка при сохранении, попробуйте ещё раз."
+                    )
+        # Если файлы есть, то проверяем, что это фото
+        else:
+            upload_form = ImageUploadForm(request.POST, request.FILES)
+            if upload_form.is_valid():
+                image = upload_form.cleaned_data["image"]
+
+                tmp_path = default_storage.save(f"tmp/{image.name}", image)
+                full_path = default_storage.path(tmp_path)
+
+                result, base64_image = get_products_from_image(full_path)
+
+                default_storage.delete(tmp_path)
+
+                if result and result.get("is_food_was_found", False):
+                    initial_data = []
+                    try:
+                        total_calories = 0
+                        total_proteins = 0
+                        total_fats = 0
+                        total_carbs = 0
+                        for food in result.get("foods", []):
+                            calories = int(food.get("calories"))
+                            proteins = round(float(food.get("proteins")), 1)
+                            fats = round(float(food.get("fats")), 1)
+                            carbs = round(float(food.get("carbs")), 1)
+
+                            total_calories += calories
+                            total_proteins += proteins
+                            total_fats += fats
+                            total_carbs += carbs
+
+                            initial_data.append(
+                                {
+                                    "food_name": str(food.get("food_name")),
+                                    "amount": str(food.get("amount")),
+                                    "calories": calories,
+                                    "proteins": proteins,
+                                    "fats": fats,
+                                    "carbs": carbs,
+                                    "meal": meal,
+                                }
+                            )
+
+                            context["formset"] = FoodFormSet(initial=initial_data)
+                            context["total"] = {
+                                "total_products": result.get(
+                                    "count", len(result["foods"])
+                                ),
+                                "total_calories": total_calories,
+                                "total_proteins": total_proteins,
+                                "total_fats": total_fats,
+                                "total_carbs": total_carbs,
+                            }
+                            context["image_data"] = base64_image
+
+                    except (AttributeError, ValueError, TypeError):
+                        context["error"] = (
+                            "Произошла ошибка при получении ответа, повторите отправку снова.."
+                        )
+                        context["upload_form"] = upload_form
+                else:
+                    context["error"] = (
+                        "Продукты на изображении не найдены! Попробуйте другое изображение."
+                    )
+                    context["upload_form"] = upload_form
+
+            else:
+                context["error"] = (
+                    "Не удалось открыть файл с изображением! Попробуйте другое изображение."
+                )
+                context["upload_form"] = upload_form
     else:
         upload_form = ImageUploadForm()
+        context["upload_form"] = upload_form
+        context["show_hello"] = True
 
     return render(
         request,
         "calculator_app/food_recognition.html",
-        {
-            "upload_form": upload_form,
+        context,
+    )
+
+
+def test(request):
+
+    image = prepare_image(r"E:\work_space\TotalControl\test_images\real_lunch.jpg")
+    # image = prepare_image(r"E:\work_space\TotalControl\test_images\real_breakfast.jpg")
+
+    context = {
+        "prev_url": "/calculator_app/food-search/breakfast/",
+        "meal": "breakfast",
+        "formset": "<ImageFoodEntryFormFormSet: bound=False valid=Unknown total_forms=4>",
+        "total": {
+            "total_products": 4,
+            "total_calories": 550,
+            "total_proteins": 26.1,
+            "total_fats": 32.0,
+            "total_carbs": 40.0,
         },
+        "image_data": image,
+    }
+    context["error"] = (
+        "Не удалось открыть файл с изображением! Попробуйте другой файл."
+    )
+
+    return render(
+        request,
+        "calculator_app/food_recognition.html",
+        context,
     )

@@ -1,52 +1,295 @@
 {% extends "main/base.html" %}
+{% load static %}
 {% block content %}
-  <h1>Загрузка фотографии блюда</h1>
 
-  {% if error %}
-    <div class="alert alert-warning">{{ error }}</div>
-  {% endif %}
+<div class="container mt-4">
+    <div class="row justify-content-center mb-3 text-center">
+        <div class="col-sm-12">
+            <div class="card">
 
-  {# Шаг 2: редактирование найденных продуктов #}
-  {% if formset %}
-    <form method="post">
-      {% csrf_token %}
-      {{ formset.management_form }}
-      <table>
-        <thead>
-          <tr>
-            <th>Название</th>
-            <th>Количество</th>
-            <th>Калории</th>
-            <th>Белки</th>
-            <th>Жиры</th>
-            <th>Углеводы</th>
-            <th>Прием пищи</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for form in formset %}
-            <tr>
-              {% for field in form.visible_fields %}
-                <td>
-                  {{ field.errors }}
-                  {{ field }}
-                </td>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <button type="submit">Сохранить в дневник</button>
-    </form>
+                <div class="z-3 row justify-content-center position-relative">
+                    <div class="col-auto mt-0 position-absolute end-0">
+                        <div class="close-btn mt-2">
+                            <a href="{{ prev_url }}">
+                                <i class="fa-solid fa-xmark fc-ferngreen fs-1 " title="Вернуться назад"></i>
+                            </a> 
+                        </div>
+                    </div>
+                </div>
 
-  {# Шаг 1: загрузка изображения #}
-  {% else %}
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ upload_form.image.label_tag }}
-      {{ upload_form.image }}
-      <button type="submit">Загрузить</button>
-    </form>
-  {% endif %}
+                <div class="card-header">
+                    <h2 class="py-4 fw-bold fc-darkgreen">Добавление еды по фото в
+                        {% if meal == 'breakfast' %}
+                        "Завтрак"
+                        {% elif meal == 'lunch' %}
+                        "Обед"
+                        {% elif meal == 'dinner' %}
+                        "Ужин"
+                        {% else %}
+                        "Перекус"
+                        {% endif %}
+                    </h2>
+                </div>
+                
+                <div class="card-body">
+
+                    {% if error %}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="alert alert-danger alert-dismissible fade show fs-5" role="alert">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span class="fw-medium">{{ error }}</span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if formset %}
+                    <div class="row justify-content-center">
+                        <div class="col-sm-5 mx-2 align-content-center">
+                            <img src="data:image/jpeg;base64,{{ image_data }}" 
+                            class="img-fluid rounded shadow my-3 h-auto w-auto" alt="Изображение еды"
+                            style="max-height: 350px;">
+                        </div>
+
+                        <div class="col-sm-5 mx-2 align-content-center">
+                            <div class="p-3 border rounded shadow bg-light m-auto">
+                                <h3 class="mb-3">Итого:</h3>
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div><span class="fs-5 fw-semibold">Кол-во продуктов:</span></div>
+                                        <div>
+                                            <span class="fw-bolder fs-4">{{ total.total_products }}</span>
+                                            <span class="fw-light fs-6">шт.</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-calories-light">
+                                        <span class="fs-5 fw-semibold">Калорий:</span>
+                                        <div>
+                                            <span class="fw-bolder fs-4">{{ total.total_calories }}</span> 
+                                            <span class="fw-light fs-6">ккал.</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-proteins-light">
+                                        <span class="fs-5 fw-semibold">Белков:</span>
+                                        <div>
+                                            <span class="fw-bolder fs-4">{{ total.total_proteins|floatformat:1 }}</span>
+                                            <span class="fw-light fs-6">г.</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-fats-light">
+                                        <span class="fs-5 fw-semibold">Жиров:</span>
+                                        <div>
+                                            <span class="fw-bolder fs-4">{{ total.total_fats|floatformat:1 }}</span>
+                                            <span class="fw-light fs-6">г.</span>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-carbs-light">
+                                        <span class="fs-5 fw-semibold">Углеводов:</span>
+                                        <div>
+                                            <span class="fw-bolder fs-4">{{ total.total_carbs|floatformat:1 }}</span>
+                                            <span class="fw-light fs-6">г.</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ formset.management_form }}
+                        {% for form in formset %}
+                            <tr>
+                            {% for field in form.visible_fields %}
+                                <td>
+                                    {{ field.errors }}
+                                    {{ field }}
+                                </td>
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        <button type="submit">Сохранить в дневник</button>
+                    </form> 
+
+                    {% else %}
+                    <div class="row justify-content-center mt-4 mb-5">
+                        <div class="col-sm-5 mx-2 align-content-center">
+                            <form method="post" enctype="multipart/form-data" id="image-submit-form">
+                                {% csrf_token %}
+                                <div id="drop-area">
+                                    <div class="container py-2 px-3 mx-auto text-center">
+                                        
+                                        <div class="mt-3 mb-3 d-flex justify-content-center align-content-center position-relative">
+                                            <div id="preview-img-container" style="position: relative; display: inline-block;">
+                                                <img id="preview-img" 
+                                                        src="" 
+                                                        alt="Предпросмотр" 
+                                                        class="img-fluid rounded shadow"
+                                                        style="max-height: 150px; max-width: 150px; display: none; filter: blur(3px);">
+                                            </div>
+                                            <div id="preview-error" class="alert alert-danger text-danger mt-2 fs-6" style="display: none;"></div>
+                                        </div>
+
+                                        <div id="spinner" class="mt-0 my-2"></div>
+                                        
+                                        <div id="to-remove">
+                                            <div class="mb-2 mt-4">
+                                                <label for="image-input" class="form-label fs-3">{{ upload_form.image.label_tag }}</label>
+                                                {{ upload_form.image }}
+                                            </div>
+                        
+                                            <button class="btn mt-4 mb-4 bg-ferngreen btn-outline-success form-control text-white w-75" 
+                                                    type="submit">Проанализировать</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    {% endif%}
+                    {% if show_hello %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <h4 class="alert-heading">Распознавание еды на фото!</h4>
+                        <p class="fs-5">
+                            Загрузите изображение, а мы постараемся определить продукты на нем и 
+                            автоматически подсчитать кол-во калорий, белков, жиров и углеводов для каждого продукта.
+                        </p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif%}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if upload_form %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('image-input');
+    const previewImg = document.getElementById('preview-img');
+    const previewError = document.getElementById('preview-error');
+
+    function resetPreview() {
+        previewImg.style.display = 'none';
+        previewImg.src = '';
+        previewError.style.display = 'none';
+        previewError.textContent = '';
+    }
+
+    function showPreview(file) {
+        resetPreview();
+
+        const imageURL = URL.createObjectURL(file);
+        previewImg.src = imageURL;
+        previewImg.style.display = 'block';
+
+        previewImg.onerror = function () {
+            resetPreview();
+            previewError.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Файл повреждён или не является изображением.';
+            previewError.style.display = 'block';
+        };
+    }
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (event) {
+        dropArea.addEventListener(event, function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    });
+
+    ['dragenter', 'dragover'].forEach(function (event) {
+        dropArea.addEventListener(event, function () {
+            dropArea.classList.add('highlight');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(function (event) {
+        dropArea.addEventListener(event, function () {
+            dropArea.classList.remove('highlight');
+        });
+    });
+
+    dropArea.addEventListener('drop', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    
+        const items = e.dataTransfer.items;
+
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i].webkitGetAsEntry?.();
+            if (item && item.isDirectory) {
+                return;
+            }
+        }
+
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+            showPreview(file);
+        }
+    });
+
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files.length > 0) {
+            showPreview(fileInput.files[0]);
+        }
+    });
+    
+    document.getElementById("image-submit-form").addEventListener('submit', function(e) {
+        const divToRemove = document.getElementById("to-remove");
+
+        const gif = document.createElement('img');
+        gif.src = '{% static 'img/analys.gif' %}';
+        gif.alt = 'Загрузка...';
+        gif.classList.add('overlay-gif');
+    
+        const previewContainer = document.getElementById('preview-img-container');
+        previewContainer.appendChild(gif);
+
+        const spinnerContainer = document.createElement('div');
+        spinnerContainer.className = 'd-flex align-items-center justify-content-center mt-4 mb-4';
+        const spinner = document.createElement('div');
+        spinner.className = 'spinner-border text-success';
+        spinner.setAttribute('role', 'status');
+
+        const spinnerText = document.createElement('span');
+        spinnerText.className = 'ms-3';
+        spinnerText.textContent = 'Анализируем изображение...';
+        
+        spinnerContainer.appendChild(spinner);
+        spinnerContainer.appendChild(spinnerText);
+        
+        divToRemove.style.opacity = '0';
+        divToRemove.style.visibility = 'hidden';
+        divToRemove.style.transition = 'opacity 0.3s ease';
+        document.getElementById("spinner").appendChild(spinnerContainer);
+        
+        const textVariants = [
+            'Находим еду...',
+            'Определяем, можно ли это есть...',
+            'Узнаем название еды...',
+            'Считаем калории...',
+            'Считаем белки...',
+            'Считаем жиры...',
+            'Считаем углеводы...',
+        ];
+        let currentIndex = 0;
+        
+        const textInterval = setInterval(() => {
+            currentIndex = (currentIndex + 1) % textVariants.length;
+            spinnerText.textContent = textVariants[currentIndex];
+        }, 3000);
+    });
+
+});
+</script>
+{% endif%}
 
 {% endblock %}

@@ -513,16 +513,33 @@ def get_weight_history_for_chart(user, limit=0, period="all", get_info=False):
 
     else:
         return labels, data, None
-    
+
 
 def get_products_from_image(image_path):
+    """
+    Определяет продукты (еду) на изображении с помощью внешнего API.
+
+    Использует модель распознавания изображений, отправляя картинку в виде base64
+    на сервис OpenRouter. Ожидается, что в ответ придёт JSON с распознанными продуктами.
+
+    Args:
+        image_path (str): Путь к изображению, на котором необходимо распознать еду.
+
+    Returns:
+        dict | None: Распознанные продукты в формате словаря (если удалось распознать),
+                     иначе None;
+        str: Строка с изображением, закодированным в формате base64, или с пустой строкой в случае ошибки.
+
+    """
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {settings.OPENROUTER_API_KEYS[0]}",
         "Content-Type": "application/json",
     }
 
     base64_image = prepare_image(image_path)
+    if not base64_image:
+        return None, base64_image
     data_url = f"data:image/jpeg;base64,{base64_image}"
 
     messages = [
@@ -538,58 +555,72 @@ def get_products_from_image(image_path):
     payload = {"model": MODEL_VERSION, "messages": messages}
 
     response = requests.post(url, headers=headers, json=payload, timeout=60)
+    keys_count = len(settings.OPENROUTER_API_KEYS) - 1
+    while response.json().get("error", {}).get("code", 0) == 429 and keys_count > 0:
+        headers["Authorization"] = f"Bearer {settings.OPENROUTER_API_KEYS[keys_count]}"
+        keys_count -= 1
+        response = requests.post(url, headers=headers, json=payload, timeout=60)
 
     answer = (
         response.json().get("choices", [{}])[0].get("message", {}).get("content", None)
     )
 
     if not answer:
-        return None
+        return None, base64_image
 
     try:
         result = json.loads(answer)
-    except json.JSONDecodeError as e:
-        print(f"Ошибка парсинга JSON: {e}")
+    except json.JSONDecodeError:
         result = None
 
-    return result
+    return result, base64_image
 
 
 def prepare_image(image_path, max_size=1280, quality=85):
     """
-    Подготавливает изображение для передачи: сжимает до заданного размера с сохранением пропорций, 
+    Подготавливает изображение для передачи: сжимает до заданного размера с сохранением пропорций,
     конвертирует в формат JPEG вместе с RGB и кодирует в base64. При увеличении разрешения
     повышает качество с помощью ресемплинга LANCZOS.
 
     Args:
         image_path (str): Путь к исходному изображению.
-        max_size (int, необязательный): Максимальный размер большей стороны изображения. 
+        max_size (int, необязательный): Максимальный размер большей стороны изображения.
                                         По умолчанию 1280 пикселей.
         quality (int, необязательный): Качество сохраняемого JPEG-файла (от 1 до 95).
                                        По умолчанию 85.
 
     Returns:
-        str: Строка с изображением, закодированным в формате base64.
+        str: Строка с изображением, закодированным в формате base64, или с пустой строкой в случае ошибки.
     """
-    with Image.open(image_path) as img:
-        if img.mode != "RGB":
-            img = img.convert("RGB")
+    try:
+        with Image.open(image_path) as img:
+            if img.mode != "RGB":
+                img = img.convert("RGB")
 
-        width, height = img.size
+            width, height = img.size
 
-        if width > height:
-            target_width = max_size
-            target_height = int((max_size / width) * height)
-        else:
-            target_height = max_size
-            target_width = int((max_size / height) * width)
+            if width > height:
+                target_width = max_size
+                target_height = int((max_size / width) * height)
+            else:
+                target_height = max_size
+                target_width = int((max_size / height) * width)
 
-        resized_img = img.resize(
-            (target_width, target_height), resample=Image.Resampling.LANCZOS
-        )
+            resized_img = img.resize(
+                (target_width, target_height), resample=Image.Resampling.LANCZOS
+            )
 
-        buffer = io.BytesIO()
-        resized_img.save(buffer, format="JPEG", quality=quality)
-        buffer.seek(0)
+            buffer = io.BytesIO()
+            resized_img.save(buffer, format="JPEG", quality=quality)
+            buffer.seek(0)
 
-        return base64.b64encode(buffer.read()).decode("utf-8")
+            return base64.b64encode(buffer.read()).decode("utf-8")
+    except (
+        FileNotFoundError,
+        IOError,
+        ValueError,
+        AttributeError,
+        Image.DecompressionBombError,
+        Image.UnidentifiedImageError,
+    ):
+        return None

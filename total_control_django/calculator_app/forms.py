@@ -1,3 +1,5 @@
+from email.policy import default
+from PIL import Image
 from django import forms
 from .models import UserCustomFood, FoodEntry
 
@@ -31,6 +33,10 @@ class OwnFoodEntryForm(forms.Form):
             }
         ),
     )
+
+    def clean_food_name(self):
+        food_name = self.cleaned_data.get("food_name").strip()
+        return food_name if food_name else "Без названия"
 
     calories = forms.FloatField(
         label="Калорий",
@@ -382,21 +388,88 @@ class UserCustomFoodForm(forms.ModelForm):
 
 
 class ImageUploadForm(forms.Form):
-    image = forms.ImageField(label='Загрузите изображение')
+    image = forms.ImageField(
+        label="Загрузите изображение",
+        widget=forms.FileInput(
+            attrs={
+                "class": "form-control",
+                "id": "image-input",
+            }
+        ),
+        )
+
+    def clean_image(self):
+        image = self.cleaned_data.get("image")
+
+        try:
+            img = Image.open(image)
+            img.verify()
+        except Exception as error:
+            raise forms.ValidationError(
+                "Файл поврежден или не является изображением."
+            ) from error
+        return image
 
 
-class ImageFoodEntryForm(forms.ModelForm):
-    class Meta:
-        model = FoodEntry
-        fields = [
-            'food_name',
-            'amount',
-            'calories',
-            'proteins',
-            'fats',
-            'carbs',
-            'meal',
-        ]
-        widgets = {
-            'meal': forms.Select(),  # выпадающий список
-        }
+class ImageFoodEntryForm(forms.Form):
+    save_flag = forms.BooleanField(
+        label="Сохранить",
+        initial=True,
+        required=False,
+    )
+
+    food_name = forms.CharField(
+        label="Название продукта",
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Название продукта...",
+            }
+        ),
+        required=True
+    )
+
+    amount = forms.CharField(
+        label="Количество",
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Название порции..."}
+        ),
+    )
+
+    calories = forms.FloatField(
+        label="Калорий",
+        min_value=0,
+        max_value=99999,
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "placeholder": "...", "step": "1"}
+        ),
+    )
+
+    proteins = forms.FloatField(
+        label="Белков",
+        min_value=0,
+        max_value=99999,
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "placeholder": "...", "step": "0.1"}
+        ),
+    )
+
+    fats = forms.FloatField(
+        label="Жиров",
+        min_value=0,
+        max_value=99999,
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "placeholder": "...", "step": "0.1"}
+        ),
+    )
+
+    carbs = forms.FloatField(
+        label="Углеводов",
+        min_value=0,
+        max_value=99999,
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", "placeholder": "...", "step": "0.1"}
+        ),
+    )

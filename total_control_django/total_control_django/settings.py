@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
+from dotenv import dotenv_values
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +30,12 @@ DEBUG = config("DEBUG_STATUS", default=False, cast=bool)
 
 FATSECRET_API_KEY = config("FATSECRET_API_KEY")
 FATSECRET_API_SECRET = config("FATSECRET_API_SECRET")
-OPENROUTER_API_KEY = config("OPENROUTER_API_KEY")
+
+OPENROUTER_API_KEYS = [
+    value
+    for key, value in dotenv_values(".env").items()
+    if key.startswith("OPENROUTER_API_KEY")
+]
 
 ALLOWED_HOSTS = ["*"]
 

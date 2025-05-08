@@ -29,7 +29,8 @@
                 <div class="card-body mt-3 mb-0">
                     <form method="get">
                         <div class="input-group mb-2">
-                            <a class="btn btn-outline-light fc-ferngreen align-content-center me-2" href="{% url 'food_recognition' %}" id="cameraIconHref">
+                            <a class="btn btn-outline-light fc-ferngreen align-content-center me-2" 
+                            href="{% url 'food_recognition' %}?meal={{meal}}&prev={{ request.get_full_path|urlencode }}" id="cameraIconHref">
                                 <i class="m-0 fs-1 fa-solid fa-camera" id="cameraIcon"></i>
                             </a>
                             <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды в базе продуктов...">
@@ -85,7 +86,7 @@
     <div class="row justify-content-center mb-3 text-center">
         <div class="col-lg-3">
             <div class="card">
-                <a href="{% url 'add_fast_entry' %}?meal={{meal}}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление записи</a>
+                <a href="{% url 'add_fast_entry' %}?meal={{meal}}&next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success bg-ferngreen text-white">Быстрое добавление записи</a>
             </div>
         </div>
     </div>            

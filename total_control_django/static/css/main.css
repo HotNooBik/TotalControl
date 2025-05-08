@@ -334,3 +334,29 @@ form select {
                  0 0 15px #588157;
     transition: text-shadow 0.5s ease;
   }
+
+
+/* Для прикрепления фото*/
+#drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #ffffff00;
+}
+
+#drop-area.highlight {
+    border-color: #77ad76;
+    background-color: #f3fff0c5;
+  }
+
+.overlay-gif {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 100px;
+    max-width: 100px;
+    z-index: 10;
+    filter: blur(2px);
+}
