@@ -11,9 +11,11 @@
                         {% if is_favorite%}
                         <form action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal}}&next={{next_url|urlencode}}" method="post">
                             {% csrf_token %}
+                            {% if not is_custom %}
                             <input type="hidden" name="food_name" value="{{ food.food_name }}">
                             <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
                             <input type="hidden" name="food_description" value="{{ food.food_description }}">
+                            {% endif %}
                             <button class="btn star-btn" title="Убрать из избранного" type="submit">
                                 <i class="fs-2 fc-star fas fa-star"></i>
                             </button>
@@ -21,9 +23,11 @@
                         {% else %}
                         <form action="{% url 'add_food_to_favorites' food.food_id %}?meal={{meal}}&next={{next_url|urlencode}}" method="post">
                             {% csrf_token %}
+                            {% if not is_custom %}
                             <input type="hidden" name="food_name" value="{{ food.food_name }}">
                             <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
                             <input type="hidden" name="food_description" value="{{ food.food_description }}">
+                            {% endif %}
                             <button class="btn star-btn" title="Добавить в избранное" type="submit">
                                 <i class="fs-2 fc-star far fa-star"></i>
                             </button>

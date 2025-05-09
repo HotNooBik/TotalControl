@@ -46,10 +46,7 @@ class UserCustomFoodAdmin(admin.ModelAdmin):
 class UserFavoriteCustomFoodAdmin(admin.ModelAdmin):
     list_display = (
         "user",
-        "custom_food_id",
-        "food_name",
-        "brand_name",
-        "food_description",
+        "food_id",
         "created_at",
     )
 

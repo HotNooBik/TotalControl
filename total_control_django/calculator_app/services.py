@@ -1,3 +1,4 @@
+from csv import Error
 from pprint import pprint
 
 import io
@@ -390,7 +391,7 @@ def search_user_favorite_food(
     """
 
     custom_favorites = UserFavoriteCustomFood.objects.filter(
-        user=user, food_name__icontains=query
+        user=user, food__food_name__icontains=query
     )
 
     api_favorites = UserFavoriteApiFood.objects.filter(
@@ -409,16 +410,28 @@ def search_user_favorite_food(
     ]
 
     processed_result = []
-    for food in favorites_on_page:
-        base_data = {
-            "brand_name": food.brand_name,
-            "food_name": food.food_name,
-            "food_description": food.food_description,
-        }
-        if isinstance(food, UserFavoriteCustomFood):
-            base_data["food_id"] = f"ucf{food.custom_food_id}"
-        elif isinstance(food, UserFavoriteApiFood):
-            base_data["food_id"] = food.food_id
+    for favorite_food in favorites_on_page:
+        if isinstance(favorite_food, UserFavoriteCustomFood):
+            custom_food = favorite_food.food
+            base_data = {
+                "food_name": custom_food.food_name,
+                "food_id": f"ucf{favorite_food.food_id}",
+                "brand_name": custom_food.brand_name,
+                "food_description": f'На "{custom_food.serving_name}" - '
+                                    f'Калорий: {custom_food.calories} ккал. | '
+                                    f'Жиров: {custom_food.fats} г. | '
+                                    f'Углеводов: {custom_food.carbs} г. | '
+                                    f'Белков: {custom_food.proteins} г.',
+            }
+        elif isinstance(favorite_food, UserFavoriteApiFood):
+            base_data = {
+                "food_id": favorite_food.food_id,
+                "food_name": favorite_food.food_name,
+                "brand_name": favorite_food.brand_name,
+                "food_description": favorite_food.food_description,
+            }
+        else:
+            raise AttributeError
         processed_result.append(base_data)
 
     context = {

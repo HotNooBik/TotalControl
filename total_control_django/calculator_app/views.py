@@ -30,7 +30,6 @@ from .services import (
     search_user_favorite_food,
     get_weight_history_for_chart,
     get_products_from_image,
-    prepare_image,
 )
 from .forms import (
     FoodEntryForm,
@@ -339,7 +338,7 @@ def add_food_entry(request, food_id: str):
     try:
         if food_id.startswith("ucf"):
             UserFavoriteCustomFood.objects.get(
-                user=request.user, custom_food_id=custom_food_id
+                user=request.user, food_id=custom_food_id
             )
         else:
             food_id = int(food_id)
@@ -553,9 +552,9 @@ def add_food_to_favorites(request, food_id: str):
     if brand_name == "None":
         brand_name = None
 
-    food_name = request.POST.get("food_name").strip()
+    food_name = request.POST.get("food_name", "").strip()
 
-    food_description = request.POST.get("food_description").strip()
+    food_description = request.POST.get("food_description", "").strip()
 
     if food_id.startswith("ucf"):
         try:
@@ -564,18 +563,9 @@ def add_food_to_favorites(request, food_id: str):
                 food_id=custom_food_id, user=request.user
             )
 
-            if not food_name:
-                food_name = custom_food.to_api_format()["food_name"]
-
-            if not food_description:
-                food_description = custom_food.to_api_format()["food_description"]
-
             UserFavoriteCustomFood.objects.get_or_create(
                 user=request.user,
-                custom_food=custom_food,
-                food_name=food_name,
-                brand_name=brand_name,
-                food_description=food_description,
+                food=custom_food,
             )
         except (ValueError, UserCustomFood.DoesNotExist):
             pass
@@ -621,7 +611,7 @@ def remove_food_from_favorites(request, food_id: str):
         try:
             custom_food_id = int(food_id.replace("ucf", ""))
             favorite = UserFavoriteCustomFood.objects.get(
-                user=request.user, custom_food_id=custom_food_id
+                user=request.user, food_id=custom_food_id
             )
             favorite.delete()
         except (ValueError, UserFavoriteCustomFood.DoesNotExist):
@@ -634,8 +624,6 @@ def remove_food_from_favorites(request, food_id: str):
             favorite.delete()
         except (ValueError, UserFavoriteApiFood.DoesNotExist):
             pass
-
-    print(referer)
 
     if referer:
         return redirect(referer)

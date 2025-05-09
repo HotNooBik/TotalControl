@@ -172,12 +172,7 @@ class UserCustomFood(models.Model):
                     ]
                 )
                 else None
-            ),
-            "food_description": f'На "{self.serving_name }" - '
-            f"Калорий: {self.calories} ккал. | "
-            f"Жиров: {self.fats} г. | "
-            f"Углеводов: {self.carbs} г. | "
-            f"Белков: {self.proteins} г.",
+            )
         }
 
     @classmethod
@@ -204,18 +199,12 @@ class UserFavoriteCustomFood(models.Model):
 
     Attributes:
         user (ForeignKey): Связь с пользователем
-        custom_food (ForeignKey): Связь с пользовательским продуктом
-        food_name (CharField): Название продукта
-        brand_name (CharField): Бренд продукта
-        food_description (CharField): Описание продукта
+        food (ForeignKey): Связь с пользовательским продуктом
         created_at (DateTimeField): Дата добавления в избранное (автоматически)
     """
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    custom_food = models.ForeignKey(UserCustomFood, on_delete=models.CASCADE)
-    food_name = models.CharField(max_length=100)
-    brand_name = models.CharField(max_length=100, null=True, blank=True)
-    food_description = models.CharField(max_length=255)
+    food = models.ForeignKey(UserCustomFood, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
