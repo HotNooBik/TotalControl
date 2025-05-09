@@ -20,6 +20,7 @@ class UserProfileAdmin(admin.ModelAdmin):
         "daily_carbs",
     )
 
+
 @admin.register(models.UserDailyRecord)
 class UserDailyRecordAdmin(admin.ModelAdmin):
     list_display = (

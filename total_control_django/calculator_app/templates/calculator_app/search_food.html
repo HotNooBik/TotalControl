@@ -4,6 +4,17 @@
     <div class="row justify-content-center mb-3 text-center">
         <div class="col-sm-12">
             <div class="card">
+
+                <div class="z-3 row justify-content-center position-relative">
+                    <div class="col-auto mt-0 position-absolute end-0">
+                        <div class="close-btn mt-3">
+                            <a href="{% url 'calculator' %}">
+                                <i class="fa-solid fa-xmark fc-ferngreen fs-1 " title="Вернуться назад"></i>
+                            </a> 
+                        </div>
+                    </div>
+                </div>
+
                 <h2 class="card-header py-3 fw-bold fc-darkgreen">Поиск еды на
                     {% if meal == 'breakfast' %}
                     завтрак

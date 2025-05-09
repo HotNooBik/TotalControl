@@ -396,7 +396,7 @@ class ImageUploadForm(forms.Form):
                 "id": "image-input",
             }
         ),
-        )
+    )
 
     def clean_image(self):
         image = self.cleaned_data.get("image")
@@ -415,6 +415,12 @@ class ImageFoodEntryForm(forms.Form):
     save_flag = forms.BooleanField(
         label="Сохранить",
         initial=True,
+        widget=forms.CheckboxInput(
+            attrs={
+                "class": "form-check-input",
+                "title": "Добавить",
+            }
+        ),
         required=False,
     )
 
@@ -423,53 +429,113 @@ class ImageFoodEntryForm(forms.Form):
         max_length=100,
         widget=forms.TextInput(
             attrs={
-                "class": "form-control",
+                "class": "form-control bg-calories-lightest",
                 "placeholder": "Название продукта...",
             }
         ),
-        required=True
+        required=False,
     )
+
+    def clean_food_name(self):
+        food_name = self.cleaned_data.get("food_name").strip()
+        if not food_name:
+            return "Без названия"
+        return food_name
 
     amount = forms.CharField(
         label="Количество",
         max_length=100,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Название порции..."}
+            attrs={
+                "class": "form-control bg-calories-lightest",
+                "placeholder": "Название порции...",
+            }
         ),
+        required=False,
     )
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get("amount").strip()
+        if not amount:
+            return "неизвестно"
+        return amount
 
     calories = forms.FloatField(
         label="Калорий",
         min_value=0,
         max_value=99999,
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "...", "step": "1"}
+            attrs={
+                "class": "form-control bg-calories-light",
+                "placeholder": "...",
+                "step": "1",
+            }
         ),
+        required=False,
     )
+
+    def clean_calories(self):
+        calories = self.cleaned_data.get("calories")
+        if calories is None:
+            return 0
+        return calories
 
     proteins = forms.FloatField(
         label="Белков",
         min_value=0,
         max_value=99999,
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "...", "step": "0.1"}
+            attrs={
+                "class": "form-control bg-proteins-light",
+                "placeholder": "...",
+                "step": "0.1",
+            }
         ),
+        required=False,
     )
+
+    def clean_proteins(self):
+        proteins = self.cleaned_data.get("proteins")
+        if proteins is None:
+            return 0.0
+        return proteins
 
     fats = forms.FloatField(
         label="Жиров",
         min_value=0,
         max_value=99999,
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "...", "step": "0.1"}
+            attrs={
+                "class": "form-control bg-fats-light",
+                "placeholder": "...",
+                "step": "0.1",
+            }
         ),
+        required=False,
     )
+
+    def clean_fats(self):
+        fats = self.cleaned_data.get("fats")
+        if fats is None:
+            return 0.0
+        return fats
 
     carbs = forms.FloatField(
         label="Углеводов",
         min_value=0,
         max_value=99999,
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "...", "step": "0.1"}
+            attrs={
+                "class": "form-control bg-carbs-light",
+                "placeholder": "...",
+                "step": "0.1",
+            }
         ),
+        required=False,
     )
+
+    def clean_carbs(self):
+        carbs = self.cleaned_data.get("carbs")
+        if carbs is None:
+            return 0.0
+        return carbs

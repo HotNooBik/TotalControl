@@ -431,7 +431,9 @@ def search_user_favorite_food(
     return context
 
 
-def get_weight_history_for_chart(user, limit=0, period="all", get_info=False):
+def get_weight_history_for_chart(
+    user, limit: int = 0, period: str = "all", get_info: bool = False
+) -> tuple[list, list, dict | None]:
     """
     Получает данные о весе пользователя за указанный период (историю) для построения графика.
 
@@ -515,7 +517,7 @@ def get_weight_history_for_chart(user, limit=0, period="all", get_info=False):
         return labels, data, None
 
 
-def get_products_from_image(image_path):
+def get_products_from_image(image_path: str) -> tuple[dict | None, str]:
     """
     Определяет продукты (еду) на изображении с помощью внешнего API.
 
@@ -576,7 +578,7 @@ def get_products_from_image(image_path):
     return result, base64_image
 
 
-def prepare_image(image_path, max_size=1280, quality=85):
+def prepare_image(image_path: str, max_size: int = 1280, quality: int = 85) -> str:
     """
     Подготавливает изображение для передачи: сжимает до заданного размера с сохранением пропорций,
     конвертирует в формат JPEG вместе с RGB и кодирует в base64. При увеличении разрешения
@@ -623,4 +625,4 @@ def prepare_image(image_path, max_size=1280, quality=85):
         Image.DecompressionBombError,
         Image.UnidentifiedImageError,
     ):
-        return None
+        return ""

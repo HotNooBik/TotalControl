@@ -174,10 +174,10 @@ class UserCustomFood(models.Model):
                 else None
             ),
             "food_description": f'На "{self.serving_name }" - '
-                                f"Калорий: {self.calories} ккал. | "
-                                f"Жиров: {self.fats} г. | "
-                                f"Углеводов: {self.carbs} г. | "
-                                f"Белков: {self.proteins} г.",
+            f"Калорий: {self.calories} ккал. | "
+            f"Жиров: {self.fats} г. | "
+            f"Углеводов: {self.carbs} г. | "
+            f"Белков: {self.proteins} г.",
         }
 
     @classmethod

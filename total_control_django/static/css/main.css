@@ -346,7 +346,7 @@ form select {
 }
 
 #drop-area.highlight {
-    border-color: #77ad76;
+    border-color: #74c972;
     background-color: #f3fff0c5;
   }
 
@@ -359,4 +359,22 @@ form select {
     max-width: 100px;
     z-index: 10;
     filter: blur(2px);
+}
+
+.accordion-button:not(.collapsed) {
+    color: #396938;
+}
+
+.accordion-button:focus {
+    z-index: 3;
+    box-shadow: 0 0 0 0.25rem #58815780;
+}
+
+.form-check-input:checked {
+    background-color: #396938;
+    border-color: #396938;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem #58815780;
 }

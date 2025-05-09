@@ -686,8 +686,8 @@ def food_image_recognition(request):
                 upload_form = ImageUploadForm()
                 context["upload_form"] = upload_form
                 context["error"] = (
-                        "Произошла ошибка при сохранении, попробуйте ещё раз."
-                    )
+                    "Произошла ошибка при сохранении, попробуйте ещё раз."
+                )
         # Если файлы есть, то проверяем, что это фото
         else:
             upload_form = ImageUploadForm(request.POST, request.FILES)
@@ -749,9 +749,7 @@ def food_image_recognition(request):
                         )
                         context["upload_form"] = upload_form
                 else:
-                    context["error"] = (
-                        "Продукты на изображении не найдены! Попробуйте другое изображение."
-                    )
+                    context["error"] = "Продукты на изображении не найдены!"
                     context["upload_form"] = upload_form
 
             else:
@@ -763,35 +761,6 @@ def food_image_recognition(request):
         upload_form = ImageUploadForm()
         context["upload_form"] = upload_form
         context["show_hello"] = True
-
-    return render(
-        request,
-        "calculator_app/food_recognition.html",
-        context,
-    )
-
-
-def test(request):
-
-    image = prepare_image(r"E:\work_space\TotalControl\test_images\real_lunch.jpg")
-    # image = prepare_image(r"E:\work_space\TotalControl\test_images\real_breakfast.jpg")
-
-    context = {
-        "prev_url": "/calculator_app/food-search/breakfast/",
-        "meal": "breakfast",
-        "formset": "<ImageFoodEntryFormFormSet: bound=False valid=Unknown total_forms=4>",
-        "total": {
-            "total_products": 4,
-            "total_calories": 550,
-            "total_proteins": 26.1,
-            "total_fats": 32.0,
-            "total_carbs": 40.0,
-        },
-        "image_data": image,
-    }
-    context["error"] = (
-        "Не удалось открыть файл с изображением! Попробуйте другой файл."
-    )
 
     return render(
         request,

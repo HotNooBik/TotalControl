@@ -12,11 +12,13 @@ from .models import UserProfile
 
 def anonymous_required(view_func):
     """Декоратор, который проверяет, чтобы пользователь не был авторизованным (иначе отправляет на главную страницу)."""
+
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
-            return HttpResponseRedirect(reverse('main'))
+            return HttpResponseRedirect(reverse("main"))
         return view_func(request, *args, **kwargs)
+
     return wrapper
 
 

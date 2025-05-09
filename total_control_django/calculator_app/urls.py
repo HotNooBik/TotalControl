@@ -24,5 +24,4 @@ urlpatterns = [
     path("remove-favorite/<str:food_id>/", views.remove_food_from_favorites, name="remove_food_from_favorites"),
 
     path("food-recognition/", views.food_image_recognition, name="food_recognition"),
-    path("test/", views.test, name="test"),
 ]

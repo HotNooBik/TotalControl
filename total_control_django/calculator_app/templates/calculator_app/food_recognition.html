@@ -58,37 +58,37 @@
                                 <h3 class="mb-3">Итого:</h3>
                                 <ul class="list-group">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div><span class="fs-5 fw-semibold">Кол-во продуктов:</span></div>
+                                        <span class="fs-5 fw-semibold">Продуктов:</span>
                                         <div>
-                                            <span class="fw-bolder fs-4">{{ total.total_products }}</span>
+                                            <span class="fw-bolder fs-4" id="total-products">{{ total.total_products }}</span>
                                             <span class="fw-light fs-6">шт.</span>
                                         </div>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center bg-calories-light">
                                         <span class="fs-5 fw-semibold">Калорий:</span>
                                         <div>
-                                            <span class="fw-bolder fs-4">{{ total.total_calories }}</span> 
+                                            <span class="fw-bolder fs-4" id="total-calories">{{ total.total_calories }}</span> 
                                             <span class="fw-light fs-6">ккал.</span>
                                         </div>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center bg-proteins-light">
                                         <span class="fs-5 fw-semibold">Белков:</span>
                                         <div>
-                                            <span class="fw-bolder fs-4">{{ total.total_proteins|floatformat:1 }}</span>
+                                            <span class="fw-bolder fs-4" id="total-proteins">{{ total.total_proteins|floatformat:1 }}</span>
                                             <span class="fw-light fs-6">г.</span>
                                         </div>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center bg-fats-light">
                                         <span class="fs-5 fw-semibold">Жиров:</span>
                                         <div>
-                                            <span class="fw-bolder fs-4">{{ total.total_fats|floatformat:1 }}</span>
+                                            <span class="fw-bolder fs-4" id="total-fats">{{ total.total_fats|floatformat:1 }}</span>
                                             <span class="fw-light fs-6">г.</span>
                                         </div>
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center bg-carbs-light">
                                         <span class="fs-5 fw-semibold">Углеводов:</span>
                                         <div>
-                                            <span class="fw-bolder fs-4">{{ total.total_carbs|floatformat:1 }}</span>
+                                            <span class="fw-bolder fs-4" id="total-carbs">{{ total.total_carbs|floatformat:1 }}</span>
                                             <span class="fw-light fs-6">г.</span>
                                         </div>
                                     </li>
@@ -96,22 +96,91 @@
                             </div>
                         </div>
                     </div>
-                
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ formset.management_form }}
-                        {% for form in formset %}
-                            <tr>
-                            {% for field in form.visible_fields %}
-                                <td>
-                                    {{ field.errors }}
-                                    {{ field }}
-                                </td>
+
+                    <h3 class="mb-3 mt-4">Найденные продукты:</h3>
+
+                    <div class="accordion" id="accordionPanelsStayOpen">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ formset.management_form }}
+                            {% for form in formset %}
+                            <div class="accordion-item position-relative">
+                                <div class="fs-3 position-absolute start-0" style="z-index: 5; margin-top: 11px; margin-left: 10px;">
+                                    {{ form.save_flag }}
+                                </div>
+                                <h2 class="accordion-header" id="panelsStayOpen-heading{{ forloop.counter0 }}">
+                                    <button class="accordion-button collapsed bg-light" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#panelsStayOpen-collapse{{ forloop.counter0 }}" 
+                                            aria-expanded="false" 
+                                            aria-controls="panelsStayOpen-collapse{{ forloop.counter0 }}">
+                                        <span class="fs-4 ms-4 ps-2 text-truncate" id="food-name-label-{{ forloop.counter0 }}">
+                                            {{ form.food_name.value }}
+                                        </span>
+                                    </button>
+                                </h2>
+                                <div id="panelsStayOpen-collapse{{ forloop.counter0 }}" 
+                                     class="accordion-collapse collapse" 
+                                     aria-labelledby="panelsStayOpen-heading{{ forloop.counter0 }}">
+                                    <div class="accordion-body bg-light-subtle">
+                                        <div class="row justify-content-center">
+                                            <div class="col-lg-6">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-ferngreen-lighter fw-semibold">Название:</span>
+                                                    {{ form.food_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-ferngreen-lighter fw-semibold">Количество:</span>
+                                                    {{ form.amount }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row justify-content-center">
+                                            <div class="col-lg-6">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-calories fw-semibold">Калорий:</span>
+                                                    {{ form.calories }}
+                                                    <span class="input-group-text bg-calories fw-semibold">ккал.</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-proteins fw-semibold">Белков: </span>
+                                                    {{ form.proteins }}
+                                                    <span class="input-group-text bg-proteins fw-semibold">г.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row justify-content-center">
+                                            <div class="col-lg-6">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-fats fw-semibold">Жиров: </span>
+                                                    {{ form.fats }}
+                                                    <span class="input-group-text bg-fats fw-semibold">г.</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-carbs fw-semibold">Углеводов: </span>
+                                                    {{ form.carbs }}
+                                                    <span class="input-group-text bg-carbs fw-semibold">г.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <span class="text-muted fst-italic">*Все значения примерны</span>
+                                    </div>
+                                </div>
+                            </div>
                             {% endfor %}
-                            </tr>
-                        {% endfor %}
-                        <button type="submit">Сохранить в дневник</button>
-                    </form> 
+                            <button class="btn bg-ferngreen btn-outline-success text-white mt-3 fs-6" type="submit">Сохранить в дневник</button>
+                        </form> 
+                    </div>
 
                     {% else %}
                     <div class="row justify-content-center mt-4 mb-5">
@@ -148,8 +217,8 @@
                             </form>
                         </div>
                     </div>
-                    
                     {% endif%}
+                    
                     {% if show_hello %}
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <h4 class="alert-heading">Распознавание еды на фото!</h4>
@@ -165,6 +234,103 @@
         </div>
     </div>
 </div>
+
+{% if formset %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    
+    // Убираем отправку формы после нажатия на Enter в каком-либо поле
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                this.blur();
+            }
+        });
+    });
+
+
+    // Код для обновления данных в Итого после изменения чекбокосов продуктов
+    const checkboxes = document.querySelectorAll('input[name*="-save_flag"]');
+    const totalProductsSpan = document.querySelector('#total-products');
+    const totalCaloriesSpan = document.querySelector('#total-calories');
+    const totalProteinsSpan = document.querySelector('#total-proteins');
+    const totalFatsSpan = document.querySelector('#total-fats');
+    const totalCarbsSpan = document.querySelector('#total-carbs');
+
+    // Функция для получения данных КБЖУ из формы
+    const getProductData = (index) => {
+        const calories = parseFloat(document.querySelector(`#id_form-${index}-calories`)?.value) || 0;
+        const proteins = parseFloat(document.querySelector(`#id_form-${index}-proteins`)?.value) || 0;
+        const fats = parseFloat(document.querySelector(`#id_form-${index}-fats`)?.value) || 0;
+        const carbs = parseFloat(document.querySelector(`#id_form-${index}-carbs`)?.value) || 0;
+        return { calories, proteins, fats, carbs };
+    };
+
+    // Функция для обновления итогов
+    const updateTotals = () => {
+        let totalProducts = 0;
+        let totalCalories = 0;
+        let totalProteins = 0;
+        let totalFats = 0;
+        let totalCarbs = 0;
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const index = checkbox.name.match(/form-(\d+)-save_flag/)[1];
+                const data = getProductData(index);
+                totalProducts += 1;
+                totalCalories += data.calories;
+                totalProteins += data.proteins;
+                totalFats += data.fats;
+                totalCarbs += data.carbs;
+            }
+        });
+
+        totalProductsSpan.textContent = totalProducts;
+        totalCaloriesSpan.textContent = Math.round(totalCalories);
+        totalProteinsSpan.textContent = totalProteins.toFixed(1);
+        totalFatsSpan.textContent = totalFats.toFixed(1);
+        totalCarbsSpan.textContent = totalCarbs.toFixed(1);
+    };
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateTotals);
+    });
+
+
+    // Код для обновление итогового КБЖУ при изменении каких-либо полей ввода
+    const kbjuFields = ['calories', 'proteins', 'fats', 'carbs'];
+    kbjuFields.forEach(field => {
+        const inputs = document.querySelectorAll(`input[name*="-${field}"]`);
+        inputs.forEach(input => {
+            input.addEventListener('blur', () => {
+                const value = parseFloat(input.value);
+                if (!isNaN(value)) {
+                    input.value = field === 'calories' ? Math.round(value) : value.toFixed(1);
+                }
+                updateTotals();
+            });
+        });
+    });
+
+
+    // Код для изменения названия продукта
+    const foodNameInputs = document.querySelectorAll('input[name*="-food_name"]');
+    foodNameInputs.forEach(input => {
+        input.addEventListener('blur', () => {
+            const index = input.name.match(/form-(\d+)-food_name/)[1];
+            const span = document.querySelector(`#food-name-label-${index}`);
+            if (span) {
+                span.textContent = input.value;
+            }
+        });
+    });
+
+});
+</script>
+{% endif %}
 
 {% if upload_form %}
 <script>

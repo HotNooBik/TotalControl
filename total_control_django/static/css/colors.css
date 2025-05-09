@@ -25,6 +25,15 @@
     background-color: #9bc99a;
 }
 
+.bg-ferngreen-lighter {
+    background-color: #c2e7c1;
+}
+
+.bg-ferngreen-lightest {
+    background-color: #effdef;
+}
+
+
 
 /* Текст с основными цветами */
 .fc-timberwolf {
