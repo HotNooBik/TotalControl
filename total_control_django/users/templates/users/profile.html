@@ -81,7 +81,10 @@
                 <div class="row mt-4">
                     <div class="col d-flex justify-content-between">
                         <a href="{% url 'edit_profile' %}" class="btn btn-outline-success bg-ferngreen text-white">Редактировать данные</a>
-                        <a href="{% url 'logout' %}" class="btn btn-danger">Выйти</a>
+                        <button type="button" class="btn btn-danger" 
+                                title="Выйти из аккаунта" data-bs-toggle="modal" data-bs-target="#logOutModal">
+                            Выйти
+                        </button>
                     </div>
                 </div>
             </div>

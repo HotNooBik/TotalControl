@@ -69,7 +69,12 @@
                                 <li>
                                 <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item text-danger h1 fs-5" href="{% url 'logout' %}">Выйти</a></li>
+                                <li>
+                                    <button type="button" class="dropdown-item text-danger h1 fs-5" 
+                                            title="Выйти из аккаунта" data-bs-toggle="modal" data-bs-target="#logOutModal">
+                                        Выйти
+                                    </button>
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -105,6 +110,28 @@
     <main class="pt-5">
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Модальное окно подтверждения выхода из аккаунта -->
+    <div class="modal fade" id="logOutModal" tabindex="-1" aria-labelledby="logOutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteFoodModalLabel">Подтверждение выхода из аккаунта</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Вы уверены, что хотите выйти из аккаунта?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Выйти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
