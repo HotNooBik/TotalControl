@@ -197,20 +197,30 @@
                                                         alt="Предпросмотр" 
                                                         class="img-fluid rounded shadow"
                                                         style="max-height: 150px; max-width: 150px; display: none; filter: blur(3px);">
+                                                <img src="{% static 'img/analys.gif' %}" alt="Загрузка..." class="overlay-gif d-none">
                                             </div>
                                             <div id="preview-error" class="alert alert-danger text-danger mt-2 fs-6" style="display: none;"></div>
                                         </div>
-
-                                        <div id="spinner" class="mt-0 my-2"></div>
                                         
-                                        <div id="to-remove">
-                                            <div class="mb-2 mt-4">
-                                                <label for="image-input" class="form-label fs-3">{{ upload_form.image.label_tag }}</label>
-                                                {{ upload_form.image }}
+                                        <div class="position-relative">
+                                            <div id="to-remove">
+                                                <div class="mb-2 mt-4">
+                                                    <label for="image-input" class="form-label fs-3">{{ upload_form.image.label_tag }}</label>
+                                                    {{ upload_form.image }}
+                                                </div>
+                            
+                                                <button class="btn mt-4 mb-4 bg-ferngreen btn-outline-success form-control text-white w-75" 
+                                                        type="submit">Проанализировать</button>
                                             </div>
-                        
-                                            <button class="btn mt-4 mb-4 bg-ferngreen btn-outline-success form-control text-white w-75" 
-                                                    type="submit">Проанализировать</button>
+                                            <div id="spinner" class="position-absolute top-0 start-0 w-100 h-100 justify-content-center align-content-center d-none"
+                                                 style="z-index: 1000;">
+                                                <div class="d-flex align-items-center justify-content-center mt-4 mb-4">
+                                                    <div class="spinner-border fc-ferngreen fs-3" style="width: 3rem; height: 3rem;" role="status">
+                                                        <span class="visually-hidden">Анализ...</span>
+                                                    </div>
+                                                    <span class="ms-3 fs-4 f-shadow">Анализируем изображение...</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -409,33 +419,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     document.getElementById("image-submit-form").addEventListener('submit', function(e) {
-        const divToRemove = document.getElementById("to-remove");
-
-        const gif = document.createElement('img');
-        gif.src = '{% static 'img/analys.gif' %}';
-        gif.alt = 'Загрузка...';
-        gif.classList.add('overlay-gif');
-    
-        const previewContainer = document.getElementById('preview-img-container');
-        previewContainer.appendChild(gif);
-
-        const spinnerContainer = document.createElement('div');
-        spinnerContainer.className = 'd-flex align-items-center justify-content-center mt-4 mb-4';
-        const spinner = document.createElement('div');
-        spinner.className = 'spinner-border text-success';
-        spinner.setAttribute('role', 'status');
-
-        const spinnerText = document.createElement('span');
-        spinnerText.className = 'ms-3';
-        spinnerText.textContent = 'Анализируем изображение...';
-        
-        spinnerContainer.appendChild(spinner);
-        spinnerContainer.appendChild(spinnerText);
-        
-        divToRemove.style.opacity = '0';
-        divToRemove.style.visibility = 'hidden';
-        divToRemove.style.transition = 'opacity 0.3s ease';
-        document.getElementById("spinner").appendChild(spinnerContainer);
+        document.querySelector(".overlay-gif").classList.remove('d-none');
+        document.getElementById("to-remove").style.visibility = 'hidden';;
+        document.getElementById("spinner").classList.remove('d-none');
         
         const textVariants = [
             'Находим еду...',
