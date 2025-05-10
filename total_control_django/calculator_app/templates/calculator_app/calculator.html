@@ -310,7 +310,7 @@
                         <div class="col-auto position-absolute start-0 top-0">
                             <button type="button" class="btn btn-dark ms-3 mt-4 btn-sm pt-2 pb-1" 
                                     data-bs-toggle="modal" data-bs-target="#graphModal"
-                                    id="filterBtn">
+                                    id="filterBtn" title="Посмотреть полный график">
                                 <i class="fs-5 fa-solid fa-filter"></i>
                             </button>
                         </div>
@@ -379,7 +379,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-3 fc-brunswickgreen" id="graphModalLabel" tabindex="0">График веса</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть" title="Закрыть"></button>
             </div>
             <div class="modal-body">
                 <div class="row justify-content-center">
@@ -676,6 +676,8 @@
                         x: {
                             type: 'category',
                             offset: true,
+                            min: 0,
+                            max: 0,
                             ticks: {
                                 autoSkip: false
                             },
@@ -683,8 +685,8 @@
                         y: {
                             position: 'right',
                             offset: true,
-                            min: Math.round(Math.min(...data) - 1),
-                            max: Math.round(Math.max(...data) + 1),
+                            min: 0,
+                            max: 0,
                             grid: {
                                 display: true,
                                 color: "rgba(0, 0, 0, 0.1)",
@@ -698,12 +700,12 @@
                         zoom: {
                             limits: {
                                 x: { 
-                                    min: 0, 
-                                    max: labels.length - 1 
+                                    min: 0,
+                                    max: 0,
                                 },
-                                y: {
-                                    min: Math.round(Math.min(...data) - 3),
-                                    max: Math.round(Math.max(...data) + 3),
+                                y : {
+                                    min: 0,
+                                    max: 0,
                                 },
                             },
                             pan: {
@@ -771,11 +773,25 @@
 
                     chartFullInstance.data.labels = data.labels;
                     chartFullInstance.data.datasets[0].data = data.data_points;
+
+                    const lastTenIndexStart = data.labels.length - 10;
+                    chartFullInstance.options.scales.x.min = lastTenIndexStart >= 0 ? lastTenIndexStart : 0
+                    chartFullInstance.options.scales.x.max = data.labels.length - 1
+
+                    chartFullInstance.options.scales.y.min = Math.round(Math.min(...data.data_points) - 1)
+                    chartFullInstance.options.scales.y.max = Math.round(Math.max(...data.data_points) + 1)
+
+                    chartFullInstance.options.plugins.zoom.limits.x.max = data.labels.length - 1
+                    chartFullInstance.options.plugins.zoom.limits.y.min = Math.round(Math.min(...data.data_points) - 3)
+                    chartFullInstance.options.plugins.zoom.limits.y.max = Math.round(Math.max(...data.data_points) + 3)
+                    
+                    console.log(chartFullInstance)
+
                     chartFullInstance.update();
                 })
                 .catch(error => {
                     console.error('Ошибка:', error.message);
-                    alert('Не удалось добавить воду.');
+                    alert('Не удалось загрузить график.');
                     return Promise.reject(error);
                 });
             } catch (error) {

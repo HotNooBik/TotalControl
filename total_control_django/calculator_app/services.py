@@ -509,11 +509,11 @@ def get_weight_history_for_chart(
 
     for record in grouped_records:
         if period == "all":
-            labels.append(record.user_date.strftime("%d/%m/%Y"))
+            labels.append(record.user_date.strftime("%d/%m/%y"))
         elif period == "week":
-            labels.append(record.user_date.strftime("№%W - %d/%m/%Y"))
+            labels.append(record.user_date.strftime("№%W/%y"))
         elif period == "month":
-            labels.append(record.user_date.strftime("%m/%Y"))
+            labels.append(record.user_date.strftime("%m/%y"))
         else:
             labels.append(record.user_date.strftime("%Y"))
         data.append(round(record.weight, 1))
