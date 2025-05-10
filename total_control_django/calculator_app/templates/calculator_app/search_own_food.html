@@ -30,7 +30,7 @@
                     <form method="get">
                         <div class="input-group mb-2">
                             <a class="btn btn-outline-light fc-ferngreen align-content-center me-2" 
-                            href="{% url 'food_recognition' %}?meal={{meal}}&prev={{ request.get_full_path|urlencode }}" id="cameraIconHref">
+                            href="{% url 'food_recognition' %}?meal={{meal|urlencode}}&prev={{request.get_full_path|urlencode}}" id="cameraIconHref">
                                 <i class="m-0 fs-1 fa-solid fa-camera" id="cameraIcon"></i>
                             </a>
                             <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды в личных продуктах...">
@@ -57,7 +57,7 @@
                                     {% endif %}
                                 </p>
                             </div>
-                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal }}&next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success">Добавить</a>
+                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{meal|urlencode}}&next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success">Добавить</a>
                         </div>
                         {% endfor %}
                     </div>
@@ -65,14 +65,14 @@
                     <i class="fa-solid fa-magnifying-glass-minus fc-carbs-dark search-img mt-3 mb-2"></i>
                     <p class="fc-carbs-dark search-font mb-5">Ничего не найдено</p>
                     {% else %}
-                    <a href="{% url 'create_custom_food'%}?meal={{ meal }}">
+                    <a href="{% url 'create_custom_food'%}?meal={{meal|urlencode}}">
                         <i class="fa-solid fa-folder-plus fc-carbs-dark search-img mt-3 mb-2"></i>
                     </a>
                     <p class="fc-carbs-dark search-font mb-5">Добавляйте продукты в свой личный список...</p>
                     {% endif %}
                     <div class="row mt-2 mb-3">
                         <div class="col-12 justify-content-center">
-                            <a href="{% url 'create_custom_food'%}?meal={{ meal }}" class="btn btn-outline-dark">
+                            <a href="{% url 'create_custom_food'%}?meal={{meal|urlencode}}" class="btn btn-outline-dark">
                                 <i class="fa-solid fa-search-plus"></i> Добавить продукт
                             </a>
                         </div>

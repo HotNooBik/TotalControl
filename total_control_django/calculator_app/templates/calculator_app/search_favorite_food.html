@@ -30,7 +30,7 @@
                     <form method="get">
                         <div class="input-group mb-2">
                             <a class="btn btn-outline-light fc-ferngreen align-content-center me-2" 
-                            href="{% url 'food_recognition' %}?meal={{meal}}&prev={{ request.get_full_path|urlencode }}" id="cameraIconHref">
+                            href="{% url 'food_recognition' %}?meal={{meal|urlencode}}&prev={{ request.get_full_path|urlencode }}" id="cameraIconHref">
                                 <i class="m-0 fs-1 fa-solid fa-camera" id="cameraIcon"></i>
                             </a>
                             <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды в избранном...">
@@ -44,7 +44,7 @@
                             {% for food in results %}
                             <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
                                 <div class="d-flex align-items-center gap-3">
-                                    <form id="remove-food-form-{{ food.food_id }}" action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{ meal }}" method="post" class="text-center">
+                                    <form id="remove-food-form-{{food.food_id}}" action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal|urlencode}}" method="post" class="text-center">
                                         {% csrf_token %}
                                         <input type="hidden" name="food_name" value="{{ food.food_name }}">
                                         <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
@@ -70,7 +70,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal }}&next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success">Добавить</a>
+                                <a href="{% url 'add_food_entry' food.food_id %}?meal={{meal|urlencode}}&next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success">Добавить</a>
                             </div>
                             {% endfor %}
                         </div>
