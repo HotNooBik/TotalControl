@@ -378,3 +378,7 @@ form select {
 .form-check-input:focus {
     box-shadow: 0 0 0 0.25rem #58815780;
 }
+
+.nav-link:hover, .nav-link:focus {
+    color: #3d853c;
+}

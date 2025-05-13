@@ -418,10 +418,10 @@ def search_user_favorite_food(
                 "food_id": f"ucf{favorite_food.food_id}",
                 "brand_name": custom_food.brand_name,
                 "food_description": f'На "{custom_food.serving_name}" - '
-                                    f'Калорий: {custom_food.calories} ккал. | '
-                                    f'Жиров: {custom_food.fats} г. | '
-                                    f'Углеводов: {custom_food.carbs} г. | '
-                                    f'Белков: {custom_food.proteins} г.',
+                f"Калорий: {custom_food.calories} ккал. | "
+                f"Жиров: {custom_food.fats} г. | "
+                f"Углеводов: {custom_food.carbs} г. | "
+                f"Белков: {custom_food.proteins} г.",
             }
         elif isinstance(favorite_food, UserFavoriteApiFood):
             base_data = {
@@ -639,3 +639,31 @@ def prepare_image(image_path: str, max_size: int = 1280, quality: int = 85) -> s
         Image.UnidentifiedImageError,
     ):
         return ""
+
+
+def get_product_by_barcode(barcode: str):
+    barcode = "".join(filter(str.isdigit, barcode))
+
+    url = f"https://world.openfoodfacts.net/api/v2/product/{barcode}?product_type=all&fields=product_name%2Cnutriments%2Cbrands"
+
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return None
+
+    data = response.json()
+
+    if data.get("status") != 1:
+        return None
+
+    product = data.get("product", {})
+    nutriments = product.get("nutriments", {})
+
+    return {
+        "product_name": product.get("product_name", "Без названия"),
+        "brands": product.get("brands", ""),
+        "calories": nutriments.get("energy-kcal_100g", 0),
+        "proteins": round(nutriments.get("proteins_100g", 0), 1),
+        "fats": round(nutriments.get("fat_100g", 0), 1),
+        "carbs": round(nutriments.get("carbohydrates_100g", 0), 1),
+    }

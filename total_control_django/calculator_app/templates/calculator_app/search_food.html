@@ -26,6 +26,7 @@
                     перекус
                     {% endif %}
                 </h2>
+
                 <ul class="nav nav-tabs mt-3 fs-5">
                     <li class="nav-item flex-fill text-center ms-2">
                         <a class="nav-link fc-huntergreen-light" href="{% url 'favorite_food_search' meal=meal %}">Избранное</a>
@@ -36,7 +37,8 @@
                     <li class="nav-item flex-fill text-center me-2">
                         <a class="nav-link fc-huntergreen-light" href="{% url 'own_food_search' meal=meal%}">Личные продукты</a>
                     </li>
-                </ul>    
+                </ul>  
+                  
                 <div class="card-body mt-3 mb-0">
                     <form method="get">
                         <div class="input-group mb-2">
@@ -71,7 +73,8 @@
                                 </p>
                                 <p class="fc-brunswickgreen" align="start">({{ food.food_description }})</p>
                             </div>
-                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{meal|urlencode}}&next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success" id="addFoodBtn">Добавить</a>
+                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{meal|urlencode}}&next={{ request.get_full_path|urlencode }}" 
+                            class="btn btn-outline-success" name="addFoodBtn">Добавить</a>
                         </div>
                         {% endfor %}
                     </div>
@@ -136,7 +139,7 @@
         const searchOverlay = document.getElementById("searchOverlay");
         const loadingMessage = document.getElementById("loadingMessage");
         const searchBtn = document.getElementById("sendbtn");
-        const addFoodBtn = document.getElementById("addFoodBtn");
+        const addFoodBtns = document.querySelectorAll('[name="addFoodBtn"]');
         const prevPageBtn = document.getElementById("prevPageBtn");
         const nextPageBtn = document.getElementById("nextPageBtn");
 
@@ -149,8 +152,11 @@
             showSearchOverlay("Ищем продукты");
         });
 
-        addFoodBtn.addEventListener('click', () => {
-            showSearchOverlay("Получаем информацию о продукте");
+        {% if results %}
+        addFoodBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                showSearchOverlay("Получаем информацию о продукте");
+            });
         });
 
         [prevPageBtn, nextPageBtn].forEach(element => {
@@ -158,9 +164,7 @@
                 showSearchOverlay("Загружаем продукты");
             });
         });
-
-
-
+        {% endif %}
     });
 </script>
 {% endblock %}

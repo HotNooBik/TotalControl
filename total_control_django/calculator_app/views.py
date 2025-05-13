@@ -30,6 +30,7 @@ from .services import (
     search_user_favorite_food,
     get_weight_history_for_chart,
     get_products_from_image,
+    get_product_by_barcode,
 )
 from .forms import (
     FoodEntryForm,
@@ -37,7 +38,10 @@ from .forms import (
     UserCustomFoodForm,
     ImageUploadForm,
     ImageFoodEntryForm,
+    BarcodeUploadForm,
 )
+from pyzbar.pyzbar import decode
+from PIL import Image
 
 
 @require_POST
@@ -753,5 +757,55 @@ def food_image_recognition(request):
     return render(
         request,
         "calculator_app/food_recognition.html",
+        context,
+    )
+
+
+@login_required
+def barcode_image_scanning(request):
+
+    prev_url = request.GET.get("prev", reverse("calculator"))
+
+    meal = request.GET.get("meal", "snack")
+    if meal not in ["breakfast", "lunch", "dinner", "snack"]:
+        meal = "snack"
+
+    context = {
+        "prev_url": prev_url,
+        "meal": meal,
+    }
+
+    decoded_text = None
+    manual_code = None
+    product_data = None
+
+    if request.method == 'POST':
+        form = BarcodeUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            manual_code = form.cleaned_data.get('manual_code')
+            image_file = form.cleaned_data.get('image')
+
+            if image_file:
+                image = Image.open(image_file)
+                decoded_objects = decode(image)
+                if decoded_objects:
+                    decoded_text = decoded_objects[0].data.decode('utf-8').strip()
+
+            final_code = decoded_text or manual_code
+            if final_code:
+                product_data = get_product_by_barcode(final_code)
+            
+            context["code"] = final_code
+            context["result"] = product_data
+            context["add_form"] = True
+
+    else:
+        upload_form = BarcodeUploadForm()
+        context["upload_form"] = upload_form
+        context["show_hello"] = True
+
+    return render(
+        request,
+        "calculator_app/barcode_scanning.html",
         context,
     )

@@ -389,7 +389,7 @@ class UserCustomFoodForm(forms.ModelForm):
 
 class ImageUploadForm(forms.Form):
     image = forms.ImageField(
-        label="Загрузите изображение",
+        label="Загрузите изображение с едой",
         widget=forms.FileInput(
             attrs={
                 "class": "form-control",
@@ -539,3 +539,32 @@ class ImageFoodEntryForm(forms.Form):
         if carbs is None:
             return 0.0
         return carbs
+
+
+class BarcodeUploadForm(forms.Form):
+    image = forms.ImageField(
+        label="Загрузите изображение со штрих-кодом",
+        widget=forms.FileInput(
+            attrs={
+                "class": "form-control",
+                "id": "barcode-input",
+            }
+        ),
+        required=False
+    )
+
+    def clean_image(self):
+        image = self.cleaned_data.get("image")
+
+        try:
+            img = Image.open(image)
+            img.verify()
+        except Exception as error:
+            raise forms.ValidationError(
+                "Файл поврежден или не является изображением."
+            ) from error
+        return image
+
+    manual_code = forms.CharField(
+        label="Введите код вручную", max_length=30, required=False
+    )
