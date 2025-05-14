@@ -16,6 +16,7 @@ class UserProfile(models.Model):
 
     Attributes:
         user (OneToOneField): Связь с моделью User (один к одному).
+        timezone (CharField): название часового пояса пользователя
         birth_date (DateField): Дата рождения пользователя.
         sex (CharField): Пол пользователя. Варианты:
             - 'man' (Мужской)
@@ -41,6 +42,7 @@ class UserProfile(models.Model):
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    timezone = models.CharField(max_length=50, default="UTC")
     birth_date = models.DateField()
     sex = models.CharField(
         max_length=5, choices=[("man", "Мужской"), ("woman", "Женский")], default="man"

@@ -211,6 +211,19 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+        // Скрипт для определения часового пояса пользователя
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        fetch('{% url "set_timezone" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ timezone: timeZone })
+        });
+
         document.getElementById('amount-input').addEventListener('input', function(event) {
             let amount =  parseFloat(event.target.value);
 

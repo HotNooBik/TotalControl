@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models import Sum
+
+from users.models import UserDailyRecord
 
 # Create your models here.
 User = get_user_model()
@@ -11,7 +14,6 @@ class FoodEntry(models.Model):
     Содержит информацию о приеме пищи с указанием времени, количества и нутриентов.
 
     Attributes:
-        user (ForeignKey): Связь с пользователем
         food_name (CharField): Название продукта/блюда
         calories (IntegerField): Калорийность порции (ккал)
         proteins (FloatField): Содержание белков (г)
@@ -23,13 +25,14 @@ class FoodEntry(models.Model):
             - lunch (Обед)
             - dinner (Ужин)
             - snack (Перекус)
-        date_added (DateTimeField): Дата и время создания записи (автоматически)
+        daily_record (ForeignKey): связь с записью пользователя
+        date_added (DateTimeField): Дата и время создания записи (автоматически 
+                                    определяется сервером, служит для сортировки)
 
     Methods:
         __str__: Возвращает строку в формате "Название (Количество)"
     """
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     food_name = models.CharField(max_length=100)
     calories = models.IntegerField(null=True)
     proteins = models.FloatField(null=True)
@@ -46,10 +49,39 @@ class FoodEntry(models.Model):
         ],
         default="snack",
     )
+    daily_record = models.ForeignKey(
+        UserDailyRecord,
+        on_delete=models.CASCADE,
+    )
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.food_name} ({self.amount})"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_daily_record_totals()
+
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+        self.update_daily_record_totals()
+
+    def update_daily_record_totals(self):
+        """Обновляет суммарные значения в связанном UserDailyRecord."""
+
+        if not self.daily_record:
+            return
+        aggregates = FoodEntry.objects.filter(daily_record=self.daily_record).aggregate(
+            total_calories=Sum("calories"),
+            total_proteins=Sum("proteins"),
+            total_fats=Sum("fats"),
+            total_carbs=Sum("carbs"),
+        )
+        self.daily_record.calories = aggregates["total_calories"] or 0
+        self.daily_record.proteins = aggregates["total_proteins"] or 0
+        self.daily_record.fats = aggregates["total_fats"] or 0
+        self.daily_record.carbs = aggregates["total_carbs"] or 0
+        self.daily_record.save()
 
 
 class UserCustomFood(models.Model):
@@ -172,7 +204,7 @@ class UserCustomFood(models.Model):
                     ]
                 )
                 else None
-            )
+            ),
         }
 
     @classmethod

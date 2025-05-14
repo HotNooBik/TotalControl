@@ -1,8 +1,11 @@
 from pprint import pprint
 import json
 from datetime import datetime
+import re
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from pyzbar.pyzbar import decode
+from PIL import Image
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -40,8 +43,6 @@ from .forms import (
     ImageFoodEntryForm,
     BarcodeUploadForm,
 )
-from pyzbar.pyzbar import decode
-from PIL import Image
 
 
 @require_POST
@@ -56,51 +57,50 @@ def set_timezone(request):
 
 @login_required
 def calculator(request):
-
-    # result = get_products_from_image(r"E:\work_space\TotalControl\total_control_django\static\img\dinner.jpg")
-    # pprint(result)
-
     user_timezone = request.session.get("user_timezone", "UTC")
 
     try:
         tz = ZoneInfo(user_timezone)
         today = timezone.now().astimezone(tz).date()
 
-        start_of_day = timezone.make_aware(
-            datetime.combine(today, datetime.min.time()), tz
-        )
-        end_of_day = timezone.make_aware(
-            datetime.combine(today, datetime.max.time()), tz
-        )
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+        if user_profile.timezone != user_timezone:
+            user_profile.timezone = user_timezone
+            user_profile.save()
+        # start_of_day = timezone.make_aware(
+        #     datetime.combine(today, datetime.min.time()), tz
+        # )
+        # end_of_day = timezone.make_aware(
+        #     datetime.combine(today, datetime.max.time()), tz
+        # )
 
-        start_of_day_utc = start_of_day.astimezone(timezone.utc)
-        end_of_day_utc = end_of_day.astimezone(timezone.utc)
+        # start_of_day_utc = start_of_day.astimezone(timezone.utc)
+        # end_of_day_utc = end_of_day.astimezone(timezone.utc)
 
-        entries = FoodEntry.objects.filter(
-            user=request.user, date_added__range=(start_of_day_utc, end_of_day_utc)
-        )
+        # entries = FoodEntry.objects.filter(
+        #     user=request.user, date_added__range=(start_of_day_utc, end_of_day_utc)
+        # )
 
     except ZoneInfoNotFoundError:
         today = timezone.now().date()
 
-        entries = FoodEntry.objects.filter(user=request.user, date_added__date=today)
-
-    totals = entries.aggregate(
-        calories=Sum("calories"),
-        proteins=Sum("proteins"),
-        fats=Sum("fats"),
-        carbs=Sum("carbs"),
-    )
+        # entries = FoodEntry.objects.filter(user=request.user, date_added__date=today)
 
     record, _ = UserDailyRecord.objects.get_or_create(
         user=request.user,
         user_date=today,
     )
-    record.calories = totals["calories"] or 0
-    record.proteins = totals["proteins"] or 0
-    record.fats = totals["fats"] or 0
-    record.carbs = totals["carbs"] or 0
-    record.save()
+
+    entries = FoodEntry.objects.filter(
+        daily_record=record,
+    )
+
+    totals = {
+        "calories": record.calories,
+        "proteins": record.proteins,
+        "fats": record.fats,
+        "carbs": record.carbs,
+    }
 
     breakfast_entries = entries.filter(meal="breakfast")
     lunch_entries = entries.filter(meal="lunch")
@@ -252,7 +252,7 @@ def get_weight_history_graph(request):
 
 @login_required
 def delete_entry(request, entry_id: int):
-    entry = get_object_or_404(FoodEntry, id=entry_id, user=request.user)
+    entry = get_object_or_404(FoodEntry, id=entry_id, daily_record__user=request.user)
     entry.delete()
     return redirect("calculator")
 
@@ -389,9 +389,20 @@ def add_food_entry(request, food_id: str):
                 fats = food_details["per_portion"]["fats"]
                 carbs = food_details["per_portion"]["carbs"]
 
+            user_profile = get_object_or_404(UserProfile, user=request.user)
+            try:
+                tz = ZoneInfo(user_profile.timezone)
+                today = timezone.now().astimezone(tz).date()
+            except ZoneInfoNotFoundError:
+                today = timezone.now().date()
+
+            daily_record, _ = UserDailyRecord.objects.get_or_create(
+                user=request.user,
+                user_date=today,
+            )
+
             # Создаем запись
             FoodEntry.objects.create(
-                user=request.user,
                 food_name=food_details["food_name"],
                 calories=round(calories * amount, 1),
                 proteins=round(proteins * amount, 1),
@@ -399,6 +410,7 @@ def add_food_entry(request, food_id: str):
                 carbs=round(carbs * amount, 1),
                 amount=food_amount,
                 meal=meal,
+                daily_record=daily_record,
             )
             return redirect("calculator")
 
@@ -448,14 +460,26 @@ def add_fast_entry(request):
         form = OwnFoodEntryForm(request.POST)
         if form.is_valid():
             # Создаем запись
-            FoodEntry.objects.create(
+            user_profile = get_object_or_404(UserProfile, user=request.user)
+            try:
+                tz = ZoneInfo(user_profile.timezone)
+                today = timezone.now().astimezone(tz).date()
+            except ZoneInfoNotFoundError:
+                today = timezone.now().date()
+
+            daily_record, _ = UserDailyRecord.objects.get_or_create(
                 user=request.user,
+                user_date=today,
+            )
+
+            FoodEntry.objects.create(
                 food_name=form.cleaned_data["food_name"],
                 calories=round(form.cleaned_data["calories"]),
                 proteins=round(form.cleaned_data["proteins"], 1),
                 fats=round(form.cleaned_data["fats"], 1),
                 carbs=round(form.cleaned_data["carbs"], 1),
                 meal=meal,
+                daily_record=daily_record,
             )
             return redirect("calculator")
     else:
@@ -663,8 +687,19 @@ def food_image_recognition(request):
                 for form in formset:
                     # Создаем запись для каждой найденной и отмеченной еды
                     if form.cleaned_data["save_flag"]:
-                        FoodEntry.objects.create(
+                        user_profile = get_object_or_404(UserProfile, user=request.user)
+                        try:
+                            tz = ZoneInfo(user_profile.timezone)
+                            today = timezone.now().astimezone(tz).date()
+                        except ZoneInfoNotFoundError:
+                            today = timezone.now().date()
+
+                        daily_record, _ = UserDailyRecord.objects.get_or_create(
                             user=request.user,
+                            user_date=today,
+                        )
+
+                        FoodEntry.objects.create(
                             food_name=form.cleaned_data["food_name"],
                             amount=form.cleaned_data["amount"],
                             calories=round(form.cleaned_data["calories"]),
@@ -672,6 +707,7 @@ def food_image_recognition(request):
                             fats=round(form.cleaned_data["fats"], 1),
                             carbs=round(form.cleaned_data["carbs"], 1),
                             meal=meal,
+                            daily_record=daily_record,
                         )
                 return redirect("calculator")
             else:
@@ -779,22 +815,22 @@ def barcode_image_scanning(request):
     manual_code = None
     product_data = None
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = BarcodeUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            manual_code = form.cleaned_data.get('manual_code')
-            image_file = form.cleaned_data.get('image')
+            manual_code = form.cleaned_data.get("manual_code")
+            image_file = form.cleaned_data.get("image")
 
             if image_file:
                 image = Image.open(image_file)
                 decoded_objects = decode(image)
                 if decoded_objects:
-                    decoded_text = decoded_objects[0].data.decode('utf-8').strip()
+                    decoded_text = decoded_objects[0].data.decode("utf-8").strip()
 
             final_code = decoded_text or manual_code
             if final_code:
                 product_data = get_product_by_barcode(final_code)
-            
+
             context["code"] = final_code
             context["result"] = product_data
             context["add_form"] = True

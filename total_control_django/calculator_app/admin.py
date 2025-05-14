@@ -5,8 +5,6 @@ from . import models
 @admin.register(models.FoodEntry)
 class FoodEntryAdmin(admin.ModelAdmin):
     list_display = (
-        "user",
-        "date_added",
         "food_name",
         "calories",
         "proteins",
@@ -14,6 +12,8 @@ class FoodEntryAdmin(admin.ModelAdmin):
         "carbs",
         "amount",
         "meal",
+        "daily_record_id",
+        "date_added",
     )
 
 
