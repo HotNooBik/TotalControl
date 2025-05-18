@@ -2,8 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path("", views.calculator, name="calculator"),
+    
     path("set-timezone/", views.set_timezone, name="set_timezone"),
-    path("calculator/", views.calculator, name="calculator"),
     path("add-water/", views.add_water, name="add_water"),
     path("update-weight/", views.update_weight, name="update_weight"),
     path("get-weight-history/", views.get_weight_history_graph, name="get_weight_history"),
@@ -24,5 +25,4 @@ urlpatterns = [
     path("remove-favorite/<str:food_id>/", views.remove_food_from_favorites, name="remove_food_from_favorites"),
 
     path("food-recognition/", views.food_image_recognition, name="food_recognition"),
-    path("barcode-scanning/", views.barcode_image_scanning, name="barcode_scanning"),
 ]

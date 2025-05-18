@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "main",
     "users",
     "calculator_app",
+    "scanner",
 ]
 
 MIDDLEWARE = [

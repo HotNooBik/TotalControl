@@ -33,7 +33,6 @@
                 
                 <div class="card-body">
 
-                    {% if not formset %}
                     <ul class="nav nav-tabs mt-3 fs-5 mb-5">
                         <li class="nav-item flex-fill text-center mx-2">
                             <a class="nav-link fc-huntergreen fs-1"  href="{% url 'food_recognition'%}?meal={{meal|urlencode}}&prev={{prev_url|urlencode}}">
@@ -46,7 +45,6 @@
                             </a>
                         </li>
                     </ul>
-                    {% endif %}
 
                     {% if error %}
                     <div class="row">
@@ -60,49 +58,9 @@
                     </div>
                     {% endif %}
 
-                    {% if add_form %}
-                    <div class="row justify-content-center">
-                        <div class="col-sm-5 mx-2 align-content-center">
-                            <div class="p-3 border rounded shadow bg-light m-auto">
-                                <h3 class="mb-3">{{result.product_name}}</h3>
-                                <h5 class="mb-3">{{result.brands}}</h5>
-                                <ul class="list-group">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-calories-light">
-                                        <span class="fs-5 fw-semibold">Калорий:</span>
-                                        <div>
-                                            <span class="fw-bolder fs-4" id="total-calories">{{ result.calories }}</span> 
-                                            <span class="fw-light fs-6">ккал.</span>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-proteins-light">
-                                        <span class="fs-5 fw-semibold">Белков:</span>
-                                        <div>
-                                            <span class="fw-bolder fs-4" id="total-proteins">{{ result.proteins|floatformat:1 }}</span>
-                                            <span class="fw-light fs-6">г.</span>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-fats-light">
-                                        <span class="fs-5 fw-semibold">Жиров:</span>
-                                        <div>
-                                            <span class="fw-bolder fs-4" id="total-fats">{{ result.fats|floatformat:1 }}</span>
-                                            <span class="fw-light fs-6">г.</span>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-carbs-light">
-                                        <span class="fs-5 fw-semibold">Углеводов:</span>
-                                        <div>
-                                            <span class="fw-bolder fs-4" id="total-carbs">{{ result.carbs|floatformat:1 }}</span>
-                                            <span class="fw-light fs-6">г.</span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    {% else %}
                     <div class="row justify-content-center mt-4 mb-5">
                         <div class="col-sm-5 mx-2 align-content-center">
-                            <form method="post" enctype="multipart/form-data" id="image-submit-form">
+                            <form method="post" enctype="multipart/form-data" id="barcode-submit-form">
                                 {% csrf_token %}
                                 <div id="drop-area">
                                     <div class="container py-2 px-3 mx-auto text-center">
@@ -122,14 +80,14 @@
                                         <div class="position-relative">
                                             <div id="to-remove">
                                                 <div class="mb-2 mt-4">
-                                                    <label for="image-input" class="form-label fs-3">{{ upload_form.image.label_tag }}</label>
-                                                    {{ upload_form.image }}
+                                                    <label for="barcode-input" class="form-label fs-3">{{ form.image.label_tag }}</label>
+                                                    {{ form.image }}
                                                 </div>
                             
                                                 <button class="btn mt-4 mb-4 bg-ferngreen btn-outline-success form-control text-white w-75" 
                                                         type="submit">Сканировать</button>
                                                 <p class="fst-italic text-black-50 mb-0 advice-text" align="center">
-                                                    Старайтесь фотографировать штрих-код горизонтально.
+                                                    Старайтесь фотографировать штрихкод горизонтально.
                                                 </p>
                                             </div>
                                             <div id="spinner" class="position-absolute top-0 start-0 w-100 h-100 justify-content-center align-content-center d-none"
@@ -138,16 +96,31 @@
                                                     <div class="spinner-border fc-ferngreen fs-3" style="width: 3rem; height: 3rem;" role="status">
                                                         <span class="visually-hidden">Сканирование...</span>
                                                     </div>
-                                                    <span class="ms-3 fs-4 f-shadow">Сканируем штрихкод...</span>
+                                                    <span id="spinner-text" class="ms-3 fs-4 f-shadow">Сканируем штрихкод...</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row justify-content-center mt-3">
+                                    <span class="fs-5 fw-lighter">ИЛИ</span>
+                                </div>
+                                <div class="row justify-content-center mt-3 mb-0">
+                                    <div class="col-sm-auto align-content-center mb-0">
+                                            <label for="code-input" class="form-label fs-4">{{ form.manual_code.label_tag }}</label>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center mt-0">
+                                    <div class="col-auto align-content-center">
+                                        {{ form.manual_code }}
+                                    </div>
+                                    <div class="col-auto align-content-center">
+                                        <button class="btn bg-ferngreen btn-outline-success form-control text-white" type="submit">Искать</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
-                    {% endif%}
                     
                     {% if show_hello %}
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -165,15 +138,10 @@
     </div>
 </div>
 
-{% if formset %}
-
-{% endif %}
-
-{% if upload_form %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const dropArea = document.getElementById('drop-area');
-    const fileInput = document.getElementById('image-input');
+    const fileInput = document.getElementById('barcode-input');
     const previewImg = document.getElementById('preview-img');
     const previewError = document.getElementById('preview-error');
 
@@ -244,20 +212,18 @@ document.addEventListener('DOMContentLoaded', function () {
             showPreview(fileInput.files[0]);
         }
     });
-    
-    document.getElementById("image-submit-form").addEventListener('submit', function(e) {
+
+    const spinnerText = document.getElementById("spinner-text");
+
+    document.getElementById("barcode-submit-form").addEventListener('submit', function(e) {
         document.querySelector(".overlay-gif").classList.remove('d-none');
         document.getElementById("to-remove").style.visibility = 'hidden';;
         document.getElementById("spinner").classList.remove('d-none');
         
         const textVariants = [
-            'Находим еду...',
-            'Определяем, можно ли это есть...',
-            'Узнаем название еды...',
-            'Считаем калории...',
-            'Считаем белки...',
-            'Считаем жиры...',
-            'Считаем углеводы...',
+            'Сканируем штрихкод',
+            'Ищём в базе',
+            'Смотрим КБЖУ',
         ];
         let currentIndex = 0;
         
@@ -269,6 +235,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
-{% endif%}
 
 {% endblock %}

@@ -233,7 +233,7 @@
                                                     <div class="spinner-border fc-ferngreen fs-3" style="width: 3rem; height: 3rem;" role="status">
                                                         <span class="visually-hidden">Анализ...</span>
                                                     </div>
-                                                    <span class="ms-3 fs-4 f-shadow">Анализируем изображение...</span>
+                                                    <span id="spinner-text" class="ms-3 fs-4 f-shadow">Анализируем изображение...</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -433,6 +433,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     
+    const spinnerText = document.getElementById("spinner-text");
+
     document.getElementById("image-submit-form").addEventListener('submit', function(e) {
         document.querySelector(".overlay-gif").classList.remove('d-none');
         document.getElementById("to-remove").style.visibility = 'hidden';;
