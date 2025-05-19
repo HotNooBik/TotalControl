@@ -1,7 +1,6 @@
-from email.policy import default
 from PIL import Image
 from django import forms
-from .models import UserCustomFood, FoodEntry
+from .models import UserCustomFood
 
 
 class FoodEntryForm(forms.Form):

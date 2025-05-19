@@ -382,3 +382,26 @@ form select {
 .nav-link:hover, .nav-link:focus {
     color: #3d853c;
 }
+
+.menu-link {
+    color: #344E41;
+    font-weight: bold;
+    border-radius: 10px;
+    padding-left: 5px;
+    margin: 10px auto;
+}
+
+.menu-link:hover, .menu-link:focus {
+    color: #ffffff;
+    font-weight: bold;
+    background-color: #58815770;
+    padding-left: 10px;
+    transition: all ease-in-out 0.2s;
+}
+
+.menu-link-active {
+    color: #ffffff;
+    font-weight: bold;
+    background-color: #588157ad;
+    padding-left: 10px;
+}

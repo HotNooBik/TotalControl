@@ -426,6 +426,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
+        const link = document.getElementById("calc-link");
+        link.classList.remove('fs-5');
+        link.classList.add('menu-link-active', 'fs-4');
+
         document.addEventListener('hide.bs.modal', function (event) {
             if (document.activeElement) {
                 document.activeElement.blur();

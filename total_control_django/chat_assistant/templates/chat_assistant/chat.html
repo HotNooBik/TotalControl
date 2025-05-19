@@ -1,0 +1,104 @@
+{% extends "main/base.html" %}
+{% load markdown_extras %}
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4 text-center"><i class="fa-solid fa-robot"></i> Чат с ИИ по питанию</h1>
+
+    <div class="d-flex justify-content-between mb-2">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="clear" value="1" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash-can"></i> Очистить чат</button>
+        </form>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">
+            {% for message in messages %}
+                <div class="mb-2">
+                    <strong class="{% if message.role == 'user' %}text-primary{% else %}text-success{% endif %}">
+                        {{ message.get_role_display }}:
+                    </strong>
+
+                    {% if message.content %}
+                        <div>{{ message.content|markdownify|safe }}</div>
+                    {% endif %}
+
+                    {% if message.image_data %}
+                        <div class="mt-2">
+                        <img src="{{ message.image_data }}" class="img-thumbnail" style="max-width: 300px;">
+                        </div>
+                    {% endif %}
+
+                    <small class="text-muted d-block">{{ message.timestamp|date:"d.m.Y H:i" }}</small>
+                </div>
+            {% empty %}
+                <p>Пока нет сообщений.</p>
+            {% endfor %}
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="message" class="form-label">Ваш вопрос:</label>
+                    <textarea name="message" class="form-control" rows="3" placeholder="Введите сообщение..." id="message-box"></textarea>
+                </div>
+
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <label class="btn btn-outline-secondary btn-sm">
+                    <i class="fa-solid fa-paperclip"></i>
+                    <input type="file" name="image" accept="image/*" hidden id="file-input">
+                    </label>
+
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </div>
+
+                <div id="preview" class="mb-3"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const link = document.getElementById("chat-link");
+        link.classList.remove('fs-5');
+        link.classList.add('menu-link-active', 'fs-4');
+
+
+        const textarea = document.getElementById('message-box');
+        const fileInput = document.getElementById('file-input');
+        const preview = document.getElementById('preview');
+
+        document.addEventListener('paste', function (event) {
+            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (const item of items) {
+            if (item.type.indexOf("image") !== -1) {
+                const blob = item.getAsFile();
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(blob);
+                fileInput.files = dataTransfer.files;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                preview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded border" style="max-height:200px;" alt="Вставленное изображение">`;
+                };
+                reader.readAsDataURL(blob);
+            }
+            }
+        });
+
+        fileInput.addEventListener("change", () => {
+            const file = fileInput.files[0];
+            if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.innerHTML = `<img src="${e.target.result}" class="img-fluid rounded border" style="max-height:200px;" alt="Выбранное изображение">`;
+            };
+            reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
+{% endblock content %}

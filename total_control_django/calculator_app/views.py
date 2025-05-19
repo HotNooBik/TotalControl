@@ -1,15 +1,10 @@
 from pprint import pprint
 import json
-from datetime import datetime
-import re
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-from pyzbar.pyzbar import decode
-from PIL import Image
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse
@@ -65,24 +60,9 @@ def calculator(request):
         if user_profile.timezone != user_timezone:
             user_profile.timezone = user_timezone
             user_profile.save()
-        # start_of_day = timezone.make_aware(
-        #     datetime.combine(today, datetime.min.time()), tz
-        # )
-        # end_of_day = timezone.make_aware(
-        #     datetime.combine(today, datetime.max.time()), tz
-        # )
-
-        # start_of_day_utc = start_of_day.astimezone(timezone.utc)
-        # end_of_day_utc = end_of_day.astimezone(timezone.utc)
-
-        # entries = FoodEntry.objects.filter(
-        #     user=request.user, date_added__range=(start_of_day_utc, end_of_day_utc)
-        # )
 
     except ZoneInfoNotFoundError:
         today = timezone.now().date()
-
-        # entries = FoodEntry.objects.filter(user=request.user, date_added__date=today)
 
     record, _ = UserDailyRecord.objects.get_or_create(
         user=request.user,

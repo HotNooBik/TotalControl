@@ -17,4 +17,12 @@
             <p>Перед тем, как начать пользоваться инструментом, зарегистрируйтесь или авторизируйтесь на сайте!</p>
         </div>
     {% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const link = document.getElementById("main-page-link");
+    link.classList.remove('fs-5');
+    link.classList.add('menu-link-active', 'fs-4');
+});
+</script>
 {% endblock content %}

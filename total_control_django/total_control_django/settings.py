@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "users",
     "calculator_app",
     "scanner",
+    "chat_assistant",
 ]
 
 MIDDLEWARE = [
