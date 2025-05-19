@@ -25,4 +25,5 @@ urlpatterns = [
     path("users/", include("users.urls")),
     path("calculator/", include("calculator_app.urls")),
     path("scanner/", include("scanner.urls")),
+    path("assistant/", include("chat_assistant.urls")),
 ]
