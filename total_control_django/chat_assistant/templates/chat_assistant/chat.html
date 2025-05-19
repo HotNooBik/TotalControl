@@ -13,7 +13,7 @@
 
     <div class="card shadow">
         <div class="card-body">
-            <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">
+            <div style="max-height: 50vh; overflow-y: auto; margin-bottom: 20px;">
             {% for message in messages %}
                 <div class="mb-2">
                     <strong class="{% if message.role == 'user' %}text-primary{% else %}text-success{% endif %}">
@@ -30,7 +30,7 @@
                         </div>
                     {% endif %}
 
-                    <small class="text-muted d-block">{{ message.timestamp|date:"d.m.Y H:i" }}</small>
+                    <small class="text-muted d-block">{{ message.date_sent|date:"d.m.Y H:i" }}</small>
                 </div>
             {% empty %}
                 <p>Пока нет сообщений.</p>

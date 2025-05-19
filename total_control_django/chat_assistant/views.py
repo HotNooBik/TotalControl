@@ -1,11 +1,14 @@
 from pprint import pprint
 import base64
-import re
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from PIL import Image
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.storage import default_storage
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+from users.models import UserProfile
 
 from calculator_app.services import prepare_image
 
@@ -69,14 +72,19 @@ def chat_assistant(request):
         )
 
         return redirect("chat")
+    
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    try:
+        tz = ZoneInfo(user_profile.timezone)
+    except ZoneInfoNotFoundError:
+        tz = timezone.get_current_timezone()
+    timezone.activate(tz)
 
     messages = Message.objects.filter(user=request.user).order_by("date_sent")[:20]
 
     for msg in messages:
         msg.image_data = msg.get_image_base64()
-        
-    context = {
-        "messages": messages
-    }
+
+    context = {"messages": messages}
 
     return render(request, "chat_assistant/chat.html", context)
