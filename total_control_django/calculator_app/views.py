@@ -181,17 +181,22 @@ def update_weight(request):
         except ZoneInfoNotFoundError:
             today = timezone.now().date()
 
-        record, _ = UserDailyRecord.objects.get_or_create(
-            user=request.user,
-            user_date=today,
-        )
-
-        record.weight = weight
-        record.save()
-
         user_profile = get_object_or_404(UserProfile, user=request.user)
         user_profile.weight = weight
         user_profile.save()
+
+        UserDailyRecord.objects.update_or_create(
+            user=request.user,
+            user_date=today,
+            defaults={
+                "weight": user_profile.weight,
+                "calories_goal": user_profile.daily_calories,
+                "proteins_goal": user_profile.daily_proteins,
+                "fats_goal": user_profile.daily_fats,
+                "carbs_goal": user_profile.daily_carbs,
+                "water_goal": user_profile.daily_water,
+            }
+        )
 
     except ValueError:
         pass

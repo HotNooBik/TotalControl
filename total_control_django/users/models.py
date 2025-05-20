@@ -103,12 +103,17 @@ class UserDailyRecord(models.Model):
     Attributes:
         user (ForeignKey): Связь с моделью User.
         user_date (DateField): Дата записи (берётся день пользователя, с учетом его часового пояса).
-        weight (FloatField): Вес пользователя в этот день (необязательное).
         calories (IntegerField): Потребленные калории (ккал).
         proteins (FloatField): Потребленные белки (г).
         fats (FloatField): Потребленные жиры (г).
         carbs (FloatField): Потребленные углеводы (г).
         water (IntegerField): Потребленная вода (мл).
+        weight (FloatField): Вес пользователя в этот день (необязательное).
+        calories_goal (IntegerField): Цель калорий в этот день (ккал).
+        proteins_goal (FloatField): Цель белков в этот день (г).
+        fats_goal (FloatField): Цель жиров в этот день (г).
+        carbs_goal (FloatField): Цель углеводов в этот день (г).
+        water_goal (IntegerField): Цель воды в этот день (мл).
 
     Meta:
         unique_together: Обеспечивает уникальность комбинации user и date
@@ -118,13 +123,18 @@ class UserDailyRecord(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     user_date = models.DateField()
 
-    weight = models.FloatField(blank=True, null=True)
-
     calories = models.IntegerField(default=0)
     proteins = models.FloatField(default=0)
     fats = models.FloatField(default=0)
     carbs = models.FloatField(default=0)
     water = models.IntegerField(default=0)
+
+    weight = models.FloatField(blank=True, null=True)
+    calories_goal = models.IntegerField(default=0)
+    proteins_goal = models.FloatField(default=0)
+    fats_goal = models.FloatField(default=0)
+    carbs_goal = models.FloatField(default=0)
+    water_goal = models.IntegerField(default=0)
 
     class Meta:
         unique_together = [["user", "user_date"]]

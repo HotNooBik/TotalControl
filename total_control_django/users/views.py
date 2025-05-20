@@ -1,13 +1,15 @@
 from functools import wraps
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect
+from django.utils import timezone
 
 from .forms import UserRegisterForm, UserLoginForm, UserProfileForm
-from .models import UserProfile
+from .models import UserProfile, UserDailyRecord
 
 
 def anonymous_required(view_func):
@@ -71,6 +73,26 @@ def edit_profile(request):
         if form.is_valid():
             updated_profile = form.save(commit=False)
             updated_profile.save()
+
+            user_profile = get_object_or_404(UserProfile, user=request.user)
+            try:
+                tz = ZoneInfo(user_profile.timezone)
+                today = timezone.now().astimezone(tz).date()
+            except ZoneInfoNotFoundError:
+                today = timezone.now().date()
+            
+            UserDailyRecord.objects.update_or_create(
+                user=request.user,
+                user_date=today,
+                defaults={
+                    "weight": user_profile.weight,
+                    "calories_goal": user_profile.daily_calories,
+                    "proteins_goal": user_profile.daily_proteins,
+                    "fats_goal": user_profile.daily_fats,
+                    "carbs_goal": user_profile.daily_carbs,
+                    "water_goal": user_profile.daily_water,
+                }
+            )
             return redirect("profile")
     else:
         form = UserProfileForm(instance=user_profile)

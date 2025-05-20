@@ -26,10 +26,15 @@ class UserDailyRecordAdmin(admin.ModelAdmin):
     list_display = (
         "user",
         "user_date",
-        "weight",
         "calories",
         "proteins",
         "fats",
         "carbs",
         "water",
+        "weight",
+        "calories_goal",
+        "proteins_goal",
+        "fats_goal",
+        "carbs_goal",
+        "water_goal",
     )
