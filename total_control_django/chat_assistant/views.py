@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.storage import default_storage
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.contrib import messages as dj_messages
 
 from users.models import UserProfile
 
@@ -35,9 +36,11 @@ def chat_assistant(request):
 
         if image_file:
             try:
-                # if image_file.size > 5 * 1024 * 1024:
-                #     messages.error(request, "Изображение слишком большое (макс. 5MB).")
-                #     return redirect("chat")
+                if image_file.size > 5 * 1024 * 1024:
+                    dj_messages.error(
+                        request, "Изображение слишком большое (макс. 5MB)."
+                    )
+                    return redirect("chat")
 
                 image = Image.open(image_file)
                 image.verify()
@@ -72,7 +75,7 @@ def chat_assistant(request):
         )
 
         return redirect("chat")
-    
+
     user_profile = get_object_or_404(UserProfile, user=request.user)
     try:
         tz = ZoneInfo(user_profile.timezone)
@@ -84,6 +87,19 @@ def chat_assistant(request):
 
     for msg in messages:
         msg.image_data = msg.get_image_base64()
+
+    if not messages.exists():
+        start_msg = """
+###Здравствуйте! 
+Я ваш помощник по **питанию** и **здоровому образу жизни**. Чем могу помочь: планирование рациона, подбор тренировок или что-то ещё?
+"""
+        Message.objects.create(
+            user=request.user,
+            role="assistant",
+            content=start_msg,
+            date_sent=timezone.now(),
+        )
+        messages = Message.objects.filter(user=request.user).order_by("date_sent")[:20]
 
     context = {"messages": messages}
 

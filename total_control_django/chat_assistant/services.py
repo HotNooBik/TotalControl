@@ -1,6 +1,5 @@
 from pprint import pprint
 
-import json
 import requests
 
 from django.conf import settings
@@ -41,6 +40,8 @@ def get_answer(user, prompt: str, image_path: str | None = None):
     answer = (
         response.json().get("choices", [{}])[0].get("message", {}).get("content", None)
     )
+
+    pprint(answer)
 
     if not answer:
         return None
