@@ -10,10 +10,16 @@ from requests_oauthlib import OAuth1
 from googletrans import Translator
 
 from django.conf import settings
+from django.core.serializers import serialize
 
 from users.models import UserDailyRecord
 
-from .models import UserCustomFood, UserFavoriteApiFood, UserFavoriteCustomFood
+from .models import (
+    UserCustomFood,
+    UserFavoriteApiFood,
+    UserFavoriteCustomFood,
+    FoodEntry,
+)
 
 from .prompts import FOOD_RECOGNITION_PROMPT, MODEL_VERSION
 
@@ -527,6 +533,76 @@ def get_weight_history_for_chart(
 
     else:
         return labels, data, None
+
+
+def get_records_history_for_chart(
+    user, limit: int = 0, get_entries: bool = False
+) -> tuple[list, list]:
+    if limit < 0:
+        raise ValueError("Invalid limit value, it must be greater than or equal to 0.")
+
+    if limit > 0:
+        records = list(UserDailyRecord.objects.filter(user=user).order_by("-user_date")[
+            :limit
+        ])
+        records.reverse()
+    else:
+        records = list(UserDailyRecord.objects.filter(user=user).order_by("user_date"))
+
+    labels = []
+    data = []
+
+    if get_entries:
+        record_pks = [r.pk for r in records]
+        all_entries = FoodEntry.objects.filter(daily_record__in=record_pks).order_by(
+            "date_added"
+        )
+
+        entries_map = {}
+        for entry in all_entries:
+            if entry.daily_record_id not in entries_map:
+                entries_map[entry.daily_record_id] = {
+                    "breakfast": [],
+                    "lunch": [],
+                    "dinner": [],
+                    "snack": [],
+                }
+            entries_map[entry.daily_record_id][entry.meal].append(
+                {
+                    "food_name": entry.food_name,
+                    "calories": entry.calories,
+                    "proteins": entry.proteins,
+                    "fats": entry.fats,
+                    "carbs": entry.carbs,
+                    "amount": entry.amount,
+                }
+            )
+
+    for record in records:
+        labels.append(record.user_date.strftime("%d/%m/%y"))
+        record_data = {
+            "data": {
+                "calories": record.calories,
+                "calories_goal": record.calories_goal,
+                "proteins": record.proteins,
+                "proteins_goal": record.proteins_goal,
+                "fats": record.fats,
+                "fats_goal": record.fats_goal,
+                "carbs": record.carbs,
+                "carbs_goal": record.carbs_goal,
+                "water": record.water,
+                "water_goal": record.water_goal,
+            }
+        }
+
+        if get_entries:
+            record_data["entries"] = entries_map.get(
+                record.pk, {"breakfast": [], "lunch": [], "dinner": [], "snack": []}
+            )
+
+        data.append(record_data)
+
+    return labels, data
 
 
 def get_products_from_image(image_path: str) -> tuple[dict | None, str]:

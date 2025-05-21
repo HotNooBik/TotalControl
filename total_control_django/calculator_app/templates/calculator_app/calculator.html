@@ -309,7 +309,7 @@
                     <div class="row justify-content-between align-items-baseline position-relative">
                         <div class="col-auto position-absolute start-0 top-0">
                             <button type="button" class="btn btn-dark ms-3 mt-4 btn-sm pt-2 pb-1" 
-                                    data-bs-toggle="modal" data-bs-target="#graphModal"
+                                    data-bs-toggle="modal" data-bs-target="#weightGraphModal"
                                     id="filterBtn" title="Посмотреть полный график">
                                 <i class="fs-5 fa-solid fa-filter"></i>
                             </button>
@@ -377,34 +377,20 @@
                 <div class="col-12">
                     <div class="card bg-water-light">
                         <div class="card-body">
-                            <div class="row justify-content-between align-items-baseline mb-2">
+                            <div class="row justify-content-center align-items-baseline mb-2">
                                 <div class="col-auto">
-                                    <p class="card-title fc-brunswickgreen fs-4 mb-0"><span class="fs-2 fw-bold">{{ current_water }}</span> мл</p>
-                                    <p class="card-text fc-fats-dark fs-6">Цель: {{ daily_water }} мл</p>
-                                </div>
-                                <div class="col-auto">
-                                    <p class="fw-bold fs-3 fc-brunswickgreen pe-2 pb-0 mb-0">Вода</p>
+                                    <p class="fw-bold fs-3 fc-brunswickgreen pe-2 pb-0 mb-0">История приемов пищи</p>
                                 </div>
                             </div>
-                            <div class="row justify-content-center align-items-center">
-                                <div class="col-sm-6">
-                                    <div class="input-group">
-                                        <input type="number" class="form-control border-secondary" placeholder="Кол-во воды..." 
-                                            min="1" step="1" value="250" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
-                                        <span class="input-group-text border-secondary">мл</span>
-                                        <button class="btn bg-water btn-outline-secondary text-black" type="button">
-                                            Добавить
-                                        </button>
-                                    </div>
-                                </div>  
-                                <div class="col-sm-3">
-                                    <div class="glass-container">
-                                        <div class="glass">
-                                            <div class="water"></div>
-                                            <div class="water-percentage">0%</div>
-                                        </div>
-                                    </div>
+                            <div class="row justify-content-between align-items-baseline position-relative">
+                                <div class="col-auto position-absolute start-0 top-0">
+                                    <button type="button" class="btn btn-dark ms-3 mt-4 btn-sm pt-2 pb-1" 
+                                            data-bs-toggle="modal" data-bs-target="#weightGraphModal"
+                                            id="fullRecordsBtn" title="Посмотреть полный график">
+                                        <i class="fs-5 fa-solid fa-expand"></i>
+                                    </button>
                                 </div>
+                                <canvas id="dailyRecordChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -416,11 +402,11 @@
 
 </div>
 
-<div class="modal fade" id="graphModal" tabindex="-1" aria-labelledby="graphModalLabel" aria-modal="true" role="dialog">
+<div class="modal fade" id="weightGraphModal" tabindex="-1" aria-labelledby="weightGraphModalLabel" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-3 fc-brunswickgreen" id="graphModalLabel" tabindex="0">График веса</h1>
+                <h1 class="modal-title fs-3 fc-brunswickgreen" id="weightGraphModalLabel" tabindex="0">График веса</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть" title="Закрыть"></button>
             </div>
             <div class="modal-body">
@@ -844,6 +830,30 @@
                 console.error('Ошибка загрузки данных:', error);
             }
         };
+
+
+        {% comment %} // Скрипт для графика приёмов пищи на главном экране
+        const ctx3 = document.getElementById('dailyRecordChart')
+
+        const recordsLabels = {{ records_data.labels }}
+        const recordsData = {{ records_data.data }}
+    
+        recordsChartInstance = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Вес (в кг)',
+                    data: data,
+                    fill: false,
+                    borderColor: 'rgb(255, 145, 0)',
+                    backgroundColor: 'rgb(255, 166, 49)',
+                    tension: 0.1,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                }],
+            },
+        }); {% endcomment %}
 
     });
 </script>
