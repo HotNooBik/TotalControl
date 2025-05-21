@@ -104,23 +104,23 @@
 
 /* Классические цвета */
 .bg-calories {
-    background-color: #fffde2;
+    background-color: rgb(255, 253, 226);
 }
 
 .bg-proteins {
-    background-color: #e2f4ff;
+    background-color: rgb(226, 244, 255);
 }
 
 .bg-fats {
-    background-color: #ffe2e2;
+    background-color: rgb(255, 226, 226);
 }
 
 .bg-carbs {
-    background-color: #e5ffe2;
+    background-color: rgb(229, 255, 226);
 }
 
 .bg-water {
-    background-color: #c1e1ee;
+    background-color: rgb(193, 225, 238);
 }
 
 /* Светлый вариант */

@@ -1,14 +1,15 @@
 {% extends "main/base.html" %}
 {% load static %}
+
 {% block content %}
 <div class="container rounded bg-white mt-5 mb-5">
     <div class="row">
         <div class="col-md-4 bg-ferngreen-light">
             <div class="d-flex flex-column align-items-center text-center p-3 py-5">
                 {% if profile.sex == "man" %}
-                <img width="150" height="150" src="{% static 'svg/user-male.svg' %}" alt="user-male-circle"/>
+                <img width="150" height="150" src="{% static 'users/svg/user-male.svg' %}" alt="user-male-circle"/>
                 {% else %}
-                <img width="150" height="150" src="{% static 'svg/user-female.svg' %}" alt="user-female-circle"/>
+                <img width="150" height="150" src="{% static 'users/svg/user-female.svg' %}" alt="user-female-circle"/>
                 {% endif %}
                 
                 <span class="fs-4 fw-bold">{{ user.username }}</span>
@@ -91,12 +92,14 @@
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const link = document.getElementById("profile-link");
-    link.classList.remove('fs-5');
-    link.classList.add('menu-link-active', 'fs-4');
-});
-</script>
 {% endblock content %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const link = document.getElementById("profile-link");
+            link.classList.remove('fs-5');
+            link.classList.add('menu-link-active', 'fs-4');
+        });
+    </script>
+{% endblock %}

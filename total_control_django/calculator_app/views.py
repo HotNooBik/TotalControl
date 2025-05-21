@@ -93,12 +93,6 @@ def calculator(request):
     carbs_percent = (totals["carbs"] or 0) / user_profile.daily_carbs * 100
     water_percent = record.water / user_profile.daily_water * 100
 
-    weight_labels, weight_data, _ = get_weight_history_for_chart(
-        request.user, limit=10, period="all", get_info=False
-    )
-
-    records_labels, records_data = get_records_history_for_chart(request.user, limit=4)
-
     context = {
         "current_calories": totals["calories"] or 0,
         "current_proteins": totals["proteins"] or 0,
@@ -121,14 +115,6 @@ def calculator(request):
         "carbs_percent": carbs_percent if carbs_percent < 100 else 100,
         "water_percent": water_percent if water_percent < 100 else 100,
         "user_goal": user_profile.get_goal_display().lower(),
-        "weight_data": {
-            "labels": weight_labels,
-            "data": weight_data,
-        },
-        "records_data": {
-            "labels": records_labels,
-            "data": records_data,
-        },
     }
     return render(request, "calculator_app/calculator.html", context)
 
@@ -214,8 +200,18 @@ def update_weight(request):
 @login_required
 def get_weight_history_graph(request):
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        limit = json.loads(request.body).get("limit", 0)
         period = json.loads(request.body).get("period")
+        get_info = json.loads(request.body).get("get_info", False)
 
+        try:
+            limit = int(limit)
+        except ValueError:
+            return JsonResponse(
+                {"error": f"Некорректный лимит. Допустимые значения: целое положительное число или нуль"},
+                status=400,
+            )
+        
         valid_periods = ["all", "week", "month", "year"]
         if period not in valid_periods:
             return JsonResponse(
@@ -223,17 +219,70 @@ def get_weight_history_graph(request):
                 status=400,
             )
 
+        try:
+            get_info = bool(get_info)
+        except ValueError:
+            return JsonResponse(
+                {"error": f"Некорректный флаг. Допустимые значения: true, false"},
+                status=400,
+            )
+
         labels, data_points, info = get_weight_history_for_chart(
-            request.user, period=period, get_info=True
+            request.user, limit=limit, period=period, get_info=get_info
+        )
+
+        if get_info:
+            return JsonResponse(
+                {
+                    "labels": labels,
+                    "data_points": data_points,
+                    "mean": info["mean"],
+                    "max": info["max"],
+                    "min": info["min"],
+                }
+            )
+        else:
+            return JsonResponse(
+                {
+                    "labels": labels,
+                    "data_points": data_points,
+                }
+            )
+
+    return JsonResponse({"error": "Недопустимый запрос"}, status=400)
+
+
+@require_POST
+@login_required
+def get_records_history_graph(request):
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        limit = json.loads(request.body).get("limit", 0)
+        get_entries = json.loads(request.body).get("get_entries", False)
+
+        try:
+            limit = int(limit)
+        except ValueError:
+            return JsonResponse(
+                {"error": f"Некорректный лимит. Допустимые значения: целое положительное число или нуль"},
+                status=400,
+            )
+
+        try:
+            get_entries = bool(get_entries)
+        except ValueError:
+            return JsonResponse(
+                {"error": f"Некорректный флаг. Допустимые значения: true, false"},
+                status=400,
+            )
+
+        labels, data_points = get_records_history_for_chart(
+            request.user, limit=limit, get_entries=True
         )
 
         return JsonResponse(
             {
                 "labels": labels,
                 "data_points": data_points,
-                "mean": info["mean"],
-                "max": info["max"],
-                "min": info["min"],
             }
         )
 

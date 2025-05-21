@@ -13,9 +13,6 @@
     <link rel="stylesheet" href="{% static 'css/colors.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <script src="{% static 'js/bootstrap.bundle.js' %}" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom" defer></script>
 
     <!-- Подключаем иконки -->
     <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
@@ -37,6 +34,9 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="{% static 'favicon/favicon-144x144.png' %}">
     <meta name="msapplication-config" content="{% static 'favicon/browserconfig.xml' %}">
+    
+    {% block css %}{% endblock %}
+    {% block extra_scripts %}{% endblock %}
 
 </head>
 <body class="bg-timberwolf">
@@ -160,5 +160,6 @@
         });
     </script>
 
+    {% block scripts %}{% endblock %}
 </body>
 </html>
