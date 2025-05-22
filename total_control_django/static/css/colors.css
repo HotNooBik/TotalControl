@@ -2,19 +2,15 @@
 .bg-timberwolf {
     background-color: #dad7cd;
 }
-
 .bg-sage {
     background-color: #a3b18a;
 }
-
 .bg-ferngreen {
     background-color: #588157;
 }
-
 .bg-huntergreen {
     background-color: #3a5a40;
 }
-
 .bg-brunswickgreen {
     background-color: #344e41;
 }
@@ -23,15 +19,12 @@
 .bg-timberwolf-light {
     background-color: #e9e7e3;
 }
-
 .bg-ferngreen-light {
     background-color: #9bc99a;
 }
-
 .bg-ferngreen-lighter {
     background-color: #c2e7c1;
 }
-
 .bg-ferngreen-lightest {
     background-color: #effdef;
 }
@@ -40,23 +33,18 @@
 .fc-timberwolf {
     color: #dad7cd;
 }
-
 .fc-sage {
     color: #a3b18a;
 }
-
 .fc-ferngreen {
     color: #588157;
 }
-
 .fc-huntergreen {
     color: #3a5a40;
 }
-
 .fc-brunswickgreen {
     color: #344e41;
 }
-
 .fc-darkgreen {
     color: #0b1a0c;
 }
@@ -65,23 +53,18 @@
 .fc-timberwolf-light {
     color: #fdfaf0;
 }
-
 .fc-sage-light {
     color: #ebffc7;
 }
-
 .fc-ferngreen-light {
     color: #89ca88;
 }
-
 .fc-huntergreen-light {
     color: #76b682;
 }
-
 .fc-brunswickgreen-light {
     color: #619179;
 }
-
 .fc-darkgreen {
     color: #163518;
 }
@@ -90,11 +73,9 @@
 .btn.bg-ferngreen-light:hover {
     background-color: #80a57f;
 }
-
 .btn.bg-ferngreen:hover {
     background-color: #35523b;
 }
-
 .btn.bg-huntergreen:hover {
     background-color: #263b2a;
 }
@@ -105,19 +86,15 @@
 .bg-calories {
     background-color: rgb(255, 253, 226);
 }
-
 .bg-proteins {
     background-color: rgb(226, 244, 255);
 }
-
 .bg-fats {
     background-color: rgb(255, 226, 226);
 }
-
 .bg-carbs {
     background-color: rgb(229, 255, 226);
 }
-
 .bg-water {
     background-color: rgb(193, 225, 238);
 }
@@ -126,19 +103,15 @@
 .bg-calories-light {
     background-color: #fffffa;
 }
-
 .bg-proteins-light {
     background-color: #fafdff;
 }
-
 .bg-fats-light {
     background-color: #fffafa;
 }
-
 .bg-carbs-light {
     background-color: #fafff9;
 }
-
 .bg-water-light {
     background-color: #fafeff;
 }
@@ -147,19 +120,15 @@
 .bg-calories-richer {
     background-color: #ffffa2;
 }
-
 .bg-proteins-richer {
     background-color: #a1daff;
 }
-
 .bg-fats-richer {
     background-color: #ffa7a7;
 }
-
 .bg-carbs-richer {
     background-color: #92df83;
 }
-
 .bg-water-richer {
     background-color: #b6f0ff;
 }
@@ -169,17 +138,14 @@
     background-color: #eceacf60;
     box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.3);
 }
-
 .bg-proteins-trans {
     background-color: #d1e4ee60;
     box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.3);
 }
-
 .bg-fats-trans {
     background-color: #ecd0d060;
     box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.3);
 }
-
 .bg-carbs-trans {
     background-color: #cfe7cc60;
     box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.3);
@@ -189,23 +155,18 @@
 .bg-calories-mid {
     background-color: #e0dda8;
 }
-
 .bg-proteins-mid {
     background-color: #aacde0;
 }
-
 .bg-fats-mid {
     background-color: #dfa9a9;
 }
-
 .bg-carbs-mid {
     background-color: #b0ddaa;
 }
-
 .bg-grams-mid {
     background-color: #dfdfdf;
 }
-
 .bg-water-mid {
     background-color: #dfedf3;
 }
@@ -214,15 +175,12 @@
 .fc-calories {
     color: #fdffe2;
 }
-
 .fc-proteins {
     color: #e2f4ff;
 }
-
 .fc-fats {
     color: #ffe2e2;
 }
-
 .fc-carbs {
     color: #e5ffe2;
 }
@@ -231,18 +189,11 @@
 .fc-proteins-dark {
     color: #86929c;
 }
-
 .fc-fats-dark {
     color: #968484;
 }
-
 .fc-carbs-dark {
     color: #82947f;
-}
-
-/* Темная тень для текста */
-.f-shadow {
-    text-shadow: 1px 1px 3px #00000050;
 }
 
 /* Цвет для иконки звезды */

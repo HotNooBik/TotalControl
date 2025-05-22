@@ -108,5 +108,10 @@ form select {
 /* Собственные стили для навигационныхэ кнопок */
 .nav-link:hover,
 .nav-link:focus {
-    color: #3d853c;
+    color: #f7fff6;
+}
+
+/* Темная тень для текста */
+.f-shadow {
+    text-shadow: 1px 1px 3px #00000050;
 }
