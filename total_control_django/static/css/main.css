@@ -67,7 +67,7 @@ form select {
 }
 
 .login-button:hover {
-    background-color: #344E41;
+    background-color: #344e41;
 }
 
 .login-link {
@@ -102,8 +102,6 @@ form select {
     font-size: 12px;
     margin-top: 5px;
 }
-
-
 
 /* Таблица стилей для профиля */
 
@@ -145,7 +143,6 @@ form select {
     background: #e04b4b;
 }
 
-
 /* Стили для выбора активности пользователя на этапе регистрации */
 
 .activity-selector {
@@ -164,11 +161,11 @@ form select {
 }
 
 .activity-option:hover {
-    border-color: #4CAF50;
+    border-color: #4caf50;
 }
 
 .activity-option.active {
-    border-color: #4CAF50;
+    border-color: #4caf50;
     background-color: #f8fff8;
 }
 
@@ -182,8 +179,8 @@ form select {
 }
 
 .active .radio-circle {
-    border-color: #4CAF50;
-    background-color: #4CAF50;
+    border-color: #4caf50;
+    background-color: #4caf50;
 }
 
 .radio-circle::after {
@@ -203,7 +200,7 @@ form select {
     display: block;
 }
 
-.activity-text-content{
+.activity-text-content {
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -219,10 +216,9 @@ form select {
     color: #666;
 }
 
-
 /* Стиль для отображения КБЖУ */
 
-.cpfc-content{
+.cpfc-content {
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -237,7 +233,6 @@ form select {
         font-size: 0.9rem;
     }
 }
-
 
 /* Стили для элементов форм */
 .form-control:focus {
@@ -255,20 +250,17 @@ form select {
     box-shadow: 0 0 0 0.2rem rgba(255, 166, 49, 0.527);
 }
 
-
 /* Звезда - избранное */
 .star-btn {
     margin-top: 20px;
     padding-left: 18px;
 }
 
-
 /* Кнопка закрыть */
 .close-btn {
     margin-top: 20px;
     padding-right: 22px;
 }
-
 
 /* Элементы для поисковика */
 .search-img {
@@ -278,7 +270,6 @@ form select {
 .search-font {
     font-size: 140%;
 }
-
 
 /* Элементы для стакана с водой */
 .glass-container {
@@ -320,21 +311,16 @@ form select {
     z-index: 2;
 }
 
-
 /* Для комментария вод графиком веса */
 .advice-text {
     font-size: 13px;
 }
 
-
 /* Селектор для свечения кнопки */
 .glow-hover {
-    text-shadow: 0 0 2px #ffffff, 
-                 0 0 5px #8fbb8e, 
-                 0 0 15px #588157;
+    text-shadow: 0 0 2px #ffffff, 0 0 5px #8fbb8e, 0 0 15px #588157;
     transition: text-shadow 0.5s ease;
-  }
-
+}
 
 /* Для прикрепления фото*/
 #drop-area {
@@ -348,7 +334,7 @@ form select {
 #drop-area.highlight {
     border-color: #74c972;
     background-color: #f3fff0c5;
-  }
+}
 
 .overlay-gif {
     position: absolute;
@@ -379,19 +365,21 @@ form select {
     box-shadow: 0 0 0 0.25rem #58815780;
 }
 
-.nav-link:hover, .nav-link:focus {
+.nav-link:hover,
+.nav-link:focus {
     color: #3d853c;
 }
 
 .menu-link {
-    color: #344E41;
+    color: #344e41;
     font-weight: bold;
     border-radius: 10px;
     padding-left: 5px;
     margin: 10px auto;
 }
 
-.menu-link:hover, .menu-link:focus {
+.menu-link:hover,
+.menu-link:focus {
     color: #ffffff;
     font-weight: bold;
     background-color: #58815770;

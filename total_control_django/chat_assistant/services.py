@@ -37,6 +37,8 @@ def get_answer(user, prompt: str, image_path: str | None = None):
         keys_count -= 1
         response = requests.post(url, headers=headers, json=payload, timeout=60)
 
+    pprint(response.json())
+
     answer = (
         response.json().get("choices", [{}])[0].get("message", {}).get("content", None)
     )

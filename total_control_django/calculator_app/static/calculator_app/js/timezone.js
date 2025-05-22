@@ -2,11 +2,11 @@
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 fetch(urls.setTimezone, {
-    method: 'POST',
+    method: "POST",
     headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrf,
-        'X-Requested-With': 'XMLHttpRequest'
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrf,
+        "X-Requested-With": "XMLHttpRequest",
     },
-    body: JSON.stringify({ timezone: timeZone })
+    body: JSON.stringify({ timezone: timeZone }),
 });
