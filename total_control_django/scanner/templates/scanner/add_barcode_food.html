@@ -62,7 +62,7 @@
                              style="background:{% if food.image %}rgba(15, 15, 15, 0.75){% endif %} url({% if food.image %}data:image/jpeg;
                                     base64,{{ food.image }}{% else %}'{% static 'img/food_entry_bg.png' %}'{% endif %}) center/cover;
                                     background-blend-mode: darken">
-                            <div class="cpfc-content mt-2 mb-4">
+                            <div class="flex-column-center mt-2 mb-4">
                                 <h1 class="card-title text-white fs-1 mb-0 f-shadow">{{ food.food_name }}</h1>
                                 {% if food.brand_name %}
                                     <p class="card-text text-white fs-4 mb-0 f-shadow">

@@ -1,5 +1,8 @@
 {% extends "main/base.html" %}
 {% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'calculator_app/css/water.css' %}">
+{% endblock css %}
 {% block extra_scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8" defer></script>
@@ -151,7 +154,7 @@
                                         <div class="list-group">
                                             {% for entry in breakfast_entries %}
                                                 <div class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <div class="cpfc-content">
+                                                    <div class="flex-column-center">
                                                         <p class="fs-6 mb-1 text-break" align="start">
                                                             <span class="fs-4 fw-bolder">{{ entry.food_name }}</span>
                                                             {% if entry.amount %}({{ entry.amount }}){% endif %}
@@ -195,7 +198,7 @@
                                         <div class="list-group">
                                             {% for entry in lunch_entries %}
                                                 <div class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <div class="cpfc-content">
+                                                    <div class="flex-column-center">
                                                         <p class="fs-6 mb-1 text-break" align="start">
                                                             <span class="fs-4 fw-bolder">{{ entry.food_name }}</span>
                                                             {% if entry.amount %}({{ entry.amount }}){% endif %}
@@ -239,7 +242,7 @@
                                         <div class="list-group">
                                             {% for entry in dinner_entries %}
                                                 <div class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <div class="cpfc-content">
+                                                    <div class="flex-column-center">
                                                         <p class="fs-6 mb-1 text-break" align="start">
                                                             <span class="fs-4 fw-bolder">{{ entry.food_name }}</span>
                                                             {% if entry.amount %}({{ entry.amount }}){% endif %}
@@ -283,7 +286,7 @@
                                         <div class="list-group">
                                             {% for entry in snack_entries %}
                                                 <div class="list-group-item d-flex justify-content-between align-items-center">
-                                                    <div class="cpfc-content">
+                                                    <div class="flex-column-center">
                                                         <p class="fs-6 mb-1 text-break" align="start">
                                                             <span class="fs-4 fw-bolder">{{ entry.food_name }}</span>
                                                             {% if entry.amount %}({{ entry.amount }}){% endif %}

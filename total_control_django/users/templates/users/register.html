@@ -1,5 +1,9 @@
 {% extends "main/base.html" %}
 {% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'users/css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/activity_coef.css' %}">
+{% endblock css %}
 {% block content %}
     <div class="container">
         <div class="row justify-content-center">
@@ -7,7 +11,7 @@
                 <div class="registration-box">
                     <h2>Регистрация</h2>
                     <hr>
-                    <form class="login-form" action="." method="post">
+                    <form class="registration-form" action="." method="post">
                         {% csrf_token %} {{ form.as_p }}
                         <h5 class="mt-3">Образ жизни</h5>
                         <div class="activity-selector">
@@ -41,9 +45,9 @@
                             </div>
                         </div>
                         <br />
-                        <button class="login-button" type="submit">Зарегистрироваться</button>
+                        <button class="registration-button" type="submit">Зарегистрироваться</button>
                     </form>
-                    <div class="login-link">
+                    <div class="registration-link">
                         <a href="{% url 'login' %}">Уже есть аккаунт? Войди!</a>
                     </div>
                 </div>
