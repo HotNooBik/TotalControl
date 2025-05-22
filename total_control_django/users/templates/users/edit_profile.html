@@ -1,103 +1,114 @@
 {% extends "main/base.html" %}
 {% load static %}
-
 {% block content %}
-<form method="post">
-    <div class="container rounded bg-white mt-5 mb-5">
-        <div class="row">
-            <div class="col-md-4 bg-ferngreen-light">
-                <div class="d-flex flex-column align-items-center text-center p-3 py-5">
-                    <img width="150" height="150" src="{% static 'users/svg/gear.svg' %}" alt="gear icon"/>
-                    
-                    <span class="fs-4 fw-bold">{{ user.username }}</span>
-                    <span class="text-black-50">{{ user.email }}</span>
-                    <span> </span>
-                </div>
-            </div>
-            <div class="col-md-8 d-flex justify-content-center text-center">
-                <div class="p-3 py-4">
-                    <h2 class='mb-4 fc-brunswickgreen'>Редактирование профиля</h2>
-                    <hr>
-                    <div class="row mt-2 px-sm-5 mb-0">
-                        {% csrf_token %}
-                        <div class="row px-sm-4">
-                            <div class="col mb-3 d-flex justify-content-center">
-                                <p class="fs-5 me-3"><b>Дата рождения:</b></p>
-                                {{ form.birth_date }}
-                            </div>
-                        </div>
-                        <div class="row px-sm-4 ">
-                            <div class="col mb-3 d-flex px-5">
-                                <p class="fs-5 me-3 mt-1 mb-0"><b>Рост:</b></p>
-                                {{ form.height }}
-                                <p class="fs-5 ms-3 mt-1 mb-0">см.</p>
-                            </div>
-                        </div>
-                        <div class="row px-sm-4">
-                            <div class="col mb-3 d-flex justify-content-between px-5">
-                                <p class="fs-5 me-3 mt-1 mb-0"><b>Вес:</b></p>
-                                {{ form.weight }}
-                                <p class="fs-5 ms-3 mt-1 mb-0">кг.</p>
-                            </div>
-                        </div>
-                        <div class="row px-sm-4">
-                            <div class="col mb-3 d-flex justify-content-between px-5">
-                                <p class="fs-5 me-3 mt-1 mb-0"><b>Цель:</b></p>
-                                {{ form.goal }}
-                            </div>
-                        </div>
-                        <div class="row px-sm-4">
-                            <div class="col mb-3 d-flex justify-content-between px-5">
-                                <p class="fs-5 me-3 mt-1 mb-0"><b>Пол:</b></p>
-                                {{ form.sex }}
-                            </div>
-                        </div>
-                        <p class="fs-5 mt-2 mb-0"><b>Активность: {{ form.activity_coef }}</b>
-                        <div class="activity-selector">
-                            <div class="activity-option active" data-value="1.2">
-                                <div class="radio-circle"></div>
-                                <div class="activity-text-content">
-                                    <span class="activity-main-text">Минимальная активность</span>
-                                    <span class="activity-sub-text">Сидячая работа, нет тренировок</span>
-                                </div>
-                            </div>
-                            <div class="activity-option" data-value="1.375">
-                                <div class="radio-circle"></div>
-                                <div class="activity-text-content">
-                                    <span class="activity-main-text">Слабая активность</span>
-                                    <span class="activity-sub-text">Тренировки 1-2 раза в неделю</span>
-                                </div>
-                            </div>
-                            <div class="activity-option" data-value="1.5">
-                                <div class="radio-circle"></div>
-                                <div class="activity-text-content">
-                                    <span class="activity-main-text">Умеренная активность</span>
-                                    <span class="activity-sub-text">Тренировки 3-4 раза в неделю</span>
-                                </div>
-                            </div>
-                            <div class="activity-option" data-value="1.73">
-                                <div class="radio-circle"></div>
-                                <div class="activity-text-content">
-                                    <span class="activity-main-text">Высокая активность</span>
-                                    <span class="activity-sub-text">Тренировки 5-7 раз в неделю</span>
-                                </div>
-                            </div>
-                        </div>
+    <form method="post">
+        <div class="container rounded bg-white mt-5 mb-5">
+            <div class="row">
+                <div class="col-md-4 bg-ferngreen-light">
+                    <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                        <img width="150"
+                             height="150"
+                             src="{% static 'users/svg/gear.svg' %}"
+                             alt="gear icon" />
+                        <span class="fs-4 fw-bold">{{ user.username }}</span>
+                        <span class="text-black-50">{{ user.email }}</span>
                     </div>
-                    <hr class="mt-0">
-                    <div class="row mt-4 mb-0">
-                        <div class="col d-flex justify-content-between">
-                            <button type="submit" class="btn btn-success">Сохранить изменения</button>
-                            <button type="submit" name="cancel" class="btn btn-danger">Отмена</button>
+                </div>
+                <div class="col-md-8 d-flex justify-content-center text-center">
+                    <div class="p-3 py-4">
+                        <h2 class="mb-4 fc-brunswickgreen">Редактирование профиля</h2>
+                        <hr>
+                        <div class="row mt-2 px-sm-5 mb-0">
+                            {% csrf_token %}
+                            <div class="row px-sm-4">
+                                <div class="col mb-3 d-flex justify-content-center">
+                                    <p class="fs-5 me-3">
+                                        <b>Дата рождения:</b>
+                                    </p>
+                                    {{ form.birth_date }}
+                                </div>
+                            </div>
+                            <div class="row px-sm-4 ">
+                                <div class="col mb-3 d-flex px-5">
+                                    <p class="fs-5 me-3 mt-1 mb-0">
+                                        <b>Рост:</b>
+                                    </p>
+                                    {{ form.height }}
+                                    <p class="fs-5 ms-3 mt-1 mb-0">см.</p>
+                                </div>
+                            </div>
+                            <div class="row px-sm-4">
+                                <div class="col mb-3 d-flex justify-content-between px-5">
+                                    <p class="fs-5 me-3 mt-1 mb-0">
+                                        <b>Вес:</b>
+                                    </p>
+                                    {{ form.weight }}
+                                    <p class="fs-5 ms-3 mt-1 mb-0">кг.</p>
+                                </div>
+                            </div>
+                            <div class="row px-sm-4">
+                                <div class="col mb-3 d-flex justify-content-between px-5">
+                                    <p class="fs-5 me-3 mt-1 mb-0">
+                                        <b>Цель:</b>
+                                    </p>
+                                    {{ form.goal }}
+                                </div>
+                            </div>
+                            <div class="row px-sm-4">
+                                <div class="col mb-3 d-flex justify-content-between px-5">
+                                    <p class="fs-5 me-3 mt-1 mb-0">
+                                        <b>Пол:</b>
+                                    </p>
+                                    {{ form.sex }}
+                                </div>
+                            </div>
+                            <div class="fs-5 mt-2 mb-0">
+                                <b>Активность: {{ form.activity_coef }}</b>
+                                <div class="activity-selector">
+                                    <div class="activity-option active" data-value="1.2">
+                                        <div class="radio-circle"></div>
+                                        <div class="activity-text-content">
+                                            <span class="activity-main-text">Минимальная активность</span>
+                                            <span class="activity-sub-text">Сидячая работа, нет тренировок</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-option" data-value="1.375">
+                                        <div class="radio-circle"></div>
+                                        <div class="activity-text-content">
+                                            <span class="activity-main-text">Слабая активность</span>
+                                            <span class="activity-sub-text">Тренировки 1-2 раза в неделю</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-option" data-value="1.5">
+                                        <div class="radio-circle"></div>
+                                        <div class="activity-text-content">
+                                            <span class="activity-main-text">Умеренная активность</span>
+                                            <span class="activity-sub-text">Тренировки 3-4 раза в неделю</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-option" data-value="1.73">
+                                        <div class="radio-circle"></div>
+                                        <div class="activity-text-content">
+                                            <span class="activity-main-text">Высокая активность</span>
+                                            <span class="activity-sub-text">Тренировки 5-7 раз в неделю</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="mt-0">
+                            <div class="row mt-4 mb-0">
+                                <div class="col d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                                    <button type="submit" name="cancel" class="btn btn-danger">Отмена</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
 {% endblock content %}
-
 {% block scripts %}
     <script src="{% static 'users/js/edit_profile.js' %}"></script>
-{% endblock %}
+{% endblock scripts %}

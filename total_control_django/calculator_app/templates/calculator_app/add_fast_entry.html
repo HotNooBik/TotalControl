@@ -1,70 +1,67 @@
 {% extends "main/base.html" %}\
 {% load static %}
-
 {% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center mb-3 text-center">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="z-3 row justify-content-center position-relative">
-                    <div class="col-auto mt-0 position-absolute end-0">
-                        <div class="close-btn mt-4">
-                            <a href="{{ next_url }}">
-                                <i class="fa-solid fa-xmark fc-ferngreen fs-1 " title="Вернуться назад"></i>
-                            </a> 
-                        </div>
-                    </div>
-                </div>
-                <h2 class="card-header py-4 fw-bold fc-darkgreen">Добавление собственной записи в
-                    {% if meal == 'breakfast' %}
-                    "Завтрак"
-                    {% elif meal == 'lunch' %}
-                    "Обед"
-                    {% elif meal == 'dinner' %}
-                    "Ужин"
-                    {% else %}
-                    "Перекус"
-                    {% endif %}
-                </h2>
-
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="row justify-content-center">
-                            <div class="col-lg-6">
-                                <div class="mb-4">
-                                    <p class="fw-bold fs-4 mb-1">{{ form.food_name.label_tag }}</p>
-                                    {{ form.food_name }}
-                                </div>
-                                <div class="d-flex mb-3 fs-5">
-                                    <p class="fw-bold me-2 my-auto" align="left">{{ form.calories.label_tag }}</p>
-                                    {{ form.calories }}
-                                    <p class="ms-2 my-auto">ккал.</p>
-                                </div>
-                                <div class="d-flex mb-3 fs-5">
-                                    <p class="fw-bold me-2 my-auto" align="left">{{ form.proteins.label_tag }}</p>
-                                    {{ form.proteins }}
-                                    <p class="ms-2 my-auto">г.</p>
-                                </div>
-                                <div class="d-flex mb-3 fs-5">
-                                    <p class="fw-bold me-2 my-auto" align="left">{{ form.fats.label_tag }}</p>
-                                    {{ form.fats }}
-                                    <p class="ms-2 my-auto">г.</p>
-                                </div>
-                                <div class="d-flex mb-3 fs-5">
-                                    <p class="fw-bold me-2 my-auto" align="left">{{ form.carbs.label_tag }}</p>
-                                    {{ form.carbs }}
-                                    <p class="ms-2 my-auto">г.</p>
-                                </div>
-                                
-                                <button type="submit" class="btn bg-ferngreen text-white mt-3">Добавить запись</button>
+    <div class="container mt-4">
+        <div class="row justify-content-center mb-3 text-center">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="z-3 row justify-content-center position-relative">
+                        <div class="col-auto mt-0 position-absolute end-0">
+                            <div class="close-btn mt-4">
+                                <a href="{{ next_url }}">
+                                    <i class="fa-solid fa-xmark fc-ferngreen fs-1 " title="Вернуться назад"></i>
+                                </a>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                    <h2 class="card-header py-4 fw-bold fc-darkgreen">
+                        Добавление собственной записи в
+                        {% if meal == 'breakfast' %}
+                            "Завтрак"
+                        {% elif meal == 'lunch' %}
+                            "Обед"
+                        {% elif meal == 'dinner' %}
+                            "Ужин"
+                        {% else %}
+                            "Перекус"
+                        {% endif %}
+                    </h2>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row justify-content-center">
+                                <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <p class="fw-bold fs-4 mb-1">{{ form.food_name.label_tag }}</p>
+                                        {{ form.food_name }}
+                                    </div>
+                                    <div class="d-flex mb-3 fs-5">
+                                        <p class="fw-bold me-2 my-auto" align="left">{{ form.calories.label_tag }}</p>
+                                        {{ form.calories }}
+                                        <p class="ms-2 my-auto">ккал.</p>
+                                    </div>
+                                    <div class="d-flex mb-3 fs-5">
+                                        <p class="fw-bold me-2 my-auto" align="left">{{ form.proteins.label_tag }}</p>
+                                        {{ form.proteins }}
+                                        <p class="ms-2 my-auto">г.</p>
+                                    </div>
+                                    <div class="d-flex mb-3 fs-5">
+                                        <p class="fw-bold me-2 my-auto" align="left">{{ form.fats.label_tag }}</p>
+                                        {{ form.fats }}
+                                        <p class="ms-2 my-auto">г.</p>
+                                    </div>
+                                    <div class="d-flex mb-3 fs-5">
+                                        <p class="fw-bold me-2 my-auto" align="left">{{ form.carbs.label_tag }}</p>
+                                        {{ form.carbs }}
+                                        <p class="ms-2 my-auto">г.</p>
+                                    </div>
+                                    <button type="submit" class="btn bg-ferngreen text-white mt-3">Добавить запись</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+{% endblock content %}

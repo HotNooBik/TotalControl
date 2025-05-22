@@ -1,110 +1,123 @@
 {% extends "main/base.html" %}
 {% load markdown_extras %}
 {% load static %}
-
 {% block css %}
-<link rel="stylesheet" href="{% static 'chat_assistant/css/chat.css' %}">
-{% endblock %}
-
+    <link rel="stylesheet" href="{% static 'chat_assistant/css/chat.css' %}">
+{% endblock css %}
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center mb-3 text-center">
-        <div class="col-12">
-            <div class="card shadow" style="border-radius: 15px;">
-
-                <h2 class="card-header py-4 fw-bold bg-ferngreen text-white justify-content-center shadow-sm border-bottom-0" 
-                    style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
-                    <i class="fa-solid fa-robot"></i> 
-                    Чат с ИИ-помощником по питанию
-                </h2>
-
-                <div class="card-body bg-ferngreen border-bottom-0 mb-0">
-                    <div class="row p-1 bg-light-subtle m-0 pt-3">
-                        <div class="col-lg-12" style="max-height: 50vh; overflow-y: auto; margin-bottom: 20px;" id="chat">
-                        {% for message in messages %}
-                            {% if message.role == 'user' %}
-                                <div class="row d-flex flex-row justify-content-end pt-1 mt-2">
-                                    <div class="col-auto">
-                                        {% if message.content %}
-                                            <div class="px-3 py-2 ms-3 mb-2 my-2 rounded-3 bg-ferngreen-lighter text-start">
-                                                {{ message.content }}
+    <div class="container py-5">
+        <div class="row justify-content-center mb-3 text-center">
+            <div class="col-12">
+                <div class="card shadow" style="border-radius: 15px;">
+                    <h2 class="card-header py-4 fw-bold bg-ferngreen text-white justify-content-center shadow-sm border-bottom-0"
+                        style="border-top-left-radius: 15px;
+                               border-top-right-radius: 15px">
+                        <i class="fa-solid fa-robot"></i>
+                        Чат с ИИ-помощником по питанию
+                    </h2>
+                    <div class="card-body bg-ferngreen border-bottom-0 mb-0">
+                        <div class="row p-1 bg-light-subtle m-0 pt-3">
+                            <div class="col-lg-12"
+                                 style="max-height: 50vh;
+                                        overflow-y: auto;
+                                        margin-bottom: 20px"
+                                 id="chat">
+                                {% for message in messages %}
+                                    {% if message.role == 'user' %}
+                                        <div class="row d-flex flex-row justify-content-end pt-1 mt-2">
+                                            <div class="col-auto">
+                                                {% if message.content %}
+                                                    <div class="px-3 py-2 ms-3 mb-2 my-2 rounded-3 bg-ferngreen-lighter text-start">{{ message.content }}</div>
+                                                {% endif %}
+                                                {% if message.image_data %}
+                                                    <div class="d-flex justify-content-end my-2">
+                                                        <img src="{{ message.image_data }}"
+                                                             class="img-fluid"
+                                                             style="border-radius: 15px;
+                                                                    max-width: 100%;
+                                                                    height: auto"
+                                                             alt="Image">
+                                                    </div>
+                                                {% endif %}
+                                                <p class="small ms-3 mt-2 rounded-3 text-muted d-flex justify-content-end">{{ message.date_sent|date:"d.m.Y H:i" }}</p>
                                             </div>
-                                        {% endif %}
-                                        {% if message.image_data %}
-                                        <div class="d-flex justify-content-end my-2">
-                                            <img src="{{ message.image_data }}" class="img-fluid" style="border-radius: 15px; max-width: 100%; height: auto;" alt="Image">
                                         </div>
-                                        {% endif %}
-                                        <p class="small ms-3 mt-2 rounded-3 text-muted d-flex justify-content-end">{{ message.date_sent|date:"d.m.Y H:i" }}</p>
-                                    </div>
-                                </div>
-                            {% else %}
-                                <div class="row d-flex flex-row justify-content-lg-start pt-1 mt-2">
-                                    <div class="col-auto">
-                                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-ferngreen text-white" 
-                                             style="width: 50px; height: 50px;">
-                                            <i class="fa-solid fa-robot fs-3"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        {% if message.content %}
-                                            <div class="px-3 py-2 pb-1 ms-3 my-2 rounded-3 bg-secondary-subtle text-start">
-                                                {{ message.content|markdownify|safe }}
+                                    {% else %}
+                                        <div class="row d-flex flex-row justify-content-lg-start pt-1 mt-2">
+                                            <div class="col-auto">
+                                                <div class="d-flex align-items-center justify-content-center rounded-circle bg-ferngreen text-white"
+                                                     style="width: 50px;
+                                                            height: 50px">
+                                                    <i class="fa-solid fa-robot fs-3"></i>
+                                                </div>
                                             </div>
-                                        {% endif %}
-                                        {% if message.image_data %}
-                                        <div class="d-flex justify-content-lg-start my-2">
-                                            <img src="{{ message.image_data }}" class="img-fluid" style="border-radius: 15px; max-width: 100%; height: auto;" alt="Image">
+                                            <div class="col-auto">
+                                                {% if message.content %}
+                                                    <div class="px-3 py-2 pb-1 ms-3 my-2 rounded-3 bg-secondary-subtle text-start">
+                                                        {{ message.content|markdownify|safe }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if message.image_data %}
+                                                    <div class="d-flex justify-content-lg-start my-2">
+                                                        <img src="{{ message.image_data }}"
+                                                             class="img-fluid"
+                                                             style="border-radius: 15px;
+                                                                    max-width: 100%;
+                                                                    height: auto"
+                                                             alt="Image">
+                                                    </div>
+                                                {% endif %}
+                                                <p class="small ms-3 mt-2 rounded-3 text-muted d-flex justify-content-lg-start">
+                                                    {{ message.date_sent|date:"d.m.Y H:i" }}
+                                                </p>
+                                            </div>
                                         </div>
-                                        {% endif %}
-                                        <p class="small ms-3 mt-2 rounded-3 text-muted d-flex justify-content-lg-start">{{ message.date_sent|date:"d.m.Y H:i" }}</p>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% empty %}
-                            <p>Пока нет сообщений.</p>
-                        {% endfor %}
-                        </div>
-
-                        <div id="preview" class="d-flex justify-content-lg-start"></div>
-                        <form method="post" enctype="multipart/form-data" class="mb-2" id="sendMsg">
-                            {% csrf_token %}
-                            <div class="row">
-                                <div class="col-12 d-flex justify-content-start align-items-center">
-                                    <label class="btn btn-sm me-2">
-                                        <i class="fa-solid fa-paperclip fs-5"></i>
-                                        <input type="file" name="image" accept="image/*" hidden id="file-input">
-                                    </label>
-                                    <textarea name="message" class="form-control" rows="1" placeholder="Введите ваш вопрос..." id="message-box"></textarea>
-                                    <button type="submit" class="btn btn-outline-success btn-md ms-2">
-                                        <i class="fas fa-paper-plane fs-5"></i>
-                                    </button>
-                                </div>
+                                    {% endif %}
+                                {% empty %}
+                                    <p>Пока нет сообщений.</p>
+                                {% endfor %}
                             </div>
+                            <div id="preview" class="d-flex justify-content-lg-start"></div>
+                            <form method="post" enctype="multipart/form-data" class="mb-2" id="sendMsg">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-start align-items-center">
+                                        <label class="btn btn-sm me-2">
+                                            <i class="fa-solid fa-paperclip fs-5"></i>
+                                            <input type="file" name="image" accept="image/*" hidden id="file-input">
+                                        </label>
+                                        <textarea name="message"
+                                                  class="form-control"
+                                                  rows="1"
+                                                  placeholder="Введите ваш вопрос..."
+                                                  id="message-box"></textarea>
+                                        <button type="submit" class="btn btn-outline-success btn-md ms-2">
+                                            <i class="fas fa-paper-plane fs-5"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-ferngreen text-white d-flex justify-content-between align-items-center border-top-0 mb-0"
+                         style="border-bottom-left-radius: 15px;
+                                border-bottom-right-radius: 15px">
+                        <span class="text-black-50 fw-semibold fs-6">Используется модель qwen2.5-vl-72b</span>
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    name="clear"
+                                    class="btn fc-brunswickgreen"
+                                    title="Очистить чат">
+                                <i class="fa-solid fa-trash-can fs-3"></i>
+                            </button>
                         </form>
-
                     </div>
                 </div>
-
-                <div class="card-footer bg-ferngreen text-white d-flex justify-content-between align-items-center border-top-0 mb-0"
-                     style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;">
-                    <span class="text-black-50 fw-semibold fs-6">
-                        Используется модель qwen2.5-vl-72b
-                    </span>
-                    <form method="post">
-                        {% csrf_token %}
-                        <button type="submit" name="clear" class="btn fc-brunswickgreen" title="Очистить чат">
-                            <i class="fa-solid fa-trash-can fs-3"></i>
-                        </button>
-                    </form>
-                </div>
-            
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
-
+{% endblock content %}
 {% block scripts %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -113,6 +126,5 @@
             link.classList.add('menu-link-active', 'fs-4');
         });
     </script>
-    
     <script src="{% static 'chat_assistant/js/send_message.js' %}"></script>
-{% endblock %}
+{% endblock scripts %}

@@ -12,3 +12,4 @@ python-dotenv==1.1.0
 pyzbar==0.1.9
 Markdown==3.8
 bleach==6.2.0
+djlint==1.36.4

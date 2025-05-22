@@ -1,62 +1,56 @@
 {% extends "main/base.html" %}
 {% load static %}
-
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-sm-auto col-lg-auto">
-            <div class="registration-box">
-                <h2>Регистрация</h2>
-                <hr>
-                <form class="login-form" action="." method="POST">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-
-                    <h5 class='mt-3'>Образ жизни</h5>
-                    <!-- Блок выбора активности -->
-                    <div class="activity-selector">
-                        <div class="activity-option active" data-value="1.2">
-                            <div class="radio-circle"></div>
-                            <div class="activity-text-content">
-                                <span class="activity-main-text">Минимальная активность</span>
-                                <span class="activity-sub-text">Сидячая работа, нет тренировок</span>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-auto col-lg-auto">
+                <div class="registration-box">
+                    <h2>Регистрация</h2>
+                    <hr>
+                    <form class="login-form" action="." method="post">
+                        {% csrf_token %} {{ form.as_p }}
+                        <h5 class="mt-3">Образ жизни</h5>
+                        <div class="activity-selector">
+                            <div class="activity-option active" data-value="1.2">
+                                <div class="radio-circle"></div>
+                                <div class="activity-text-content">
+                                    <span class="activity-main-text">Минимальная активность</span>
+                                    <span class="activity-sub-text">Сидячая работа, нет тренировок</span>
+                                </div>
+                            </div>
+                            <div class="activity-option" data-value="1.375">
+                                <div class="radio-circle"></div>
+                                <div class="activity-text-content">
+                                    <span class="activity-main-text">Слабая активность</span>
+                                    <span class="activity-sub-text">Тренировки 1-2 раза в неделю</span>
+                                </div>
+                            </div>
+                            <div class="activity-option" data-value="1.5">
+                                <div class="radio-circle"></div>
+                                <div class="activity-text-content">
+                                    <span class="activity-main-text">Умеренная активность</span>
+                                    <span class="activity-sub-text">Тренировки 3-4 раза в неделю</span>
+                                </div>
+                            </div>
+                            <div class="activity-option" data-value="1.73">
+                                <div class="radio-circle"></div>
+                                <div class="activity-text-content">
+                                    <span class="activity-main-text">Высокая активность</span>
+                                    <span class="activity-sub-text">Тренировки 5-7 раз в неделю</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="activity-option" data-value="1.375">
-                            <div class="radio-circle"></div>
-                            <div class="activity-text-content">
-                                <span class="activity-main-text">Слабая активность</span>
-                                <span class="activity-sub-text">Тренировки 1-2 раза в неделю</span>
-                            </div>
-                        </div>
-                        <div class="activity-option" data-value="1.5">
-                            <div class="radio-circle"></div>
-                            <div class="activity-text-content">
-                                <span class="activity-main-text">Умеренная активность</span>
-                                <span class="activity-sub-text">Тренировки 3-4 раза в неделю</span>
-                            </div>
-                        </div>
-                        <div class="activity-option" data-value="1.73">
-                            <div class="radio-circle"></div>
-                            <div class="activity-text-content">
-                                <span class="activity-main-text">Высокая активность</span>
-                                <span class="activity-sub-text">Тренировки 5-7 раз в неделю</span>
-                            </div>
-                        </div>
+                        <br />
+                        <button class="login-button" type="submit">Зарегистрироваться</button>
+                    </form>
+                    <div class="login-link">
+                        <a href="{% url 'login' %}">Уже есть аккаунт? Войди!</a>
                     </div>
-
-                    <br>
-                    <button class="login-button" type="submit">Зарегистрироваться</button>
-                </form>
-                <div class="login-link">
-                    <a href="{% url 'login' %}">Уже есть аккаунт? Войди!</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock content %}
-
 {% block scripts %}
     <script src="{% static 'users/js/set_activity.js' %}"></script>
-{% endblock %}
+{% endblock scripts %}

@@ -1,108 +1,108 @@
 {% extends "main/base.html" %}
-
 {% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center mb-3 text-center">
-        <div class="col-sm-12">
-            <div class="card">
-                <h2 class="card-header py-3 fw-bold fc-darkgreen">Поиск еды на
-                    {% if meal == 'breakfast' %}
-                    завтрак
-                    {% elif meal == 'lunch' %}
-                    обед
-                    {% elif meal == 'dinner' %}
-                    ужин
-                    {% else %}
-                    перекус
-                    {% endif %}
-                </h2>
-
-                <ul class="nav nav-tabs mt-3 fs-5">
-                    <li class="nav-item flex-fill text-center ms-2">
-                        <a class="nav-link fc-huntergreen-light" href="{% url 'favorite_food_search' meal=meal %}">Избранное</a>
-                    </li>
-                    <li class="nav-item flex-fill text-center mx-2">
-                        <a class="nav-link fc-huntergreen-light" href="{% url 'food_search' meal=meal %}">Общая база продуктов</a>
-                    </li>
-                    <li class="nav-item flex-fill text-center me-2">
-                        <a class="nav-link active" aria-current="page"><span class="fw-bold">Личные продукты</span></a>
-                    </li>
-                </ul>  
-
-                <div class="card-body mt-3 mb-0">
-                    <form method="get">
-                        <div class="input-group mb-2">
-                            <a class="btn btn-outline-light fc-ferngreen align-content-center me-2" 
-                            href="{% url 'food_recognition' %}?meal={{meal|urlencode}}&prev={{request.get_full_path|urlencode}}" id="cameraIconHref">
-                                <i class="m-0 fs-1 fa-solid fa-camera" id="cameraIcon"></i>
-                            </a>
-                            <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды в личных продуктах...">
-                            <button class="btn bg-ferngreen text-white" id="sendbtn" type="submit">Искать</button>
-                        </div>
-                    </form>
-                </div>
-                
-                <div class="card-body mt-0">
-                    {% if results %}
-                    <div class="list-group">
-                        {% for food in results %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
-                            <div class="cpfc-content">
-                                <p class="fs-3 mb-1 text-break" align="start">
-                                    <span class="fs-4 fw-bolder ">{{ food.food_name }}</span> {% if food.brand_name %} (от "{{ food.brand_name }}") {% endif %}
-                                </p>
-                                <p class="fc-brunswickgreen text-break" align="start">
-                                    ({{ food.food_description }})
-                                    {% if food.has_g %}
-                                    <span class="badge rounded-pill bg-grams-mid fc-brunswickgreen">+100г</span>
-                                    {% endif %}
-                                    {% if food.has_ml %}
-                                    <span class="badge rounded-pill bg-water-mid fc-brunswickgreen">+100мл</span>
-                                    {% endif %}
-                                </p>
+    <div class="container mt-4">
+        <div class="row justify-content-center mb-3 text-center">
+            <div class="col-sm-12">
+                <div class="card">
+                    <h2 class="card-header py-3 fw-bold fc-darkgreen">
+                        Поиск еды на
+                        {% if meal == 'breakfast' %}
+                            завтрак
+                        {% elif meal == 'lunch' %}
+                            обед
+                        {% elif meal == 'dinner' %}
+                            ужин
+                        {% else %}
+                            перекус
+                        {% endif %}
+                    </h2>
+                    <ul class="nav nav-tabs mt-3 fs-5">
+                        <li class="nav-item flex-fill text-center ms-2">
+                            <a class="nav-link fc-huntergreen-light"
+                               href="{% url 'favorite_food_search' meal=meal %}">Избранное</a>
+                        </li>
+                        <li class="nav-item flex-fill text-center mx-2">
+                            <a class="nav-link fc-huntergreen-light"
+                               href="{% url 'food_search' meal=meal %}">Общая база продуктов</a>
+                        </li>
+                        <li class="nav-item flex-fill text-center me-2">
+                            <a class="nav-link active" aria-current="page"><span class="fw-bold">Личные продукты</span></a>
+                        </li>
+                    </ul>
+                    <div class="card-body mt-3 mb-0">
+                        <form method="get">
+                            <div class="input-group mb-2">
+                                <a class="btn btn-outline-light fc-ferngreen align-content-center me-2"
+                                   href="{% url 'food_recognition' %}?meal={{ meal|urlencode }}&prev={{ request.get_full_path|urlencode }}"
+                                   id="cameraIconHref">
+                                    <i class="m-0 fs-1 fa-solid fa-camera" id="cameraIcon"></i>
+                                </a>
+                                <input type="text"
+                                       class="form-control"
+                                       name="query"
+                                       value="{{ query }}"
+                                       placeholder="Поиск еды в личных продуктах...">
+                                <button class="btn bg-ferngreen text-white" id="sendbtn" type="submit">Искать</button>
                             </div>
-                            <a href="{% url 'add_food_entry' food.food_id %}?meal={{meal|urlencode}}&next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success">Добавить</a>
-                        </div>
-                        {% endfor %}
+                        </form>
                     </div>
-                    {% elif query %}
-                    <i class="fa-solid fa-magnifying-glass-minus fc-carbs-dark search-img mt-3 mb-2"></i>
-                    <p class="fc-carbs-dark search-font mb-5">Ничего не найдено</p>
-                    {% else %}
-                    <a href="{% url 'create_custom_food'%}?meal={{meal|urlencode}}">
-                        <i class="fa-solid fa-folder-plus fc-carbs-dark search-img mt-3 mb-2"></i>
-                    </a>
-                    <p class="fc-carbs-dark search-font mb-5">Добавляйте продукты в свой личный список...</p>
-                    {% endif %}
-                    <div class="row mt-2 mb-3">
-                        <div class="col-12 justify-content-center">
-                            <a href="{% url 'create_custom_food'%}?meal={{meal|urlencode}}" class="btn btn-outline-dark">
-                                <i class="fa-solid fa-search-plus"></i> Добавить продукт
+                    <div class="card-body mt-0">
+                        {% if results %}
+                            <div class="list-group">
+                                {% for food in results %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
+                                        <div class="cpfc-content">
+                                            <p class="fs-3 mb-1 text-break" align="start">
+                                                <span class="fs-4 fw-bolder ">{{ food.food_name }}</span>
+                                                {% if food.brand_name %}(от "{{ food.brand_name }}"){% endif %}
+                                            </p>
+                                            <p class="fc-brunswickgreen text-break" align="start">
+                                                ({{ food.food_description }})
+                                                {% if food.has_g %}<span class="badge rounded-pill bg-grams-mid fc-brunswickgreen">+100г</span>{% endif %}
+                                                {% if food.has_ml %}<span class="badge rounded-pill bg-water-mid fc-brunswickgreen">+100мл</span>{% endif %}
+                                            </p>
+                                        </div>
+                                        <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal|urlencode }}&next={{ request.get_full_path|urlencode }}"
+                                           class="btn btn-outline-success">Добавить</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% elif query %}
+                            <i class="fa-solid fa-magnifying-glass-minus fc-carbs-dark search-img mt-3 mb-2"></i>
+                            <p class="fc-carbs-dark search-font mb-5">Ничего не найдено</p>
+                        {% else %}
+                            <a href="{% url 'create_custom_food' %}?meal={{ meal|urlencode }}">
+                                <i class="fa-solid fa-folder-plus fc-carbs-dark search-img mt-3 mb-2"></i>
                             </a>
+                            <p class="fc-carbs-dark search-font mb-5">Добавляйте продукты в свой личный список...</p>
+                        {% endif %}
+                        <div class="row mt-2 mb-3">
+                            <div class="col-12 justify-content-center">
+                                <a href="{% url 'create_custom_food' %}?meal={{ meal|urlencode }}"
+                                   class="btn btn-outline-dark">
+                                    <i class="fa-solid fa-search-plus"></i> Добавить продукт
+                                </a>
+                            </div>
                         </div>
+                        {% if results %}
+                            <div class="row mt-4">
+                                <div class="col d-flex justify-content-between align-self-center">
+                                    {% if total_pages != 0 %}
+                                        <a href="?query={{ query }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}"
+                                           class="btn bg-ferngreen text-white"><i class="fa-solid fa-arrow-left"></i> Предыдущая</a>
+                                        <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
+                                        <a href="?query={{ query }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{ 0 }}{% endif %}"
+                                           class="btn bg-ferngreen text-white">Следующая <i class="fa-solid fa-arrow-left"></i></a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
-                    {% if results %}
-                    <div class="row mt-4">
-                        <div class="col d-flex justify-content-between align-self-center">
-                            {% if total_pages != 0 %}
-                            <a href="?query={{ query }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}" 
-                            class="btn bg-ferngreen text-white"><i class="fa-solid fa-arrow-left"></i> Предыдущая</a>
-                            
-                            <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
-                            
-                            <a href="?query={{ query }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{0}}{% endif %}" 
-                            class="btn bg-ferngreen text-white">Следующая <i class="fa-solid fa-arrow-left"></i></a>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
-    </div>        
-</div>
-
-<script>
+    </div>
+    <script>
     document.addEventListener("DOMContentLoaded", function() {
         const icon = document.getElementById('cameraIcon');
         const iconHref = document.getElementById('cameraIconHref')
@@ -115,5 +115,5 @@
           icon.classList.remove('glow-hover');
         });
     });
-</script>
-{% endblock %}
+    </script>
+{% endblock content %}

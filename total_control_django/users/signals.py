@@ -18,8 +18,8 @@ from .models import UserProfile, UserDailyRecord
 
 
 @receiver(pre_save, sender=UserDailyRecord)
-def set_default_weight(sender, instance, **kwargs):
-    if not instance.pk:    # Срабатывает, если объекта ещё нет в базе
+def on_create_daily_record(sender, instance, **kwargs):
+    if instance.pk is None:    # Срабатывает, если объекта ещё нет в базе
         profile = UserProfile.objects.get(user=instance.user)
         instance.weight = profile.weight
         instance.calories_goal = profile.daily_calories

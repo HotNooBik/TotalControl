@@ -37,6 +37,11 @@ from .forms import (
     ImageUploadForm,
     ImageFoodEntryForm,
 )
+from users.utils.nutrition_calculator import (
+    get_user_calories_norm,
+    get_user_pfc_norm,
+    get_user_water_norm,
+)
 
 
 @require_POST

@@ -41,8 +41,6 @@ def get_answer(user, prompt: str, image_path: str | None = None):
         response.json().get("choices", [{}])[0].get("message", {}).get("content", None)
     )
 
-    pprint(answer)
-
     if not answer:
         return None
     return answer

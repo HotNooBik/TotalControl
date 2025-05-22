@@ -1,6 +1,6 @@
 /* Цвета основной палитры сайта*/
 .bg-timberwolf {
-    background-color: #DAD7CD;
+    background-color: #dad7cd;
 }
 
 .bg-sage {
@@ -12,13 +12,12 @@
 }
 
 .bg-huntergreen {
-    background-color: #3A5A40;
+    background-color: #3a5a40;
 }
 
 .bg-brunswickgreen {
-    background-color: #344E41;
+    background-color: #344e41;
 }
-
 
 /* Светлый вариант основных цветов */
 .bg-ferngreen-light {
@@ -33,15 +32,13 @@
     background-color: #effdef;
 }
 
-
-
 /* Текст с основными цветами */
 .fc-timberwolf {
-    color: #DAD7CD;
+    color: #dad7cd;
 }
 
 .fc-sage {
-    color: #A3B18A;
+    color: #a3b18a;
 }
 
 .fc-ferngreen {
@@ -49,11 +46,11 @@
 }
 
 .fc-huntergreen {
-    color: #3A5A40;
+    color: #3a5a40;
 }
 
 .fc-brunswickgreen {
-    color: #344E41;
+    color: #344e41;
 }
 
 .fc-darkgreen {
@@ -85,7 +82,6 @@
     color: #163518;
 }
 
-
 /* Цвет наводки на кнопки с основным цветом */
 .btn.bg-ferngreen-light:hover {
     background-color: #80a57f;
@@ -98,7 +94,6 @@
 .btn.bg-huntergreen:hover {
     background-color: #263b2a;
 }
-
 
 /* Цвета для фона КБЖУ */
 
@@ -168,22 +163,22 @@
 /* Темный и прозрачный вариант */
 .bg-calories-trans {
     background-color: #eceacf60;
-    box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.30);
+    box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.3);
 }
 
 .bg-proteins-trans {
     background-color: #d1e4ee60;
-    box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.30);
+    box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.3);
 }
 
 .bg-fats-trans {
     background-color: #ecd0d060;
-    box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.30);
+    box-shadow: 0px 1px 19px 6px rgba(0, 0, 0, 0.3);
 }
 
 .bg-carbs-trans {
     background-color: #cfe7cc60;
-    box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.30);
+    box-shadow: 0px 0px 20px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* Менее насыщенный вариант */
@@ -211,11 +206,9 @@
     background-color: #dfedf3;
 }
 
-
 /* Цвета для текста с КБЖУ */
 .fc-calories {
     color: #fdffe2;
-    
 }
 
 .fc-proteins {
@@ -243,18 +236,15 @@
     color: #82947f;
 }
 
-
 /* Темная тень для текста */
 .f-shadow {
     text-shadow: 1px 1px 3px #00000050;
 }
 
-
 /* Цвет для иконки звезды */
 .fc-star {
     color: #fecc4e;
 }
-
 
 /* Цвет для кнопки отправки веса */
 .bg-send-weight {

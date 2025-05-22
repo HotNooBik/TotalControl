@@ -1,7 +1,7 @@
 {% extends "main/base.html" %}
 {% block content %}
     {% if user.is_authenticated %}
-        <div style="text-align: center; padding: 50px;">
+        <div class="card-body align-content-center p-3">
             <h1>Поздравляем!</h1>
             <p>Теперь вы можете перейти к калькулятору для контроля за вашим питанием и КБЖУ.</p>
             <br>
@@ -10,19 +10,18 @@
             </div>
         </div>
     {% else %}
-        <div style="text-align: center; padding: 50px;">
+        <div class="card-body align-content-center p-3">
             <h1>Добро пожаловать в TotalControl</h1>
             <p>Удобный инструмент для контроля за вашим питанием и КБЖУ.</p>
             <br>
             <p>Перед тем, как начать пользоваться инструментом, зарегистрируйтесь или авторизируйтесь на сайте!</p>
         </div>
     {% endif %}
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const link = document.getElementById("main-page-link");
-    link.classList.remove('fs-5');
-    link.classList.add('menu-link-active', 'fs-4');
-});
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const link = document.getElementById("main-page-link");
+            link.classList.remove('fs-5');
+            link.classList.add('menu-link-active', 'fs-4');
+        });
+    </script>
 {% endblock content %}

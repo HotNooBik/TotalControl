@@ -1,148 +1,157 @@
 {% extends "main/base.html" %}
-
 {% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center mb-3 text-center">
-        <div class="col-sm-12">
-            <div class="card">
-                <h2 class="card-header py-3 fw-bold fc-darkgreen">Поиск еды на
-                    {% if meal == 'breakfast' %}
-                    завтрак
-                    {% elif meal == 'lunch' %}
-                    обед
-                    {% elif meal == 'dinner' %}
-                    ужин
-                    {% else %}
-                    перекус
-                    {% endif %}
-                </h2>
-
-                <ul class="nav nav-tabs mt-3 fs-5">
-                    <li class="nav-item flex-fill text-center ms-2">
-                        <a class="nav-link active" aria-current="page"><span class="fw-bold">Избранное</span></a>
-                    </li>
-                    <li class="nav-item flex-fill text-center mx-2">
-                        <a class="nav-link fc-huntergreen-light" href="{% url 'food_search' meal=meal %}">Общая база продуктов</a>
-                    </li>
-                    <li class="nav-item flex-fill text-center me-2">
-                        <a class="nav-link fc-huntergreen-light" href="{% url 'own_food_search' meal=meal%}">Личные продукты</a>
-                    </li>
-                </ul>  
-
-                <div class="card-body mt-3 mb-0">
-                    <form method="get">
-                        <div class="input-group mb-2">
-                            <a class="btn btn-outline-light fc-ferngreen align-content-center me-2" 
-                            href="{% url 'food_recognition' %}?meal={{meal|urlencode}}&prev={{ request.get_full_path|urlencode }}" id="cameraIconHref">
-                                <i class="m-0 fs-1 fa-solid fa-camera" id="cameraIcon"></i>
-                            </a>
-                            <input type="text" class="form-control" name="query" value="{{ query }}" placeholder="Поиск еды в избранном...">
-                            <button class="btn btn-outline-success bg-ferngreen text-white" id="sendbtn" type="submit">Искать</button>
-                        </div>
-                    </form>
-                </div>
-                
-                <div class="card-body mt-0">
-                    {% if results %}
-                        <div class="list-group">
-                            {% for food in results %}
-                            <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
-                                <div class="d-flex align-items-center gap-3">
-                                    <form id="remove-food-form-{{food.food_id}}" action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{meal|urlencode}}" method="post" class="text-center">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="food_name" value="{{ food.food_name }}">
-                                        <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
-                                        <input type="hidden" name="food_description" value="{{ food.food_description }}">
-
-                                        <button type="button"
-                                                class="btn star-btn m-auto p-0"
-                                                title="Убрать из избранного"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#deleteFavoriteModal"
-                                                onclick="setFormId('{{ food.food_id }}')">
-                                            <i class="fs-2 fc-star fas fa-star"></i>
-                                        </button>
-                                    </form>
-
-                                    <div class="cpfc-content">
-                                        <p class="fs-3 mb-1 text-break" align="start">
-                                            <span class="fs-4 fw-bolder">{{ food.food_name }}</span>
-                                            {% if food.brand_name %} (от "{{ food.brand_name }}") {% endif %}
-                                        </p>
-                                        <p class="fc-brunswickgreen text-break" align="start">
-                                            ({{ food.food_description }})
-                                        </p>
-                                    </div>
-                                </div>
-                                <a href="{% url 'add_food_entry' food.food_id %}?meal={{meal|urlencode}}&next={{ request.get_full_path|urlencode }}" class="btn btn-outline-success">Добавить</a>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% if current_page == 0 and results|length > 5 or current_page == 0 and total_pages != 0 %}
-                            {% if max_result < 10%}
-                            <div class="row mt-2">
-                                <div class="col-12 justify-content-center">
-                                    <a href="?query={{ query }}&max=10" class="btn btn-outline-dark">
-                                        <i class="fa-solid fa-caret-down"></i> Показать больше <i class="fa-solid fa-caret-down"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            {% else %}
-                            <div class="row mt-2">
-                                <div class="col-12 justify-content-center">
-                                    <a href="?query={{ query }}&max=5" class="btn btn-outline-dark">
-                                        <i class="fa-solid fa-caret-up"></i> Свернуть <i class="fa-solid fa-caret-up"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            {% endif %}
+    <div class="container mt-4">
+        <div class="row justify-content-center mb-3 text-center">
+            <div class="col-sm-12">
+                <div class="card">
+                    <h2 class="card-header py-3 fw-bold fc-darkgreen">
+                        Поиск еды на
+                        {% if meal == 'breakfast' %}
+                            завтрак
+                        {% elif meal == 'lunch' %}
+                            обед
+                        {% elif meal == 'dinner' %}
+                            ужин
+                        {% else %}
+                            перекус
                         {% endif %}
-                        <div class="row mt-4">
-                            <div class="col d-flex justify-content-between align-self-center">
-                                {% if total_pages != 0 %}
-                                <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}" 
-                                class="btn btn-outline-success bg-ferngreen text-white"><i class="fa-solid fa-arrow-left"></i> Предыдущая</a>
-                                
-                                <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
-                                
-                                <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{0}}{% endif %}" 
-                                class="btn btn-outline-success bg-ferngreen text-white">Следующая <i class="fa-solid fa-arrow-right"></i></a>
-                                {% endif %}
+                    </h2>
+                    <ul class="nav nav-tabs mt-3 fs-5">
+                        <li class="nav-item flex-fill text-center ms-2">
+                            <a class="nav-link active" aria-current="page"><span class="fw-bold">Избранное</span></a>
+                        </li>
+                        <li class="nav-item flex-fill text-center mx-2">
+                            <a class="nav-link fc-huntergreen-light"
+                               href="{% url 'food_search' meal=meal %}">Общая база продуктов</a>
+                        </li>
+                        <li class="nav-item flex-fill text-center me-2">
+                            <a class="nav-link fc-huntergreen-light"
+                               href="{% url 'own_food_search' meal=meal %}">Личные продукты</a>
+                        </li>
+                    </ul>
+                    <div class="card-body mt-3 mb-0">
+                        <form method="get">
+                            <div class="input-group mb-2">
+                                <a class="btn btn-outline-light fc-ferngreen align-content-center me-2"
+                                   href="{% url 'food_recognition' %}?meal={{ meal|urlencode }}&prev={{ request.get_full_path|urlencode }}"
+                                   id="cameraIconHref">
+                                    <i class="m-0 fs-1 fa-solid fa-camera" id="cameraIcon"></i>
+                                </a>
+                                <input type="text"
+                                       class="form-control"
+                                       name="query"
+                                       value="{{ query }}"
+                                       placeholder="Поиск еды в избранном...">
+                                <button class="btn btn-outline-success bg-ferngreen text-white"
+                                        id="sendbtn"
+                                        type="submit">Искать</button>
                             </div>
-                        </div>
-                    {% elif query %}
-                    <i class="fa-solid fa-magnifying-glass-minus fc-carbs-dark search-img mt-3 mb-2"></i>
-                    <p class="fc-carbs-dark search-font mb-5">Ничего не найдено</p>
-                    {% else %}
-                    <i class="fa-solid fa-star-half-stroke fc-carbs-dark search-img mt-3 mb-2"></i>
-                    <p class="fc-carbs-dark search-font mb-5">Вы ещё не добавляли продукт в избранное...</p>
-                    {% endif %}
+                        </form>
+                    </div>
+                    <div class="card-body mt-0">
+                        {% if results %}
+                            <div class="list-group">
+                                {% for food in results %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center pt-3 pb-2">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <form id="remove-food-form-{{ food.food_id }}"
+                                                  action="{% url 'remove_food_from_favorites' food.food_id %}?meal={{ meal|urlencode }}"
+                                                  method="post"
+                                                  class="text-center">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="food_name" value="{{ food.food_name }}">
+                                                <input type="hidden" name="brand_name" value="{{ food.brand_name }}">
+                                                <input type="hidden"
+                                                       name="food_description"
+                                                       value="{{ food.food_description }}">
+                                                <button type="button"
+                                                        class="btn star-btn m-auto p-0"
+                                                        title="Убрать из избранного"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteFavoriteModal"
+                                                        onclick="setFormId('{{ food.food_id }}')">
+                                                    <i class="fs-2 fc-star fas fa-star"></i>
+                                                </button>
+                                            </form>
+                                            <div class="cpfc-content">
+                                                <p class="fs-3 mb-1 text-break" align="start">
+                                                    <span class="fs-4 fw-bolder">{{ food.food_name }}</span>
+                                                    {% if food.brand_name %}(от "{{ food.brand_name }}"){% endif %}
+                                                </p>
+                                                <p class="fc-brunswickgreen text-break" align="start">({{ food.food_description }})</p>
+                                            </div>
+                                        </div>
+                                        <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal|urlencode }}&next={{ request.get_full_path|urlencode }}"
+                                           class="btn btn-outline-success">Добавить</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if current_page == 0 and results|length > 5 or current_page == 0 and total_pages != 0 %}
+                                {% if max_result < 10 %}
+                                    <div class="row mt-2">
+                                        <div class="col-12 justify-content-center">
+                                            <a href="?query={{ query }}&max=10" class="btn btn-outline-dark">
+                                                <i class="fa-solid fa-caret-down"></i> Показать больше <i class="fa-solid fa-caret-down"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="row mt-2">
+                                        <div class="col-12 justify-content-center">
+                                            <a href="?query={{ query }}&max=5" class="btn btn-outline-dark">
+                                                <i class="fa-solid fa-caret-up"></i> Свернуть <i class="fa-solid fa-caret-up"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            <div class="row mt-4">
+                                <div class="col d-flex justify-content-between align-self-center">
+                                    {% if total_pages != 0 %}
+                                        <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page > 0 %}{{ current_page|add:-1 }}{% else %}{{ total_pages }}{% endif %}"
+                                           class="btn btn-outline-success bg-ferngreen text-white"><i class="fa-solid fa-arrow-left"></i> Предыдущая</a>
+                                        <span>Стр. {{ current_page|add:1 }} из {{ total_pages|add:1 }}</span>
+                                        <a href="?query={{ query }}&max={{ max_result }}&page={% if current_page < total_pages %}{{ current_page|add:1 }}{% else %}{{ 0 }}{% endif %}"
+                                           class="btn btn-outline-success bg-ferngreen text-white">Следующая <i class="fa-solid fa-arrow-right"></i></a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% elif query %}
+                            <i class="fa-solid fa-magnifying-glass-minus fc-carbs-dark search-img mt-3 mb-2"></i>
+                            <p class="fc-carbs-dark search-font mb-5">Ничего не найдено</p>
+                        {% else %}
+                            <i class="fa-solid fa-star-half-stroke fc-carbs-dark search-img mt-3 mb-2"></i>
+                            <p class="fc-carbs-dark search-font mb-5">Вы ещё не добавляли продукт в избранное...</p>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>         
-</div>
-
-<!-- Модальное окно подтверждения удаления еды из избранного -->
-<div class="modal fade" id="deleteFavoriteModal" tabindex="-1" aria-labelledby="deleteFavoriteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteFavoriteModalLabel">Подтверждение удаления</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-            </div>
-            <div class="modal-body">
-                Вы действительно хотите удалить этот продукт из избранного?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-danger" id="confirm-delete-btn">Удалить</button>
             </div>
         </div>
     </div>
-</div>
-
-<script>
+    <!-- Модальное окно подтверждения удаления еды из избранного -->
+    <div class="modal fade"
+         id="deleteFavoriteModal"
+         tabindex="-1"
+         aria-labelledby="deleteFavoriteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteFavoriteModalLabel">Подтверждение удаления</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">Вы действительно хотите удалить этот продукт из избранного?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
     // Код для удаления еды из избранного
     let formIdToDelete = null;
 
@@ -155,9 +164,8 @@
             document.getElementById('remove-food-form-' + formIdToDelete).submit();
         }
     });
-</script>
-
-<script>
+    </script>
+    <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Свечение иконки с камерой при наведении
         const icon = document.getElementById('cameraIcon');
@@ -171,5 +179,5 @@
           icon.classList.remove('glow-hover');
         });
     });
-</script>
-{% endblock %}
+    </script>
+{% endblock content %}
