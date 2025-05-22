@@ -9,6 +9,15 @@
         <div class="row justify-content-center mb-3 text-center">
             <div class="col-12">
                 <div class="card shadow" style="border-radius: 15px;">
+                    <div class="z-3 row justify-content-center position-relative">
+                        <div class="col-auto mt-0 position-absolute end-0">
+                            <div class="close-btn mt-3">
+                                <a href="{% url 'calculator' %}">
+                                    <i class="fa-solid fa-xmark text-white fs-1 " title="Вернуться назад"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <h2 class="card-header py-4 fw-bold bg-ferngreen text-white justify-content-center shadow-sm border-bottom-0"
                         style="border-top-left-radius: 15px;
                                border-top-right-radius: 15px">

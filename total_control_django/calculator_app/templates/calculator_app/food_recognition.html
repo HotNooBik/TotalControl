@@ -269,203 +269,23 @@
             </div>
         </div>
     </div>
-    {% if formset %}
-        <script>
-document.addEventListener('DOMContentLoaded', function () {
-    
-    // Убираем отправку формы после нажатия на Enter в каком-либо поле
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.keyCode === 13) {
-                e.preventDefault();
-                this.blur();
-            }
-        });
-    });
-
-
-    // Код для обновления данных в Итого после изменения чекбокосов продуктов
-    const checkboxes = document.querySelectorAll('input[name*="-save_flag"]');
-    const totalProductsSpan = document.querySelector('#total-products');
-    const totalCaloriesSpan = document.querySelector('#total-calories');
-    const totalProteinsSpan = document.querySelector('#total-proteins');
-    const totalFatsSpan = document.querySelector('#total-fats');
-    const totalCarbsSpan = document.querySelector('#total-carbs');
-
-    // Функция для получения данных КБЖУ из формы
-    const getProductData = (index) => {
-        const calories = parseFloat(document.querySelector(`#id_form-${index}-calories`)?.value) || 0;
-        const proteins = parseFloat(document.querySelector(`#id_form-${index}-proteins`)?.value) || 0;
-        const fats = parseFloat(document.querySelector(`#id_form-${index}-fats`)?.value) || 0;
-        const carbs = parseFloat(document.querySelector(`#id_form-${index}-carbs`)?.value) || 0;
-        return { calories, proteins, fats, carbs };
-    };
-
-    // Функция для обновления итогов
-    const updateTotals = () => {
-        let totalProducts = 0;
-        let totalCalories = 0;
-        let totalProteins = 0;
-        let totalFats = 0;
-        let totalCarbs = 0;
-
-        checkboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                const index = checkbox.name.match(/form-(\d+)-save_flag/)[1];
-                const data = getProductData(index);
-                totalProducts += 1;
-                totalCalories += data.calories;
-                totalProteins += data.proteins;
-                totalFats += data.fats;
-                totalCarbs += data.carbs;
-            }
-        });
-
-        totalProductsSpan.textContent = totalProducts;
-        totalCaloriesSpan.textContent = Math.round(totalCalories);
-        totalProteinsSpan.textContent = totalProteins.toFixed(1);
-        totalFatsSpan.textContent = totalFats.toFixed(1);
-        totalCarbsSpan.textContent = totalCarbs.toFixed(1);
-    };
-
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateTotals);
-    });
-
-
-    // Код для обновление итогового КБЖУ при изменении каких-либо полей ввода
-    const kbjuFields = ['calories', 'proteins', 'fats', 'carbs'];
-    kbjuFields.forEach(field => {
-        const inputs = document.querySelectorAll(`input[name*="-${field}"]`);
-        inputs.forEach(input => {
-            input.addEventListener('blur', () => {
-                const value = parseFloat(input.value);
-                if (!isNaN(value)) {
-                    input.value = field === 'calories' ? Math.round(value) : value.toFixed(1);
-                }
-                updateTotals();
-            });
-        });
-    });
-
-
-    // Код для изменения названия продукта
-    const foodNameInputs = document.querySelectorAll('input[name*="-food_name"]');
-    foodNameInputs.forEach(input => {
-        input.addEventListener('blur', () => {
-            const index = input.name.match(/form-(\d+)-food_name/)[1];
-            const span = document.querySelector(`#food-name-label-${index}`);
-            if (span) {
-                span.textContent = input.value;
-            }
-        });
-    });
-
-});
-        </script>
-    {% endif %}
+{% endblock content %}
+{% block scripts %}
     {% if upload_form %}
         <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const dropArea = document.getElementById('drop-area');
-    const fileInput = document.getElementById('image-input');
-    const previewImg = document.getElementById('preview-img');
-    const previewError = document.getElementById('preview-error');
-
-    function resetPreview() {
-        previewImg.style.display = 'none';
-        previewImg.src = '';
-        previewError.style.display = 'none';
-        previewError.textContent = '';
-    }
-
-    function showPreview(file) {
-        resetPreview();
-
-        const imageURL = URL.createObjectURL(file);
-        previewImg.src = imageURL;
-        previewImg.style.display = 'block';
-
-        previewImg.onerror = function () {
-            resetPreview();
-            previewError.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Файл повреждён или не является изображением.';
-            previewError.style.display = 'block';
-        };
-    }
-
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function (event) {
-        dropArea.addEventListener(event, function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        });
-    });
-
-    ['dragenter', 'dragover'].forEach(function (event) {
-        dropArea.addEventListener(event, function () {
-            dropArea.classList.add('highlight');
-        });
-    });
-
-    ['dragleave', 'drop'].forEach(function (event) {
-        dropArea.addEventListener(event, function () {
-            dropArea.classList.remove('highlight');
-        });
-    });
-
-    dropArea.addEventListener('drop', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-    
-        const items = e.dataTransfer.items;
-
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i].webkitGetAsEntry?.();
-            if (item && item.isDirectory) {
-                return;
-            }
-        }
-
-        const file = e.dataTransfer.files[0];
-        if (file) {
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            fileInput.files = dataTransfer.files;
-            showPreview(file);
-        }
-    });
-
-    fileInput.addEventListener('change', function () {
-        if (fileInput.files.length > 0) {
-            showPreview(fileInput.files[0]);
-        }
-    });
-    
-    const spinnerText = document.getElementById("spinner-text");
-
-    document.getElementById("image-submit-form").addEventListener('submit', function(e) {
-        document.querySelector(".overlay-gif").classList.remove('d-none');
-        document.getElementById("to-remove").style.visibility = 'hidden';;
-        document.getElementById("spinner").classList.remove('d-none');
-        
-        const textVariants = [
-            'Находим еду...',
-            'Определяем, можно ли это есть...',
-            'Узнаем название еды...',
-            'Считаем калории...',
-            'Считаем белки...',
-            'Считаем жиры...',
-            'Считаем углеводы...',
-        ];
-        let currentIndex = 0;
-        
-        const textInterval = setInterval(() => {
-            currentIndex = (currentIndex + 1) % textVariants.length;
-            spinnerText.textContent = textVariants[currentIndex];
-        }, 3000);
-    });
-
-});
+            const messages = [
+                "Находим еду...",
+                "Определяем, можно ли это есть...",
+                "Узнаем название еды...",
+                "Считаем калории...",
+                "Считаем белки...",
+                "Считаем жиры...",
+                "Считаем углеводы...",
+            ];
         </script>
+        <script src="{% static 'calculator_app/js/load_image.js' %}"></script>
     {% endif %}
-{% endblock content %}
+    {% if formset %}
+        <script src="{% static 'calculator_app/js/edit_recognized_food.js' %}"></script>
+    {% endif %}
+{% endblock scripts %}

@@ -517,7 +517,6 @@
             </div>
         </div>
     </div>
-    <div id="water-percent" data-percent="{{ water_percent }}"></div>
 {% endblock content %}
 {% block scripts %}
     <script>
@@ -535,6 +534,8 @@
         };
 
         const csrf = "{{ csrf_token }}";
+
+        const waterPercent = {{ water_percent }};
     </script>
     <script src="{% static 'calculator_app/js/timezone.js' %}"></script>
     <script src="{% static 'calculator_app/js/bs_collapse.js' %}"></script>

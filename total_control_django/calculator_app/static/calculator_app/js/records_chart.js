@@ -38,14 +38,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         datasets: [
                             {
                                 label: "Калории",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.calories
                                 ),
                                 backgroundColor: "rgba(230, 222, 123, 0.9)",
                             },
                             {
                                 label: "Цель к.",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.calories_goal
                                 ),
                                 type: "line",
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                             {
                                 label: "Белки",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.proteins
                                 ),
                                 backgroundColor: "rgba(116, 181, 221, 0.9)",
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                             {
                                 label: "Цель б.",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.proteins_goal
                                 ),
                                 type: "line",
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                             {
                                 label: "Жиры",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.fats
                                 ),
                                 backgroundColor: "rgba(219, 115, 115, 0.9)",
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                             {
                                 label: "Цель ж.",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.fats_goal
                                 ),
                                 type: "line",
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                             {
                                 label: "Углеводы",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.carbs
                                 ),
                                 backgroundColor: "rgba(128, 221, 117, 0.9)",
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                             {
                                 label: "Цель у.",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.carbs_goal
                                 ),
                                 type: "line",
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                             {
                                 label: "Вода (мл)",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.water
                                 ),
                                 backgroundColor: "rgba(117, 127, 221, 0.9)",
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                             {
                                 label: "Цель в.",
-                                data: data.data_points.map(
+                                data: data_points.map(
                                     (entry) => entry.data.water_goal
                                 ),
                                 type: "line",

@@ -37,11 +37,6 @@ from .forms import (
     ImageUploadForm,
     ImageFoodEntryForm,
 )
-from users.utils.nutrition_calculator import (
-    get_user_calories_norm,
-    get_user_pfc_norm,
-    get_user_water_norm,
-)
 
 
 @require_POST
@@ -193,7 +188,7 @@ def update_weight(request):
                 "fats_goal": user_profile.daily_fats,
                 "carbs_goal": user_profile.daily_carbs,
                 "water_goal": user_profile.daily_water,
-            }
+            },
         )
 
     except ValueError:
@@ -213,10 +208,12 @@ def get_weight_history_graph(request):
             limit = int(limit)
         except ValueError:
             return JsonResponse(
-                {"error": f"Некорректный лимит. Допустимые значения: целое положительное число или нуль"},
+                {
+                    "error": "Некорректный лимит. Допустимые значения: целое положительное число или нуль"
+                },
                 status=400,
             )
-        
+
         valid_periods = ["all", "week", "month", "year"]
         if period not in valid_periods:
             return JsonResponse(
@@ -228,7 +225,7 @@ def get_weight_history_graph(request):
             get_info = bool(get_info)
         except ValueError:
             return JsonResponse(
-                {"error": f"Некорректный флаг. Допустимые значения: true, false"},
+                {"error": "Некорректный флаг. Допустимые значения: true, false"},
                 status=400,
             )
 
@@ -268,7 +265,9 @@ def get_records_history_graph(request):
             limit = int(limit)
         except ValueError:
             return JsonResponse(
-                {"error": f"Некорректный лимит. Допустимые значения: целое положительное число или нуль"},
+                {
+                    "error": "Некорректный лимит. Допустимые значения: целое положительное число или нуль"
+                },
                 status=400,
             )
 
@@ -276,7 +275,7 @@ def get_records_history_graph(request):
             get_entries = bool(get_entries)
         except ValueError:
             return JsonResponse(
-                {"error": f"Некорректный флаг. Допустимые значения: true, false"},
+                {"error": "Некорректный флаг. Допустимые значения: true, false"},
                 status=400,
             )
 
@@ -543,6 +542,8 @@ def create_custom_fodd(request):
     if meal not in ["breakfast", "lunch", "dinner", "snack"]:
         meal = "snack"
 
+    next_url = request.GET.get("next", reverse("calculator"))
+
     if request.method == "POST":
         form = UserCustomFoodForm(request.POST)
         if form.is_valid():
@@ -557,6 +558,7 @@ def create_custom_fodd(request):
     context = {
         "form": form,
         "target": form.target if hasattr(form, "target") else "portion",
+        "next_url": next_url,
     }
     return render(request, "calculator_app/create_custom_food.html", context)
 

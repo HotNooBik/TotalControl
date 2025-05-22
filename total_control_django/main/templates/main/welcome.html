@@ -1,22 +1,28 @@
 {% extends "main/base.html" %}
 {% block content %}
-    {% if user.is_authenticated %}
-        <div class="card-body align-content-center p-3">
-            <h1>Поздравляем!</h1>
-            <p>Теперь вы можете перейти к калькулятору для контроля за вашим питанием и КБЖУ.</p>
-            <br>
-            <div class="btn">
-                <a href="{% url 'calculator' %}">Перейти к калькулятору</a>
+    <div class="row justify-content-center mt-5">
+        <div class="col-6">
+            <div class="card bg-timberwolf-light p-3">
+                <div class="card-body align-content-center text-center">
+                    {% if user.is_authenticated %}
+                        <h1 class="mb-3">Поздравляем!</h1>
+                        <p>Теперь вы можете перейти к калькулятору для контроля за вашим питанием и КБЖУ.</p>
+                        <br>
+                        <div class="btn">
+                            <a href="{% url 'calculator' %}">Перейти к калькулятору</a>
+                        </div>
+                    {% else %}
+                        <h1 class="mb-3">Добро пожаловать в TotalControl</h1>
+                        <p>Удобный инструмент для контроля за вашим питанием и КБЖУ.</p>
+                        <br>
+                        <p>Перед тем, как начать пользоваться инструментом, зарегистрируйтесь или авторизируйтесь на сайте!</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    {% else %}
-        <div class="card-body align-content-center p-3">
-            <h1>Добро пожаловать в TotalControl</h1>
-            <p>Удобный инструмент для контроля за вашим питанием и КБЖУ.</p>
-            <br>
-            <p>Перед тем, как начать пользоваться инструментом, зарегистрируйтесь или авторизируйтесь на сайте!</p>
-        </div>
-    {% endif %}
+    </div>
+{% endblock content %}
+{% block scripts %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const link = document.getElementById("main-page-link");
@@ -24,4 +30,4 @@
             link.classList.add('menu-link-active', 'fs-4');
         });
     </script>
-{% endblock content %}
+{% endblock scripts %}

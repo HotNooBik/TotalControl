@@ -1,4 +1,5 @@
 {% extends "main/base.html" %}
+{% load static %}
 {% block content %}
     <div class="container mt-4">
         <div class="row justify-content-center mb-3 text-center">
@@ -129,51 +130,8 @@
             </div>
         </div>
     </div>
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Код для иконки камеры
-        const icon = document.getElementById('cameraIcon');
-        const iconHref = document.getElementById('cameraIconHref')
-      
-        iconHref.addEventListener('mouseenter', () => {
-          icon.classList.add('glow-hover');
-        });
-      
-        iconHref.addEventListener('mouseleave', () => {
-          icon.classList.remove('glow-hover');
-        });
-
-
-        // Код для окна загрузки при поиске
-        const searchOverlay = document.getElementById("searchOverlay");
-        const loadingMessage = document.getElementById("loadingMessage");
-        const searchBtn = document.getElementById("sendbtn");
-        const addFoodBtns = document.querySelectorAll('[name="addFoodBtn"]');
-        const prevPageBtn = document.getElementById("prevPageBtn");
-        const nextPageBtn = document.getElementById("nextPageBtn");
-
-        function showSearchOverlay(message) {
-            searchOverlay.classList.remove('d-none');
-            loadingMessage.textContent = message;
-        };
-
-        searchBtn.addEventListener('click', () => {
-            showSearchOverlay("Ищем продукты");
-        });
-
-        {% if results %}
-        addFoodBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                showSearchOverlay("Получаем информацию о продукте");
-            });
-        });
-
-        [prevPageBtn, nextPageBtn].forEach(element => {
-            element.addEventListener('click', () => {
-                showSearchOverlay("Загружаем продукты");
-            });
-        });
-        {% endif %}
-    });
-    </script>
 {% endblock content %}
+{% block scripts %}
+    <script src="{% static 'calculator_app/js/camera_icon.js' %}"></script>
+    <script src="{% static 'calculator_app/js/search_messages.js' %}"></script>
+{% endblock scripts %}

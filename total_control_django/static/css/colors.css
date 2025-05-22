@@ -20,6 +20,10 @@
 }
 
 /* Светлый вариант основных цветов */
+.bg-timberwolf-light {
+    background-color: #e9e7e3;
+}
+
 .bg-ferngreen-light {
     background-color: #9bc99a;
 }

@@ -1,5 +1,5 @@
 const dropArea = document.getElementById("drop-area");
-const fileInput = document.getElementById("barcode-input");
+const fileInput = document.getElementById("image-input");
 const previewImg = document.getElementById("preview-img");
 const previewError = document.getElementById("preview-error");
 
@@ -75,17 +75,16 @@ fileInput.addEventListener("change", function () {
 const spinnerText = document.getElementById("spinner-text");
 
 document
-    .getElementById("barcode-submit-form")
+    .getElementById("image-submit-form")
     .addEventListener("submit", function (e) {
         document.querySelector(".overlay-gif").classList.remove("d-none");
         document.getElementById("to-remove").style.visibility = "hidden";
         document.getElementById("spinner").classList.remove("d-none");
 
-        const textVariants = [
-            "Сканируем штрихкод",
-            "Ищём в базе",
-            "Смотрим КБЖУ",
+        let textVariants = [
+            "Анализируем изображение..."
         ];
+        textVariants = textVariants.concat(messages)
         let currentIndex = 0;
 
         const textInterval = setInterval(() => {

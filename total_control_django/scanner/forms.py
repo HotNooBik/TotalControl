@@ -1,4 +1,3 @@
-from email.policy import default
 from PIL import Image
 from django import forms
 
@@ -9,7 +8,7 @@ class BarcodeUploadForm(forms.Form):
         widget=forms.FileInput(
             attrs={
                 "class": "form-control",
-                "id": "barcode-input",
+                "id": "image-input",
             }
         ),
         required=False,

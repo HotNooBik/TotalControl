@@ -45,8 +45,6 @@ addWaterBtn.addEventListener("click", function () {
 });
 
 // Скрипт для стакана с водой
-const percentElement = document.getElementById("water-percent");
-const waterPercent = parseFloat(percentElement.dataset.percent);
 const waterElement = document.querySelector(".water");
 const percentageElement = document.querySelector(".water-percentage");
 

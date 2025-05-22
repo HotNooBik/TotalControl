@@ -5,6 +5,15 @@
         <div class="row justify-content-center mb-3 text-center">
             <div class="col-sm-12">
                 <div class="card">
+                    <div class="z-3 row justify-content-center position-relative">
+                        <div class="col-auto mt-0 position-absolute end-0">
+                            <div class="close-btn mt-4">
+                                <a href="{{ next_url }}">
+                                    <i class="fa-solid fa-xmark fc-ferngreen fs-1" title="Вернуться назад"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <h2 class="card-header py-4 fw-bold fc-darkgreen">Добавление собственного продукта</h2>
                     <div class="card-body">
                         <div class="row justify-content-center">
@@ -180,32 +189,8 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const activeDiv = document.querySelector("div.show.active");
-            const activeButton = document.querySelector("button.active");
-
-            const divClassesToTransfer = ["show", "active"];
-            const buttonClassesToTransfer = ["active"];
-
-            if (activeDiv) {
-                activeDiv.classList.remove(...divClassesToTransfer);
-            }
-
-            if (activeButton) {
-                activeButton.classList.remove(...buttonClassesToTransfer);
-            }
-
-            const targetElements = document.querySelectorAll("[id*='{{ target }}']");
-
-            targetElements.forEach(el => {
-                if (el.tagName.toLowerCase() === "div") {
-                    el.classList.add(...divClassesToTransfer);
-                } else if (el.tagName.toLowerCase() === "button") {
-                    el.classList.add(...buttonClassesToTransfer);
-                }
-            });
-        });
-
-    </script>
 {% endblock content %}
+{% block scripts %}
+    <script>const target_window = "{{ target }}";</script>
+    <script src="{% static 'calculator_app/js/error_target.js' %}"></script>
+{% endblock scripts %}

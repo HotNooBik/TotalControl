@@ -1,9 +1,19 @@
 {% extends "main/base.html" %}
+{% load static %}
 {% block content %}
     <div class="container mt-4">
         <div class="row justify-content-center mb-3 text-center">
             <div class="col-sm-12">
                 <div class="card">
+                    <div class="z-3 row justify-content-center position-relative">
+                        <div class="col-auto mt-0 position-absolute end-0">
+                            <div class="close-btn mt-3">
+                                <a href="{% url 'calculator' %}">
+                                    <i class="fa-solid fa-xmark fc-ferngreen fs-1 " title="Вернуться назад"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <h2 class="card-header py-3 fw-bold fc-darkgreen">
                         Поиск еды на
                         {% if meal == 'breakfast' %}
@@ -46,7 +56,21 @@
                             </div>
                         </form>
                     </div>
-                    <div class="card-body mt-0">
+                    <div class="card-body mt-0 position-relative">
+                        <div id="searchOverlay"
+                             class="position-absolute top-0 start-0 w-100 h-100 justify-content-center align-content-center d-none"
+                             style="background-color: rgba(255,255,255,0.9);
+                                    z-index: 1000">
+                            <div class="spinner-border fc-ferngreen fs-3"
+                                 style="width: 3rem;
+                                        height: 3rem"
+                                 role="status">
+                                <span class="visually-hidden">Загрузка...</span>
+                            </div>
+                            <div>
+                                <span class="ms-3 fs-4 f-shadow" id="loadingMessage">Ищем продукты...</span>
+                            </div>
+                        </div>
                         {% if results %}
                             <div class="list-group">
                                 {% for food in results %}
@@ -63,7 +87,8 @@
                                             </p>
                                         </div>
                                         <a href="{% url 'add_food_entry' food.food_id %}?meal={{ meal|urlencode }}&next={{ request.get_full_path|urlencode }}"
-                                           class="btn btn-outline-success">Добавить</a>
+                                           class="btn btn-outline-success"
+                                           name="addFoodBtn">Добавить</a>
                                     </div>
                                 {% endfor %}
                             </div>
@@ -71,14 +96,14 @@
                             <i class="fa-solid fa-magnifying-glass-minus fc-carbs-dark search-img mt-3 mb-2"></i>
                             <p class="fc-carbs-dark search-font mb-5">Ничего не найдено</p>
                         {% else %}
-                            <a href="{% url 'create_custom_food' %}?meal={{ meal|urlencode }}">
+                            <a href="{% url 'create_custom_food' %}?meal={{ meal|urlencode }}&next={{ request.get_full_path|urlencode }}">
                                 <i class="fa-solid fa-folder-plus fc-carbs-dark search-img mt-3 mb-2"></i>
                             </a>
                             <p class="fc-carbs-dark search-font mb-5">Добавляйте продукты в свой личный список...</p>
                         {% endif %}
                         <div class="row mt-2 mb-3">
                             <div class="col-12 justify-content-center">
-                                <a href="{% url 'create_custom_food' %}?meal={{ meal|urlencode }}"
+                                <a href="{% url 'create_custom_food' %}?meal={{ meal|urlencode }}&next={{ request.get_full_path|urlencode }}"
                                    class="btn btn-outline-dark">
                                     <i class="fa-solid fa-search-plus"></i> Добавить продукт
                                 </a>
@@ -102,18 +127,8 @@
             </div>
         </div>
     </div>
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const icon = document.getElementById('cameraIcon');
-        const iconHref = document.getElementById('cameraIconHref')
-      
-        iconHref.addEventListener('mouseenter', () => {
-          icon.classList.add('glow-hover');
-        });
-      
-        iconHref.addEventListener('mouseleave', () => {
-          icon.classList.remove('glow-hover');
-        });
-    });
-    </script>
 {% endblock content %}
+{% block scripts %}
+    <script src="{% static 'calculator_app/js/camera_icon.js' %}"></script>
+    <script src="{% static 'calculator_app/js/search_messages.js' %}"></script>
+{% endblock scripts %}

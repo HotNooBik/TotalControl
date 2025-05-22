@@ -60,7 +60,7 @@
                         {% endif %}
                         <div class="row justify-content-center mt-4 mb-5">
                             <div class="col-sm-5 mx-2 align-content-center">
-                                <form method="post" enctype="multipart/form-data" id="barcode-submit-form">
+                                <form method="post" enctype="multipart/form-data" id="image-submit-form">
                                     {% csrf_token %}
                                     <div id="drop-area">
                                         <div class="container py-2 px-3 mx-auto text-center">
@@ -87,7 +87,7 @@
                                             <div class="position-relative">
                                                 <div id="to-remove">
                                                     <div class="mb-2 mt-4">
-                                                        <label for="barcode-input" class="form-label fs-3">{{ form.image.label_tag }}</label>
+                                                        <label for="image-input" class="form-label fs-3">{{ form.image.label_tag }}</label>
                                                         {{ form.image }}
                                                     </div>
                                                     <button class="btn mt-4 mb-4 bg-ferngreen btn-outline-success form-control text-white w-75"
@@ -150,5 +150,12 @@
     </div>
 {% endblock content %}
 {% block scripts %}
-    <script src="{% static 'scanner/js/load_barcode.js' %}"></script>
+    <script>
+        const messages = [
+            "Сканируем штрихкод",
+            "Ищём в базе",
+            "Смотрим КБЖУ",
+        ];
+    </script>
+    <script src="{% static 'calculator_app/js/load_image.js' %}"></script>
 {% endblock scripts %}

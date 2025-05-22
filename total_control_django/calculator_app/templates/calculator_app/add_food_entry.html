@@ -234,100 +234,37 @@
             </div>
         </div>
     {% endif %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-        // Скрипт для определения часового пояса пользователя
-            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            fetch('{% url "set_timezone" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({ timezone: timeZone })
-            });
-
-            document.getElementById('amount-input').addEventListener('input', function(event) {
-                let amount =  parseFloat(event.target.value);
-
-                const unit = document.getElementById('unit').value;
-                console.log(unit);
-
-                if (!isNaN(amount)) {
-                    if (amount > 99999) {
-                        amount = 99999;
-                        event.target.value = 99999;
-                    }
-                    if (amount < 0) {
-                        amount = 0;
-                        event.target.value = 0;
-                    }
-
-                    document.getElementById('current-amount').textContent = amount.toFixed(1);
-
-                // Пересчет значений
-                    const multiply = (value) => (value * amount).toFixed(1);
-                    switch(unit) {
-                        case 'portion':
-                            document.getElementById('calculated-calories').textContent = Math.round(multiply({{ food.per_portion.calories }}));
-                            document.getElementById('calculated-proteins').textContent = multiply({{ food.per_portion.proteins }});
-                            document.getElementById('calculated-fats').textContent = multiply({{ food.per_portion.fats }});
-                            document.getElementById('calculated-carbs').textContent = multiply({{ food.per_portion.carbs }});
-                            break;
-
-                        case 'g':
-                            amount /= 100
-                            document.getElementById('calculated-calories').textContent = Math.round(multiply({{ food.per_100g.calories|default:0 }}));
-                            document.getElementById('calculated-proteins').textContent = multiply({{ food.per_100g.proteins|default:0 }});
-                            document.getElementById('calculated-fats').textContent = multiply({{ food.per_100g.fats|default:0 }});
-                            document.getElementById('calculated-carbs').textContent = multiply({{ food.per_100g.carbs|default:0 }});
-                            break;
-
-                        case 'ml':
-                        default:
-                            amount /= 100
-                            document.getElementById('calculated-calories').textContent = Math.round(multiply({{ food.per_100ml.calories|default:0 }}));
-                            document.getElementById('calculated-proteins').textContent = multiply({{ food.per_100ml.proteins|default:0 }});
-                            document.getElementById('calculated-fats').textContent = multiply({{ food.per_100ml.fats|default:0 }});
-                            document.getElementById('calculated-carbs').textContent = multiply({{ food.per_100ml.carbs|default:0 }});
-                    }
-                }
-            });
-
-            document.getElementById('unit').addEventListener('change', function(event) {
-                const unit = event.target.value;
-
-                switch(unit) {
-                    case 'portion':
-                        document.getElementById('amount-input').value = 1;
-                        document.getElementById('amount-title').innerHTML = 'На <span id="current-amount">1.0</span> порций по <i>{{ food.serving_name }}</i>:';
-                        document.getElementById('calculated-calories').textContent = {{ food.per_portion.calories }};
-                        document.getElementById('calculated-proteins').textContent = ({{ food.per_portion.proteins }}).toFixed(1);
-                        document.getElementById('calculated-fats').textContent = ({{ food.per_portion.fats }}).toFixed(1);
-                        document.getElementById('calculated-carbs').textContent = ({{ food.per_portion.carbs }}).toFixed(1);
-                        break;
-
-                    case 'g':
-                        document.getElementById('amount-input').value = 100;
-                        document.getElementById('amount-title').innerHTML = 'На <span id="current-amount">100.0</span> грамм продукта:';
-                        document.getElementById('calculated-calories').textContent = {{ food.per_100g.calories|default:0 }};
-                        document.getElementById('calculated-proteins').textContent = ({{ food.per_100g.proteins|default:0 }}).toFixed(1);
-                        document.getElementById('calculated-fats').textContent = ({{ food.per_100g.fats|default:0 }}).toFixed(1);
-                        document.getElementById('calculated-carbs').textContent = ({{ food.per_100g.carbs|default:0 }}).toFixed(1);
-                        break;
-
-                    case 'ml':
-                    default:
-                        document.getElementById('amount-input').value = 100;
-                        document.getElementById('amount-title').innerHTML = 'На <span id="current-amount">100.0</span> мл. продукта:';
-                        document.getElementById('calculated-calories').textContent = {{ food.per_100ml.calories|default:0 }};
-                        document.getElementById('calculated-proteins').textContent = ({{ food.per_100ml.proteins|default:0 }}).toFixed(1);
-                        document.getElementById('calculated-fats').textContent = ({{ food.per_100ml.fats|default:0 }}).toFixed(1);
-                        document.getElementById('calculated-carbs').textContent = ({{ food.per_100ml.carbs|default:0 }}).toFixed(1);
-                }
-            });
-        });
-    </script>
 {% endblock content %}
+{% block scripts %}
+    <script>
+        const urls = {
+            setTimezone: "{% url 'set_timezone' %}",
+        };
+
+        const csrf = "{{ csrf_token }}";
+
+        const food = {
+            per_portion: {
+                calories: {{ food.per_portion.calories }},
+                proteins: {{ food.per_portion.proteins }},
+                fats: {{ food.per_portion.fats }},
+                carbs: {{ food.per_portion.carbs }},
+            },
+            per_100g: {
+                calories: {{ food.per_100g.calories|default:0 }},
+                proteins: {{ food.per_100g.proteins|default:0 }},
+                fats: {{ food.per_100g.fats|default:0 }},
+                carbs: {{ food.per_100g.carbs|default:0 }},
+            },
+            per_100ml: {
+                calories: {{ food.per_100ml.calories|default:0 }},
+                proteins: {{ food.per_100ml.proteins|default:0 }},
+                fats: {{ food.per_100ml.fats|default:0 }},
+                carbs: {{ food.per_100ml.carbs|default:0 }},
+            },
+        };
+        const servingName = "{{food.serving_name}}";
+    </script>
+    <script src="{% static 'calculator_app/js/timezone.js' %}"></script>
+    <script src="{% static 'calculator_app/js/add_food.js' %}"></script>
+{% endblock scripts %}
