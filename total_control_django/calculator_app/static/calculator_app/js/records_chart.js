@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 pointStyle: "line",
                             },
                             {
-                                label: "Белки",
+                                label: "Белки (г)",
                                 data: data_points.map(
                                     (entry) => entry.data.proteins
                                 ),
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 hidden: true,
                             },
                             {
-                                label: "Жиры",
+                                label: "Жиры (г)",
                                 data: data_points.map(
                                     (entry) => entry.data.fats
                                 ),
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 hidden: true,
                             },
                             {
-                                label: "Углеводы",
+                                label: "Углеводы (г)",
                                 data: data_points.map(
                                     (entry) => entry.data.carbs
                                 ),
